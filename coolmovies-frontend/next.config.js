@@ -7,7 +7,7 @@ module.exports = {
     return [
       {
         source: '/graphql',
-        destination: 'http://localhost:5001/graphql',
+        destination: process.env.GRAPHQL_API_URL || 'http://localhost:5001/graphql',
       },
     ];
   },
