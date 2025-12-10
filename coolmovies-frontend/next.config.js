@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  compiler: {
-    emotion: true,
-  },
+  // compiler: { emotion: true }, // Removed for Tailwind
   async rewrites() {
     return [
       {
