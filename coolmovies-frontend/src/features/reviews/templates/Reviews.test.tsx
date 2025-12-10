@@ -6,10 +6,10 @@ import { MockedProvider } from '@apollo/client/testing';
 import { InMemoryCache } from '@apollo/client';
 import Reviews from './Reviews';
 import { reviewsReducer, ReviewsState } from '../state';
-import { ThemeProvider, createTheme } from '@mui/material';
 import { CurrentUserDocument } from '../../../generated/graphql';
 
-const theme = createTheme();
+// Removed MUI theme creation
+
 
 const mockUser = {
     id: 'user1',
@@ -51,9 +51,7 @@ const renderWithProviders = (
         ...render(
             <Provider store={store}>
                 <MockedProvider mocks={mocks} addTypename={false} cache={cache}>
-                    <ThemeProvider theme={theme}>
-                        {component}
-                    </ThemeProvider>
+                    {component}
                 </MockedProvider>
             </Provider>
         ),
@@ -131,7 +129,8 @@ describe('Reviews Component', () => {
 
         // Wait for Apollo to resolve (even if we provided data via Redux, subcomponents fetch user)
         expect(await screen.findByText('Cool Movie')).toBeInTheDocument();
-        expect(screen.getByText('(1 reviews)')).toBeInTheDocument();
+        // Updated text expectation based on MovieCard.tsx
+        expect(screen.getByText(/1 Reviews/i)).toBeInTheDocument();
     });
 
     it('opens view reviews dialog when requested', async () => {
@@ -147,6 +146,7 @@ describe('Reviews Component', () => {
 
         // The dialog should be open and showing the review
         expect(await screen.findByText('Great')).toBeInTheDocument();
-        expect(screen.getByText('"Loved it"')).toBeInTheDocument();
+        // Updated text expectation based on ReviewListDialog.tsx (no quotes)
+        expect(screen.getByText('Loved it')).toBeInTheDocument();
     });
 });

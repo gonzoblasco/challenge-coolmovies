@@ -2,16 +2,14 @@ import React, { FC } from 'react';
 import {
     Card,
     CardContent,
-    CardMedia,
-    Typography,
-    Box,
-    Button,
-    Rating
-} from '@mui/material';
+    CardFooter,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Movie } from '../../../generated/graphql';
-import { useAppDispatch, useAppSelector } from '../../../state'; // Assuming hooks are here, checking store.ts exports
+import { useAppDispatch } from '../../../state';
 import { actions } from '../state/slice';
 import { useCurrentUserQuery } from '../../../generated/graphql';
+import { Star } from 'lucide-react';
 
 interface MovieCardProps {
     movie: Movie;
@@ -36,80 +34,66 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
         dispatch(actions.openWriteReview(movie.id));
     };
 
+    const renderStars = (rating: number) => {
+        return (
+            <div className="flex items-center gap-0.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                        key={star}
+                        className={`w-4 h-4 ${star <= Math.round(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'}`}
+                    />
+                ))}
+            </div>
+        );
+    };
+
     return (
-        <Card
-            sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                '&:hover': {
-                    transform: 'translateY(-8px)',
-                    boxShadow: '0 12px 30px rgba(98, 0, 234, 0.15)',
-                },
-                position: 'relative',
-                overflow: 'hidden',
-                borderRadius: 4,
-                border: '1px solid rgba(255, 255, 255, 0.05)',
-                bgcolor: 'background.paper'
-            }}
-        >
-            <Box sx={{ position: 'relative', height: 400 }}>
-                <CardMedia
-                    component="img"
-                    height="100%"
-                    image={movie.imgUrl}
+        <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
+            <div className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20">
+                <img
+                    src={movie.imgUrl}
                     alt={movie.title}
-                    sx={{ objectFit: 'cover' }}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
                 />
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        background: 'linear-gradient(to top, rgba(15,15,19,1) 0%, rgba(15,15,19,0) 100%)',
-                        height: '50%',
-                    }}
-                />
-            </Box>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
 
-            <CardContent sx={{ flexGrow: 1, position: 'relative', zIndex: 1, pt: 2 }}>
-                <Typography variant="h5" component="div" gutterBottom sx={{ lineHeight: 1.2, fontWeight: 700 }}>
-                    {movie.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Released: {new Date(movie.releaseDate).toLocaleDateString()}
-                </Typography>
+                <div className="absolute bottom-0 left-0 p-4 w-full">
+                    <h3 className="text-xl font-bold text-white mb-1 line-clamp-1 truncate" title={movie.title}>
+                        {movie.title}
+                    </h3>
+                    <p className="text-sm text-gray-300 font-medium">
+                        {new Date(movie.releaseDate).getFullYear()} • {reviewCount} Reviews
+                    </p>
+                </div>
+            </div>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 2 }}>
-                    <Rating value={averageRating} precision={0.5} readOnly size="small" />
-                    <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                        ({reviewCount} reviews)
-                    </Typography>
-                </Box>
+            <CardContent className="flex-grow p-4 flex flex-col justify-end">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-full">
+                        {renderStars(averageRating)}
+                        <span className="text-sm font-semibold ml-1">{averageRating.toFixed(1)}</span>
+                    </div>
+                </div>
             </CardContent>
 
-            <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-3">
                 <Button
-                    variant="contained"
-                    fullWidth
-                    color="primary"
+                    variant="secondary"
+                    className="w-full"
                     onClick={handleViewReviews}
                 >
-                    View Reviews
+                    Read
                 </Button>
                 <Button
-                    variant="outlined"
-                    fullWidth
-                    color="primary"
+                    variant={currentUser ? "default" : "outline"}
+                    className="w-full"
                     onClick={handleWriteReview}
                     disabled={!currentUser}
-                    sx={{ borderWidth: 2, '&:hover': { borderWidth: 2 } }}
                 >
-                    {currentUser ? 'Write Review' : 'Login to Review'}
+                    {currentUser ? 'Review' : 'Log in'}
                 </Button>
-            </Box>
+            </CardFooter>
         </Card>
     );
 };

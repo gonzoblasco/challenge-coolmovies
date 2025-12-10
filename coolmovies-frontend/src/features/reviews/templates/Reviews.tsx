@@ -1,16 +1,10 @@
 import React, { useEffect } from 'react';
-import {
-    Typography,
-    Grid,
-    Container,
-    Skeleton,
-    Box
-} from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../state';
 import { actions } from '../state/slice';
 import { MovieCard } from '../components/MovieCard';
 import { ReviewListDialog } from '../components/ReviewListDialog';
 import { CreateReviewDialog } from '../components/CreateReviewDialog';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Reviews = () => {
     const dispatch = useAppDispatch();
@@ -21,48 +15,41 @@ const Reviews = () => {
     }, [dispatch]);
 
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Typography variant="h2" component="h1" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
-                Movie Reviews
-            </Typography>
+        <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-4xl font-extrabold tracking-tight text-center mb-12 sm:text-5xl bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                    Movie Reviews
+                </h1>
 
-            {error && (
-                <Typography color="error" align="center" gutterBottom>
-                    Error: {error}
-                </Typography>
-            )}
-
-            <Grid container spacing={4}>
-                {loading && movies.length === 0 ? (
-                    // Skeleton Loading State
-                    Array.from(new Array(6)).map((_, index) => (
-                        <Grid item key={`skeleton-${index}`} xs={12} md={6} lg={4}>
-                            <Box sx={{ height: '100%', borderRadius: 4, overflow: 'hidden' }}>
-                                <Skeleton variant="rectangular" height={400} animation="wave" />
-                                <Box sx={{ p: 2 }}>
-                                    <Skeleton width="80%" height={32} sx={{ mb: 1 }} />
-                                    <Skeleton width="40%" height={20} sx={{ mb: 2 }} />
-                                    <Skeleton width="60%" height={24} />
-                                    <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
-                                        <Skeleton width="100%" height={40} />
-                                    </Box>
-                                </Box>
-                            </Box>
-                        </Grid>
-                    ))
-                ) : (
-                    movies.map((movie) => (
-                        <Grid item key={movie.id} xs={12} md={6} lg={4}>
-                            <MovieCard movie={movie} />
-                        </Grid>
-                    ))
+                {error && (
+                    <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-md mb-8 text-center" role="alert">
+                        <span className="block sm:inline">Error: {error}</span>
+                    </div>
                 )}
-            </Grid>
 
-            {/* Dialogs controlled by Redux state */}
-            <ReviewListDialog />
-            <CreateReviewDialog />
-        </Container>
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    {loading && movies.length === 0 ? (
+                        Array.from(new Array(6)).map((_, index) => (
+                            <div key={`skeleton-${index}`} className="flex flex-col space-y-3">
+                                <Skeleton className="h-[400px] w-full rounded-xl" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-[250px]" />
+                                    <Skeleton className="h-4 w-[200px]" />
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        movies.map((movie) => (
+                            <MovieCard key={movie.id} movie={movie} />
+                        ))
+                    )}
+                </div>
+
+                {/* Dialogs controlled by Redux state */}
+                <ReviewListDialog />
+                <CreateReviewDialog />
+            </div>
+        </div>
     );
 };
 

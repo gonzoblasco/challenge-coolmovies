@@ -1,19 +1,17 @@
 import React, { FC } from 'react';
 import {
     Dialog,
-    DialogTitle,
     DialogContent,
-    DialogActions,
-    Button,
-    Typography,
-    Box,
-    Grid,
-    Card,
-    Rating
-} from '@mui/material';
+    DialogHeader,
+    DialogTitle,
+    DialogFooter
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { useAppDispatch, useAppSelector } from '../../../state';
 import { actions } from '../state/slice';
 import { useCurrentUserQuery } from '../../../generated/graphql';
+import { Star } from 'lucide-react';
 
 export const ReviewListDialog: FC = () => {
     const dispatch = useAppDispatch();
@@ -34,76 +32,69 @@ export const ReviewListDialog: FC = () => {
         }
     };
 
+    const handleOpenChange = (open: boolean) => {
+        if (!open) handleClose();
+    };
+
     if (!selectedMovie) return null;
 
     return (
-        <Dialog
-            open={isViewReviewsOpen}
-            onClose={handleClose}
-            maxWidth="md"
-            fullWidth
-            scroll="paper"
-        >
-            <DialogTitle sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                bgcolor: '#eeeeee',
-                color: '#212121',
-                borderBottom: '1px solid rgba(0,0,0,0.1)'
-            }}>
-                <Box>
-                    <Typography variant="h4" component="span" sx={{ fontWeight: 700, color: '#212121' }}>
+        <Dialog open={isViewReviewsOpen} onOpenChange={handleOpenChange}>
+            <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
+                <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold flex items-baseline gap-2">
                         {selectedMovie.title}
-                    </Typography>
-                    <Typography variant="h5" component="span" color="primary.main" sx={{ ml: 2, fontWeight: 300 }}>
-                        Reviews
-                    </Typography>
-                </Box>
-            </DialogTitle>
-            <DialogContent dividers>
-                {selectedMovie.movieReviewsByMovieId.nodes.length === 0 ? (
-                    <Box sx={{ py: 4, textAlign: 'center' }}>
-                        <Typography color="text.secondary">No reviews yet. Be the first!</Typography>
-                    </Box>
-                ) : (
-                    <Grid container spacing={2}>
-                        {selectedMovie.movieReviewsByMovieId.nodes.map((review) => {
+                        <span className="text-lg font-normal text-muted-foreground">Reviews</span>
+                    </DialogTitle>
+                </DialogHeader>
+
+                <div className="flex-1 overflow-y-auto pr-2 space-y-4 py-4">
+                    {selectedMovie.movieReviewsByMovieId.nodes.length === 0 ? (
+                        <div className="text-center py-12 text-muted-foreground">
+                            No reviews yet. Be the first to share your thoughts!
+                        </div>
+                    ) : (
+                        selectedMovie.movieReviewsByMovieId.nodes.map((review) => {
                             if (!review) return null;
                             return (
-                                <Grid item xs={12} key={review.id}>
-                                    <Card variant="outlined" sx={{ p: 2, bgcolor: 'background.default' }}>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                                            <Typography variant="h6" component="div">
-                                                {review.title}
-                                            </Typography>
-                                            <Rating value={review.rating || 0} readOnly size="small" />
-                                        </Box>
-                                        <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary' }}>
-                                            "{review.body}"
-                                        </Typography>
-                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                            <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                                                — {review.userByUserReviewerId?.name || 'Unknown User'}
-                                            </Typography>
-                                        </Box>
-                                    </Card>
-                                </Grid>
+                                <Card key={review.id} className="bg-muted/50 border-border/50">
+                                    <CardHeader className="p-4 pb-2">
+                                        <div className="flex justify-between items-start">
+                                            <h4 className="font-semibold text-lg">{review.title}</h4>
+                                            <div className="flex items-center">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <Star
+                                                        key={star}
+                                                        className={`w-4 h-4 ${star <= (review.rating || 0) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'}`}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent className="p-4 pt-2">
+                                        <p className="text-sm text-foreground/90 whitespace-pre-wrap">{review.body}</p>
+                                        <div className="mt-4 flex justify-end">
+                                            <span className="text-xs text-muted-foreground italic">
+                                                — {review.userByUserReviewerId?.name || 'Anonymous'}
+                                            </span>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             )
-                        })}
-                    </Grid>
-                )}
+                        })
+                    )}
+                </div>
+
+                <DialogFooter className="border-t pt-4">
+                    <Button variant="outline" onClick={handleClose}>Close</Button>
+                    <Button
+                        onClick={handleWriteReview}
+                        disabled={!currentUser}
+                    >
+                        {currentUser ? 'Write a Review' : 'Login to Review'}
+                    </Button>
+                </DialogFooter>
             </DialogContent>
-            <DialogActions sx={{ p: 2.5 }}>
-                <Button onClick={handleClose} color="inherit">Close</Button>
-                <Button
-                    variant="contained"
-                    onClick={handleWriteReview}
-                    disabled={!currentUser}
-                >
-                    Write a Review
-                </Button>
-            </DialogActions>
         </Dialog>
     );
 };

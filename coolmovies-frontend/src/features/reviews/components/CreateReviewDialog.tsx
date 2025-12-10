@@ -1,18 +1,19 @@
 import React, { FC, useState, useEffect } from 'react';
 import {
     Dialog,
-    DialogTitle,
     DialogContent,
-    DialogActions,
-    Button,
-    TextField,
-    Rating,
-    Box,
-    Typography
-} from '@mui/material';
+    DialogHeader,
+    DialogTitle,
+    DialogFooter
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { useAppDispatch, useAppSelector } from '../../../state';
 import { actions } from '../state/slice';
 import { useCurrentUserQuery } from '../../../generated/graphql';
+import { Star } from 'lucide-react';
 
 export const CreateReviewDialog: FC = () => {
     const dispatch = useAppDispatch();
@@ -21,21 +22,26 @@ export const CreateReviewDialog: FC = () => {
     const currentUser = userData?.currentUser;
     const selectedMovie = movies.find(m => m.id === selectedMovieId);
 
-    const [rating, setRating] = useState<number | null>(0);
+    const [rating, setRating] = useState<number>(0);
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
+    const [hoverRating, setHoverRating] = useState<number>(0);
 
-    // Reset form when dialog opens
     useEffect(() => {
         if (isWriteReviewOpen) {
             setRating(0);
             setTitle('');
             setBody('');
+            setHoverRating(0);
         }
     }, [isWriteReviewOpen]);
 
     const handleClose = () => {
         dispatch(actions.closeWriteReview());
+    };
+
+    const handleOpenChange = (open: boolean) => {
+        if (!open) handleClose();
     };
 
     const handleSubmit = () => {
@@ -53,52 +59,73 @@ export const CreateReviewDialog: FC = () => {
     if (!selectedMovie) return null;
 
     return (
-        <Dialog open={isWriteReviewOpen} onClose={handleClose} maxWidth="sm" fullWidth>
-            <DialogTitle>Write a Review for {selectedMovie.title}</DialogTitle>
-            <DialogContent>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-                    <TextField
-                        autoFocus
-                        label="Title"
-                        fullWidth
-                        variant="outlined"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                    <Box>
-                        <Typography component="legend">Rating</Typography>
-                        <Rating
-                            name="simple-controlled"
-                            value={rating}
-                            size="large"
-                            onChange={(event, newValue) => {
-                                setRating(newValue);
-                            }}
+        <Dialog open={isWriteReviewOpen} onOpenChange={handleOpenChange}>
+            <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>Write a Review for {selectedMovie.title}</DialogTitle>
+                </DialogHeader>
+
+                <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="title">Title</Label>
+                        <Input
+                            id="title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            placeholder="Great Movie!"
+                            autoFocus
                         />
-                    </Box>
-                    <TextField
-                        label="Review"
-                        fullWidth
-                        multiline
-                        rows={4}
-                        variant="outlined"
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        placeholder="Tell us what you thought about the movie..."
-                    />
-                </Box>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label>Rating</Label>
+                        <div className="flex items-center gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                    key={star}
+                                    type="button"
+                                    className="focus:outline-none transition-transform hover:scale-110"
+                                    onClick={() => setRating(star)}
+                                    onMouseEnter={() => setHoverRating(star)}
+                                    onMouseLeave={() => setHoverRating(0)}
+                                    aria-label={`Rate ${star} stars`}
+                                >
+                                    <Star
+                                        className={`w-8 h-8 ${star <= (hoverRating || rating)
+                                            ? 'text-yellow-400 fill-yellow-400'
+                                            : 'text-muted-foreground/30'
+                                            }`}
+                                    />
+                                </button>
+                            ))}
+                            <span className="ml-2 text-sm text-muted-foreground">
+                                {rating ? `${rating}/5` : 'Select a rating'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="review">Review</Label>
+                        <Textarea
+                            id="review"
+                            value={body}
+                            onChange={(e) => setBody(e.target.value)}
+                            placeholder="Tell us what you thought..."
+                            rows={4}
+                        />
+                    </div>
+                </div>
+
+                <DialogFooter>
+                    <Button variant="outline" onClick={handleClose}>Cancel</Button>
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={!title || !body || !rating || loading}
+                    >
+                        {loading ? 'Submitting...' : 'Submit Review'}
+                    </Button>
+                </DialogFooter>
             </DialogContent>
-            <DialogActions sx={{ p: 3 }}>
-                <Button onClick={handleClose} color="inherit">Cancel</Button>
-                <Button
-                    onClick={handleSubmit}
-                    variant="contained"
-                    disabled={!title || !body || !rating || loading}
-                    size="large"
-                >
-                    {loading ? 'Submitting...' : 'Submit Review'}
-                </Button>
-            </DialogActions>
         </Dialog>
     );
 };
