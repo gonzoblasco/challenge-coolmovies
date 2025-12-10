@@ -13,7 +13,7 @@ import {
 } from '../../../generated/graphql';
 
 export const fetchMoviesEpic: Epic<
-    SliceAction['fetchMovies'],
+    any,
     any,
     RootState,
     EpicDependencies
@@ -32,7 +32,7 @@ export const fetchMoviesEpic: Epic<
         );
 
 export const createReviewEpic: Epic<
-    SliceAction['createReview'],
+    any,
     any,
     RootState,
     EpicDependencies

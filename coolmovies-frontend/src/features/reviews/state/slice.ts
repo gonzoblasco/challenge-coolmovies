@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Movie } from '../../../generated/graphql';
 
-interface ReviewsState {
+export interface ReviewsState {
     movies: Movie[];
     loading: boolean;
     error?: string;

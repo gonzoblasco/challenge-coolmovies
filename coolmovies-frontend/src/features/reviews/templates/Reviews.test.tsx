@@ -3,8 +3,9 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { MockedProvider } from '@apollo/client/testing';
+import { InMemoryCache } from '@apollo/client';
 import Reviews from './Reviews';
-import { reviewsReducer } from '../state';
+import { reviewsReducer, ReviewsState } from '../state';
 import { ThemeProvider, createTheme } from '@mui/material';
 import { CurrentUserDocument } from '../../../generated/graphql';
 
@@ -29,20 +30,27 @@ const mocks = [
 ];
 
 // Helpers to render with Redux and Apollo
+interface RenderOptions {
+    initialState?: Partial<ReviewsState>;
+    store?: ReturnType<typeof configureStore>;
+}
+
 const renderWithProviders = (
     component: React.ReactElement,
     {
         initialState,
         store = configureStore({
             reducer: { reviews: reviewsReducer },
-            preloadedState: { reviews: initialState },
+            preloadedState: { reviews: initialState as any }, // casting as any because slice state might differ slightly in strictness, but let's try to be safer if possible. Actually, let's keep it simple for now.
         }),
-    }: any = {}
+    }: RenderOptions = {}
 ) => {
+    const cache = new InMemoryCache();
+
     return {
         ...render(
             <Provider store={store}>
-                <MockedProvider mocks={mocks} addTypename={false}>
+                <MockedProvider mocks={mocks} addTypename={false} cache={cache}>
                     <ThemeProvider theme={theme}>
                         {component}
                     </ThemeProvider>
@@ -59,18 +67,44 @@ const mockMovies = [
         title: 'Cool Movie',
         releaseDate: '2023-01-01',
         imgUrl: 'http://example.com/image.jpg',
+        nodeId: 'node-1',
+        movieDirectorId: 'director-1',
+        userCreatorId: 'user-creator-1',
         movieReviewsByMovieId: {
             nodes: [
                 {
                     id: 'r1',
+                    nodeId: 'review-1',
                     title: 'Great',
                     body: 'Loved it',
                     rating: 5,
+                    movieId: '1',
+                    userReviewerId: 'user-1',
                     userByUserReviewerId: {
                         name: 'Reviewer 1',
+                        id: 'user-1',
+                        nodeId: 'user-node-1',
+                        commentsByUserId: { edges: [], nodes: [], pageInfo: { hasNextPage: false, hasPreviousPage: false }, totalCount: 0 },
+                        movieReviewsByUserReviewerId: { edges: [], nodes: [], pageInfo: { hasNextPage: false, hasPreviousPage: false }, totalCount: 0 },
+                        moviesByUserCreatorId: { edges: [], nodes: [], pageInfo: { hasNextPage: false, hasPreviousPage: false }, totalCount: 0 },
+                    },
+                    commentsByMovieReviewId: {
+                        edges: [],
+                        nodes: [],
+                        pageInfo: {
+                            hasNextPage: false,
+                            hasPreviousPage: false,
+                        },
+                        totalCount: 0,
                     },
                 },
             ],
+            edges: [],
+            pageInfo: {
+                hasNextPage: false,
+                hasPreviousPage: false,
+            },
+            totalCount: 1,
         },
     },
 ];
