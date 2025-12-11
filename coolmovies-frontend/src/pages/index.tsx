@@ -1,8 +1,8 @@
-import type { NextPage } from 'next';
-import { Example } from '../features/example/';
+import type { NextPage } from "next";
+import { Reviews } from "../features/reviews";
 
 const Home: NextPage = () => {
-  return <Example />;
+  return <Reviews />;
 };
 
 export default Home;
