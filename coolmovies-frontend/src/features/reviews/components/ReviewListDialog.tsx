@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -92,6 +93,9 @@ export const ReviewListDialog: FC = () => {
               Reviews
             </span>
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            List of reviews for {selectedMovie.title}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-4 py-4 border-b pb-4">

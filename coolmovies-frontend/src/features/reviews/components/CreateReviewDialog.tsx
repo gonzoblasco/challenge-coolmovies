@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -92,6 +93,9 @@ export const CreateReviewDialog: FC = () => {
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Write a Review for {selectedMovie.title}</DialogTitle>
+          <DialogDescription>
+            Share your thoughts and rating for this movie.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
