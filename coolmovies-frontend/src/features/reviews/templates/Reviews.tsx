@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../state";
 import { actions } from "../state/slice";
-import { useAllMoviesQuery } from "../../../generated/graphql";
+import { useAllMoviesQuery, Movie } from "../../../generated/graphql";
 import { MovieCard } from "../components/MovieCard";
 import { ReviewListDialog } from "../components/ReviewListDialog";
 import { CreateReviewDialog } from "../components/CreateReviewDialog";
@@ -58,7 +58,9 @@ const Reviews = () => {
           ) : (
             movies
               .filter((m): m is NonNullable<typeof m> => m !== null)
-              .map((movie) => <MovieCard key={movie.id} movie={movie as any} />)
+              .map((movie) => (
+                <MovieCard key={movie.id} movie={movie as Movie} />
+              ))
           )}
         </div>
 
