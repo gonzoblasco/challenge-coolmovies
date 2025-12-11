@@ -16,6 +16,7 @@ import {
   useDeleteCommentMutation,
   CurrentUserQuery,
 } from "../../../generated/graphql";
+import { TEXT } from "@/constants/text";
 
 interface Comment {
   id: string;
@@ -100,19 +101,20 @@ export const CommentList: FC<CommentListProps> = ({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {TEXT.DELETE_CONFIRMATION_TITLE}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              comment.
+              {TEXT.DELETE_COMMENT_CONFIRMATION_DESC}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{TEXT.CANCEL}</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              {TEXT.DELETE}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -21,6 +21,7 @@ import {
   MovieReviewsQuery,
   CurrentUserQuery,
 } from "../../../generated/graphql";
+import { TEXT } from "@/constants/text";
 
 type Review = NonNullable<
   NonNullable<
@@ -183,19 +184,20 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogTitle>
+                        {TEXT.DELETE_CONFIRMATION_TITLE}
+                      </AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your review.
+                        {TEXT.DELETE_REVIEW_CONFIRMATION_DESC}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{TEXT.CANCEL}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDelete}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
-                        Delete
+                        {TEXT.DELETE}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
