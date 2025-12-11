@@ -1,0 +1,69 @@
+query AllMovies {
+  allMovies {
+    nodes {
+      id
+      title
+      releaseDate
+      imgUrl
+      movieReviewsByMovieId {
+        nodes {
+          id
+          title
+          body
+          rating
+          userReviewerId
+          userByUserReviewerId {
+            name
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation CreateReview($title: String!, $body: String!, $rating: Int!, $movieId: UUID!, $userId: UUID!) {
+  createMovieReview(
+    input: {movieReview: {title: $title, body: $body, rating: $rating, movieId: $movieId, userReviewerId: $userId}}
+  ) {
+    movieReview {
+      id
+      title
+      body
+      rating
+      movieId
+      userByUserReviewerId {
+        name
+      }
+    }
+  }
+}
+
+mutation UpdateReview($id: UUID!, $patch: MovieReviewPatch!) {
+  updateMovieReviewById(input: {id: $id, movieReviewPatch: $patch}) {
+    movieReview {
+      id
+      title
+      body
+      rating
+    }
+  }
+}
+
+query MovieReviews($id: UUID!) {
+  movieById(id: $id) {
+    id
+    title
+    movieReviewsByMovieId {
+      nodes {
+        id
+        title
+        body
+        rating
+        userReviewerId
+        userByUserReviewerId {
+          name
+        }
+      }
+    }
+  }
+}
