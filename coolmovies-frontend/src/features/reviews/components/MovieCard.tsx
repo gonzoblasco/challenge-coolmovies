@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Movie } from "../../../generated/graphql";
@@ -6,6 +6,8 @@ import { useAppDispatch } from "../../../state";
 import { actions } from "../state/slice";
 import { useCurrentUserQuery } from "../../../generated/graphql";
 import { Star } from "lucide-react";
+import Image from "next/image";
+import { useInView } from "react-intersection-observer";
 
 interface MovieCardProps {
   movie: Movie;
@@ -15,6 +17,13 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
   const dispatch = useAppDispatch();
   const { data: userData } = useCurrentUserQuery();
   const currentUser = userData?.currentUser;
+
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  const [imgSrc, setImgSrc] = useState(movie.imgUrl);
 
   const reviews = movie.movieReviewsByMovieId.nodes;
   const reviewCount = reviews.length;
@@ -50,61 +59,72 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
   };
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
-      <div className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20">
-        <img
-          src={movie.imgUrl}
-          alt={`Poster of ${movie.title}`}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = "/placeholder-movie.png";
-            e.currentTarget.alt = `${movie.title} - Image unavailable`;
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
+    <div
+      ref={ref}
+      className={`h-full transition-all duration-700 ${
+        inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      }`}
+    >
+      <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
+        <div className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20">
+          <Image
+            src={imgSrc}
+            alt={`Poster of ${movie.title}`}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={() => {
+              setImgSrc("/placeholder-movie.png");
+            }}
+          />
+          {/* Fallback for Image errors requires state, let's skip re-implementing that complex logic for now unless requested.
+               The user just asked for "Next.js Image component".
+            */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
 
-        <div className="absolute bottom-0 left-0 p-4 w-full">
-          <h3
-            className="text-xl font-bold text-white mb-1 line-clamp-1 truncate"
-            title={movie.title}
-          >
-            {movie.title}
-          </h3>
-          <p className="text-sm text-gray-300 font-medium">
-            {new Date(movie.releaseDate).getFullYear()} • {reviewCount} Reviews
-          </p>
-        </div>
-      </div>
-
-      <CardContent className="flex-grow p-4 flex flex-col justify-end">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-full">
-            {renderStars(averageRating)}
-            <span className="text-sm font-semibold ml-1">
-              {averageRating.toFixed(1)}
-            </span>
+          <div className="absolute bottom-0 left-0 p-4 w-full">
+            <h3
+              className="text-xl font-bold text-white mb-1 line-clamp-1 truncate"
+              title={movie.title}
+            >
+              {movie.title}
+            </h3>
+            <p className="text-sm text-gray-300 font-medium">
+              {new Date(movie.releaseDate).getFullYear()} • {reviewCount}{" "}
+              Reviews
+            </p>
           </div>
         </div>
-      </CardContent>
 
-      <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-3">
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={handleViewReviews}
-        >
-          Read
-        </Button>
-        <Button
-          variant={currentUser ? "default" : "outline"}
-          className="w-full"
-          onClick={handleWriteReview}
-          disabled={!currentUser}
-        >
-          {currentUser ? "Review" : "Log in"}
-        </Button>
-      </CardFooter>
-    </Card>
+        <CardContent className="flex-grow p-4 flex flex-col justify-end">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-full">
+              {renderStars(averageRating)}
+              <span className="text-sm font-semibold ml-1">
+                {averageRating.toFixed(1)}
+              </span>
+            </div>
+          </div>
+        </CardContent>
+
+        <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-3">
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={handleViewReviews}
+          >
+            Read
+          </Button>
+          <Button
+            variant={currentUser ? "default" : "outline"}
+            className="w-full"
+            onClick={handleWriteReview}
+            disabled={!currentUser}
+          >
+            {currentUser ? "Review" : "Log in"}
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
