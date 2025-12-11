@@ -9,6 +9,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "../../../state";
 import { actions } from "../state/slice";
 import {
@@ -145,36 +152,43 @@ export const ReviewListDialog: FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <select
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-            value={ratingFilter || ""}
-            onChange={(e) =>
-              updateFilter(
-                "rating",
-                e.target.value ? parseInt(e.target.value) : null
-              )
+          <Select
+            value={ratingFilter ? ratingFilter.toString() : "all"}
+            onValueChange={(val) =>
+              updateFilter("rating", val === "all" ? null : parseInt(val))
             }
           >
-            <option value="">All Ratings</option>
-            {[5, 4, 3, 2, 1].map((r) => (
-              <option key={r} value={r}>
-                {r} Stars
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Ratings" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Ratings</SelectItem>
+              {[5, 4, 3, 2, 1].map((r) => (
+                <SelectItem key={r} value={r.toString()}>
+                  {r} Stars
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-          <select
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-            value={userFilter || ""}
-            onChange={(e) => updateFilter("user", e.target.value || null)}
+          <Select
+            value={userFilter || "all"}
+            onValueChange={(val) =>
+              updateFilter("user", val === "all" ? null : val)
+            }
           >
-            <option value="">All Users</option>
-            {(allUsersData?.allUsers?.nodes ?? []).map((user) => (
-              <option key={user?.id} value={user?.id}>
-                {user?.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Users" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Users</SelectItem>
+              {(allUsersData?.allUsers?.nodes ?? []).map((user) => (
+                <SelectItem key={user?.id} value={user?.id}>
+                  {user?.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex-1 overflow-y-auto pr-2 space-y-4 py-4">
