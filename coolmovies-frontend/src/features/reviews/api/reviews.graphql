@@ -151,3 +151,12 @@ mutation DeleteComment($id: UUID!) {
     }
   }
 }
+
+mutation DeleteReview($id: UUID!) {
+  deleteMovieReviewById(input: { id: $id }) {
+    movieReview {
+      id
+      movieId
+    }
+  }
+}

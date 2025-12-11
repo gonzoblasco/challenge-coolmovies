@@ -3,9 +3,21 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Star, Pencil, Check, X } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Star, Pencil, Check, X, Trash2 } from "lucide-react";
 import {
   useUpdateReviewMutation,
+  useDeleteReviewMutation,
   MovieReviewsQuery,
   CurrentUserQuery,
 } from "../../../generated/graphql";
@@ -27,6 +39,7 @@ interface ReviewCardProps {
 
 export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
   const [updateReview] = useUpdateReviewMutation();
+  const [deleteReview] = useDeleteReviewMutation();
 
   // Formatting helper
   const isOwner = currentUser && review.userReviewerId === currentUser.id;
@@ -43,6 +56,9 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
   const [isReplying, setIsReplying] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const comments = review.commentsByMovieReviewId?.nodes || [];
+
+  // Delete confirmation state
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const startEdit = () => {
     setIsEditing(true);
@@ -71,6 +87,15 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update review:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteReview({ id: review.id }).unwrap();
+      setShowDeleteDialog(false);
+    } catch (error) {
+      console.error("Failed to delete review:", error);
     }
   };
 
@@ -132,15 +157,50 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
             )}
 
             {isOwner && !isEditing && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-primary"
-                onClick={startEdit}
-                aria-label="Edit review"
-              >
-                <Pencil className="w-4 h-4" />
-              </Button>
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-primary"
+                  onClick={startEdit}
+                  aria-label="Edit review"
+                >
+                  <Pencil className="w-4 h-4" />
+                </Button>
+                <AlertDialog
+                  open={showDeleteDialog}
+                  onOpenChange={setShowDeleteDialog}
+                >
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      aria-label="Delete review"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta acción no se puede deshacer. Esto eliminará
+                        permanentemente tu reseña.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDelete}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Eliminar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </>
             )}
           </div>
         </div>
