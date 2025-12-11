@@ -25,5 +25,13 @@ export const enhancedApi = api.enhanceEndpoints({
         { type: 'Review', id: reviewId },
       ],
     },
+    DeleteComment: {
+      invalidatesTags: (result) => {
+        const movieReviewId = result?.deleteCommentById?.comment?.movieReviewId;
+        return movieReviewId
+          ? [{ type: 'Review', id: movieReviewId }]
+          : [{ type: 'Review', id: 'LIST' }];
+      },
+    },
   },
 });

@@ -99,6 +99,29 @@ create table if not exists comments
 
 alter table comments owner to postgres;
 
+-- Enable Row Level Security for comments
+ALTER TABLE comments ENABLE ROW LEVEL SECURITY;
+
+-- Policy: Users can view all comments
+CREATE POLICY comments_select_policy ON comments
+    FOR SELECT
+    USING (true);
+
+-- Policy: Users can insert their own comments
+CREATE POLICY comments_insert_policy ON comments
+    FOR INSERT
+    WITH CHECK (user_id = (SELECT id FROM current_user()));
+
+-- Policy: Users can update their own comments
+CREATE POLICY comments_update_policy ON comments
+    FOR UPDATE
+    USING (user_id = (SELECT id FROM current_user()));
+
+-- Policy: Users can delete their own comments
+CREATE POLICY comments_delete_policy ON comments
+    FOR DELETE
+    USING (user_id = (SELECT id FROM current_user()));
+
 -- FAKE CURRENT USER
 create function "current_user"() returns users
     stable

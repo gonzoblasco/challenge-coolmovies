@@ -221,7 +221,9 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
               />
             )}
 
-            {showComments && <CommentList comments={comments} />}
+            {showComments && (
+              <CommentList comments={comments} currentUser={currentUser} />
+            )}
           </>
         )}
       </CardContent>
