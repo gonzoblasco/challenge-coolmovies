@@ -114,6 +114,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review }) => {
                       setEditForm((prev) => ({ ...prev, rating: star }))
                     }
                     className="focus:outline-none transition-transform hover:scale-110"
+                    aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
                   >
                     <Star
                       className={`w-4 h-4 ${
@@ -158,6 +159,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review }) => {
         {isEditing ? (
           <div className="space-y-4">
             <Textarea
+              aria-label="Review body"
               value={editForm.body}
               onChange={(e) =>
                 setEditForm((prev) => ({ ...prev, body: e.target.value }))
