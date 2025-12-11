@@ -20,8 +20,8 @@ export const CommentForm: FC<CommentFormProps> = ({
   onCancel,
   onSuccess,
 }) => {
-  const { data: userData, loading: userLoading } = useCurrentUserQuery();
-  const [createComment, { loading }] = useCreateCommentMutation();
+  const { data: userData, isLoading: userLoading } = useCurrentUserQuery();
+  const [createComment, { isLoading: loading }] = useCreateCommentMutation();
   const [form, setForm] = useState({ title: "", body: "" });
   const [error, setError] = useState<string | null>(null);
 
@@ -34,42 +34,11 @@ export const CommentForm: FC<CommentFormProps> = ({
 
     try {
       await createComment({
-        variables: {
-          title: form.title,
-          body: form.body,
-          reviewId: reviewId,
-          userId: currentUser.id,
-        },
-        update: (cache, { data }) => {
-          const newComment = data?.createComment?.comment;
-          if (!newComment) return;
-
-          const newCommentRef = cache.writeFragment({
-            data: newComment,
-            fragment: NewCommentFragmentDoc,
-          });
-
-          const reviewCacheId = cache.identify({
-            __typename: "MovieReview",
-            id: reviewId,
-          });
-
-          if (!reviewCacheId) return;
-
-          cache.modify({
-            id: reviewCacheId,
-            fields: {
-              commentsByMovieReviewId(existingCommentConnection = {}) {
-                const existingNodes = existingCommentConnection.nodes || [];
-                return {
-                  ...existingCommentConnection,
-                  nodes: [...existingNodes, newCommentRef],
-                };
-              },
-            },
-          });
-        },
-      });
+        title: form.title,
+        body: form.body,
+        reviewId: reviewId,
+        userId: currentUser.id,
+      }).unwrap(); // RTK Query returns a promise that resolves to { data }, unwrap throws if error
       setForm({ title: "", body: "" });
       onSuccess();
     } catch (error) {

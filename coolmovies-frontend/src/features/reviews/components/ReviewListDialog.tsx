@@ -12,22 +12,26 @@ import { actions } from "../state/slice";
 import {
   useCurrentUserQuery,
   useMovieReviewsQuery,
+  useAllMoviesQuery,
 } from "../../../generated/graphql";
 import { ReviewCard } from "./ReviewCard";
 
 export const ReviewListDialog: FC = () => {
   const dispatch = useAppDispatch();
-  const { movies, selectedMovieId, isViewReviewsOpen } = useAppSelector(
+  const { selectedMovieId, isViewReviewsOpen } = useAppSelector(
     (state) => state.reviews
   );
   const { data: userData } = useCurrentUserQuery();
-  const { data: reviewsData, loading: reviewsLoading } = useMovieReviewsQuery({
-    variables: { id: selectedMovieId! },
-    skip: !selectedMovieId,
-  });
+  const { data: moviesData } = useAllMoviesQuery(); // Access cached movies
+  const { data: reviewsData, isLoading: reviewsLoading } = useMovieReviewsQuery(
+    { id: selectedMovieId! },
+    { skip: !selectedMovieId }
+  );
   const currentUser = userData?.currentUser;
 
-  const selectedMovie = movies.find((m) => m.id === selectedMovieId);
+  const selectedMovie = moviesData?.allMovies?.nodes.find(
+    (m: any) => m?.id === selectedMovieId
+  );
 
   const handleClose = () => {
     dispatch(actions.closeViewReviews());
