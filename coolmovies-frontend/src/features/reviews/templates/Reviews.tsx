@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../state";
 import { actions } from "../state/slice";
-import { useAllMoviesQuery } from "../../../generated/graphql";
+import { useAllMoviesQuery, Movie } from "../../../generated/graphql";
 import { MovieCard } from "../components/MovieCard";
 import { ReviewListDialog } from "../components/ReviewListDialog";
 import { CreateReviewDialog } from "../components/CreateReviewDialog";
@@ -35,8 +35,14 @@ const Reviews = () => {
         )}
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {loading
-            ? Array.from(new Array(6)).map((_, index) => (
+          {loading ? (
+            <div
+              role="status"
+              aria-live="polite"
+              className="col-span-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+            >
+              <span className="sr-only">Loading movies...</span>
+              {Array.from(new Array(6)).map((_, index) => (
                 <div
                   key={`skeleton-${index}`}
                   className="flex flex-col space-y-3"
@@ -47,12 +53,15 @@ const Reviews = () => {
                     <Skeleton className="h-4 w-[200px]" />
                   </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            movies
+              .filter((m): m is NonNullable<typeof m> => m !== null)
+              .map((movie) => (
+                <MovieCard key={movie.id} movie={movie as Movie} />
               ))
-            : movies
-                .filter((m): m is NonNullable<typeof m> => m !== null)
-                .map((movie) => (
-                  <MovieCard key={movie.id} movie={movie as any} />
-                ))}
+          )}
         </div>
 
         {/* Dialogs controlled by Redux state */}

@@ -1,99 +1,110 @@
-import React, { FC } from 'react';
-import {
-    Card,
-    CardContent,
-    CardFooter,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Movie } from '../../../generated/graphql';
-import { useAppDispatch } from '../../../state';
-import { actions } from '../state/slice';
-import { useCurrentUserQuery } from '../../../generated/graphql';
-import { Star } from 'lucide-react';
+import React, { FC } from "react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Movie } from "../../../generated/graphql";
+import { useAppDispatch } from "../../../state";
+import { actions } from "../state/slice";
+import { useCurrentUserQuery } from "../../../generated/graphql";
+import { Star } from "lucide-react";
 
 interface MovieCardProps {
-    movie: Movie;
+  movie: Movie;
 }
 
 export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
-    const dispatch = useAppDispatch();
-    const { data: userData } = useCurrentUserQuery();
-    const currentUser = userData?.currentUser;
+  const dispatch = useAppDispatch();
+  const { data: userData } = useCurrentUserQuery();
+  const currentUser = userData?.currentUser;
 
-    const reviews = movie.movieReviewsByMovieId.nodes;
-    const reviewCount = reviews.length;
-    const averageRating = reviewCount > 0
-        ? reviews.reduce((acc, review) => acc + (review?.rating || 0), 0) / reviewCount
-        : 0;
+  const reviews = movie.movieReviewsByMovieId.nodes;
+  const reviewCount = reviews.length;
+  const averageRating =
+    reviewCount > 0
+      ? reviews.reduce((acc, review) => acc + (review?.rating || 0), 0) /
+        reviewCount
+      : 0;
 
-    const handleViewReviews = () => {
-        dispatch(actions.openViewReviews(movie.id));
-    };
+  const handleViewReviews = () => {
+    dispatch(actions.openViewReviews(movie.id));
+  };
 
-    const handleWriteReview = () => {
-        dispatch(actions.openWriteReview(movie.id));
-    };
+  const handleWriteReview = () => {
+    dispatch(actions.openWriteReview(movie.id));
+  };
 
-    const renderStars = (rating: number) => {
-        return (
-            <div className="flex items-center gap-0.5">
-                {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                        key={star}
-                        className={`w-4 h-4 ${star <= Math.round(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'}`}
-                    />
-                ))}
-            </div>
-        );
-    };
-
+  const renderStars = (rating: number) => {
     return (
-        <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
-            <div className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20">
-                <img
-                    src={movie.imgUrl}
-                    alt={movie.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
-
-                <div className="absolute bottom-0 left-0 p-4 w-full">
-                    <h3 className="text-xl font-bold text-white mb-1 line-clamp-1 truncate" title={movie.title}>
-                        {movie.title}
-                    </h3>
-                    <p className="text-sm text-gray-300 font-medium">
-                        {new Date(movie.releaseDate).getFullYear()} • {reviewCount} Reviews
-                    </p>
-                </div>
-            </div>
-
-            <CardContent className="flex-grow p-4 flex flex-col justify-end">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-full">
-                        {renderStars(averageRating)}
-                        <span className="text-sm font-semibold ml-1">{averageRating.toFixed(1)}</span>
-                    </div>
-                </div>
-            </CardContent>
-
-            <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-3">
-                <Button
-                    variant="secondary"
-                    className="w-full"
-                    onClick={handleViewReviews}
-                >
-                    Read
-                </Button>
-                <Button
-                    variant={currentUser ? "default" : "outline"}
-                    className="w-full"
-                    onClick={handleWriteReview}
-                    disabled={!currentUser}
-                >
-                    {currentUser ? 'Review' : 'Log in'}
-                </Button>
-            </CardFooter>
-        </Card>
+      <div className="flex items-center gap-0.5">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            className={`w-4 h-4 ${
+              star <= Math.round(rating)
+                ? "text-yellow-400 fill-yellow-400"
+                : "text-muted-foreground/30"
+            }`}
+          />
+        ))}
+      </div>
     );
+  };
+
+  return (
+    <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
+      <div className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20">
+        <img
+          src={movie.imgUrl}
+          alt={`Poster of ${movie.title}`}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.src = "/placeholder-movie.png";
+            e.currentTarget.alt = `${movie.title} - Image unavailable`;
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
+
+        <div className="absolute bottom-0 left-0 p-4 w-full">
+          <h3
+            className="text-xl font-bold text-white mb-1 line-clamp-1 truncate"
+            title={movie.title}
+          >
+            {movie.title}
+          </h3>
+          <p className="text-sm text-gray-300 font-medium">
+            {new Date(movie.releaseDate).getFullYear()} • {reviewCount} Reviews
+          </p>
+        </div>
+      </div>
+
+      <CardContent className="flex-grow p-4 flex flex-col justify-end">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 bg-secondary/50 px-3 py-1.5 rounded-full">
+            {renderStars(averageRating)}
+            <span className="text-sm font-semibold ml-1">
+              {averageRating.toFixed(1)}
+            </span>
+          </div>
+        </div>
+      </CardContent>
+
+      <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-3">
+        <Button
+          variant="secondary"
+          className="w-full"
+          onClick={handleViewReviews}
+        >
+          Read
+        </Button>
+        <Button
+          variant={currentUser ? "default" : "outline"}
+          className="w-full"
+          onClick={handleWriteReview}
+          disabled={!currentUser}
+        >
+          {currentUser ? "Review" : "Log in"}
+        </Button>
+      </CardFooter>
+    </Card>
+  );
 };
