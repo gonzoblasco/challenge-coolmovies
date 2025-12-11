@@ -10,6 +10,12 @@ import { enhancedApi } from './enhancedApi';
 const rootEpic = combineEpics<any, any, RootState>(exampleEpics, reviewsEpics);
 
 export const createStore = ({ epicDependencies }: CreateStoreOptions) => {
+  if (!epicDependencies) {
+    throw new Error(
+      'epicDependencies is required for store initialization (needed by legacy example epic)'
+    );
+  }
+
   const epicMiddleware = createEpicMiddleware({
     dependencies: epicDependencies,
   });
