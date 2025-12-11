@@ -1,4 +1,5 @@
 "use client";
+import "../lib/observable-polyfill";
 
 /**
  * Providers Component - App Router Compatible
@@ -16,7 +17,12 @@
 import React, { FC, useRef, PropsWithChildren } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { createStore } from "../state";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloProvider,
+  InMemoryCache,
+  HttpLink,
+} from "@apollo/client";
 
 export const Providers: FC<PropsWithChildren> = ({ children }) => {
   // Initialize store once per client session using useRef
@@ -27,7 +33,9 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
       epicDependencies: {
         client: new ApolloClient({
           cache: new InMemoryCache(),
-          uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "/graphql",
+          link: new HttpLink({
+            uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "/graphql",
+          }),
         }),
       },
     })
@@ -38,7 +46,9 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
   const clientRef = useRef(
     new ApolloClient({
       cache: new InMemoryCache(),
-      uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "/graphql",
+      link: new HttpLink({
+        uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "/graphql",
+      }),
     })
   );
 
