@@ -28,6 +28,8 @@ import { ReviewCard } from "./ReviewCard";
 import { useReviewFilters } from "../hooks/useReviewFilters";
 import { useReviews } from "../hooks/useReviews";
 import { constructFilter } from "../utils/helpers";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { Loading } from "@/components/common/Loading";
 
 export const ReviewListDialog: FC = () => {
   const dispatch = useAppDispatch();
@@ -149,29 +151,31 @@ export const ReviewListDialog: FC = () => {
         </div>
 
         <div className="flex-1 overflow-y-auto pr-2 space-y-4 py-4">
-          {reviewsLoading ? (
-            <div className="flex justify-center items-center h-full">
-              Loading reviews...
-            </div>
-          ) : !reviewsData?.movieById?.movieReviewsByMovieId?.nodes ||
-            reviewsData.movieById.movieReviewsByMovieId.nodes.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              {ratingFilter || userFilter || searchFilter
-                ? "No reviews match your filters."
-                : "No reviews yet. Be the first to share your thoughts!"}
-            </div>
-          ) : (
-            reviewsData.movieById.movieReviewsByMovieId.nodes.map((review) => {
-              if (!review) return null;
-              return (
-                <ReviewCard
-                  key={review.id}
-                  review={review}
-                  currentUser={currentUser}
-                />
-              );
-            })
-          )}
+          <ErrorBoundary name="ReviewList">
+            {reviewsLoading ? (
+              <Loading lines={4} />
+            ) : !reviewsData?.movieById?.movieReviewsByMovieId?.nodes ||
+              reviewsData.movieById.movieReviewsByMovieId.nodes.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                {ratingFilter || userFilter || searchFilter
+                  ? "No reviews match your filters."
+                  : "No reviews yet. Be the first to share your thoughts!"}
+              </div>
+            ) : (
+              reviewsData.movieById.movieReviewsByMovieId.nodes.map(
+                (review) => {
+                  if (!review) return null;
+                  return (
+                    <ReviewCard
+                      key={review.id}
+                      review={review}
+                      currentUser={currentUser}
+                    />
+                  );
+                }
+              )
+            )}
+          </ErrorBoundary>
         </div>
 
         <DialogFooter className="border-t pt-4">
