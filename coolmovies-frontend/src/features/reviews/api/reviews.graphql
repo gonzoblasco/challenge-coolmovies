@@ -1,5 +1,6 @@
-query AllMovies {
-  allMovies {
+query AllMovies($first: Int, $offset: Int) {
+  allMovies(first: $first, offset: $offset) {
+    totalCount
     nodes {
       id
       title

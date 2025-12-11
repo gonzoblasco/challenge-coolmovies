@@ -34,6 +34,7 @@
     "next": "15.1.6",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-intersection-observer": "^10.0.0",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
     "redux-observable": "^3.0.0-rc.2",

@@ -1,20 +1,46 @@
-import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../../state";
-import { actions } from "../state/slice";
+import React, { useState } from "react";
+import { useAppSelector } from "../../../state";
 import { useAllMoviesQuery, Movie } from "../../../generated/graphql";
 import { MovieCard } from "../components/MovieCard";
 import { ReviewListDialog } from "../components/ReviewListDialog";
 import { CreateReviewDialog } from "../components/CreateReviewDialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+const PAGE_SIZE = 12;
 
 const Reviews = () => {
-  const dispatch = useAppDispatch();
-  const { data, isLoading: loading, error: queryError } = useAllMoviesQuery();
+  const [page, setPage] = useState(0);
+
+  const {
+    data,
+    isLoading: loading,
+    error: queryError,
+    isFetching,
+  } = useAllMoviesQuery({
+    first: PAGE_SIZE,
+    offset: page * PAGE_SIZE,
+  });
+
   const { error: sliceError } = useAppSelector((state) => state.reviews);
 
   // Combine errors if necessary, or just use queryError
   const error = queryError ? "Failed to load movies" : sliceError;
   const movies = data?.allMovies?.nodes || [];
+  const totalCount = data?.allMovies?.totalCount || 0;
+
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
+  const handlePrevious = () => {
+    setPage((p) => Math.max(0, p - 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleNext = () => {
+    setPage((p) => Math.min(totalPages - 1, p + 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
@@ -63,6 +89,33 @@ const Reviews = () => {
               ))
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {!loading && !error && totalCount > 0 && (
+          <div className="mt-12 flex items-center justify-center gap-4">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handlePrevious}
+              disabled={page === 0 || isFetching}
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-medium">
+              Page {page + 1} of {totalPages || 1}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleNext}
+              disabled={page >= totalPages - 1 || isFetching}
+              aria-label="Next page"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
 
         {/* Dialogs controlled by Redux state */}
         <ReviewListDialog />
