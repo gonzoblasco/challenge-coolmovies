@@ -38,7 +38,7 @@ export const CommentList: FC<CommentListProps> = ({
   comments,
   currentUser,
 }) => {
-  const [deleteComment] = useDeleteCommentMutation();
+  const [deleteComment, { isLoading: isDeleting }] = useDeleteCommentMutation();
   const [commentToDelete, setCommentToDelete] = React.useState<string | null>(
     null
   );
@@ -113,8 +113,9 @@ export const CommentList: FC<CommentListProps> = ({
             <AlertDialogAction
               onClick={confirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={isDeleting}
             >
-              {TEXT.DELETE}
+              {isDeleting ? "Deleting..." : TEXT.DELETE}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

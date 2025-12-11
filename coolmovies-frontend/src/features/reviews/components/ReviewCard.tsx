@@ -32,8 +32,8 @@ interface ReviewCardProps {
 }
 
 export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
-  const [updateReview] = useUpdateReviewMutation();
-  const [deleteReview] = useDeleteReviewMutation();
+  const [updateReview, { isLoading: isUpdating }] = useUpdateReviewMutation();
+  const [deleteReview, { isLoading: isDeleting }] = useDeleteReviewMutation();
 
   // Formatting helper
   const isOwner = currentUser && review.userReviewerId === currentUser.id;
@@ -194,7 +194,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
                         onClick={handleDelete}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
-                        {TEXT.DELETE}
+                        {isDeleting ? "Deleting..." : TEXT.DELETE}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -230,10 +230,14 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
                 size="sm"
                 onClick={saveEdit}
                 className="h-8 w-8 p-0"
-                disabled={!editForm.title || !editForm.body}
+                disabled={!editForm.title || !editForm.body || isUpdating}
                 aria-label="Save review"
               >
-                <Check className="w-4 h-4" />
+                {isUpdating ? (
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Check className="w-4 h-4" />
+                )}
               </Button>
             </div>
           </div>

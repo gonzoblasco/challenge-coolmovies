@@ -82,8 +82,14 @@ export const CommentForm: FC<CommentFormProps> = ({
           Cancel
         </Button>
         <Button size="sm" type="submit" disabled={loading || !form.body.trim()}>
-          <Send className="w-3 h-3 mr-2" />
-          Reply
+          {loading ? (
+            "Posting..."
+          ) : (
+            <>
+              <Send className="w-3 h-3 mr-2" />
+              Reply
+            </>
+          )}
         </Button>
       </div>
     </form>
