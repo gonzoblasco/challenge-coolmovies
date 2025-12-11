@@ -21,9 +21,23 @@ query AllMovies {
   }
 }
 
-mutation CreateReview($title: String!, $body: String!, $rating: Int!, $movieId: UUID!, $userId: UUID!) {
+mutation CreateReview(
+  $title: String!
+  $body: String!
+  $rating: Int!
+  $movieId: UUID!
+  $userId: UUID!
+) {
   createMovieReview(
-    input: {movieReview: {title: $title, body: $body, rating: $rating, movieId: $movieId, userReviewerId: $userId}}
+    input: {
+      movieReview: {
+        title: $title
+        body: $body
+        rating: $rating
+        movieId: $movieId
+        userReviewerId: $userId
+      }
+    }
   ) {
     movieReview {
       id
@@ -39,7 +53,7 @@ mutation CreateReview($title: String!, $body: String!, $rating: Int!, $movieId: 
 }
 
 mutation UpdateReview($id: UUID!, $patch: MovieReviewPatch!) {
-  updateMovieReviewById(input: {id: $id, movieReviewPatch: $patch}) {
+  updateMovieReviewById(input: { id: $id, movieReviewPatch: $patch }) {
     movieReview {
       id
       title
@@ -60,9 +74,50 @@ query MovieReviews($id: UUID!) {
         body
         rating
         userReviewerId
+
         userByUserReviewerId {
           name
         }
+        commentsByMovieReviewId {
+          nodes {
+            id
+            title
+            body
+            userByUserId {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation CreateComment(
+  $title: String
+  $body: String!
+  $reviewId: UUID!
+  $userId: UUID!
+) {
+  createComment(
+    input: {
+      comment: {
+        title: $title
+        body: $body
+        movieReviewId: $reviewId
+        userId: $userId
+      }
+    }
+  ) {
+    comment {
+      id
+      title
+      body
+      movieReviewId
+      userByUserId {
+        id
+        name
       }
     }
   }
