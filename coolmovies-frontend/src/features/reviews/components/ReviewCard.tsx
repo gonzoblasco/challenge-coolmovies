@@ -161,9 +161,9 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
                   size="icon"
                   className="h-8 w-8 text-muted-foreground hover:text-primary"
                   onClick={startEdit}
-                  aria-label="Edit review"
+                  aria-label={`Edit review of ${review.title}`}
                 >
-                  <Pencil className="w-4 h-4" />
+                  <Pencil className="w-4 h-4" aria-hidden="true" />
                 </Button>
                 <AlertDialog
                   open={showDeleteDialog}

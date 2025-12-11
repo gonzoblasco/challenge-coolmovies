@@ -35,8 +35,14 @@ const Reviews = () => {
         )}
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {loading
-            ? Array.from(new Array(6)).map((_, index) => (
+          {loading ? (
+            <div
+              role="status"
+              aria-live="polite"
+              className="col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+            >
+              <span className="sr-only">Loading movies...</span>
+              {Array.from(new Array(6)).map((_, index) => (
                 <div
                   key={`skeleton-${index}`}
                   className="flex flex-col space-y-3"
@@ -47,12 +53,13 @@ const Reviews = () => {
                     <Skeleton className="h-4 w-[200px]" />
                   </div>
                 </div>
-              ))
-            : movies
-                .filter((m): m is NonNullable<typeof m> => m !== null)
-                .map((movie) => (
-                  <MovieCard key={movie.id} movie={movie as any} />
-                ))}
+              ))}
+            </div>
+          ) : (
+            movies
+              .filter((m): m is NonNullable<typeof m> => m !== null)
+              .map((movie) => <MovieCard key={movie.id} movie={movie as any} />)
+          )}
         </div>
 
         {/* Dialogs controlled by Redux state */}
