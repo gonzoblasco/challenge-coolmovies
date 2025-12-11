@@ -24,6 +24,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
   });
 
   const [imgSrc, setImgSrc] = useState(movie.imgUrl);
+  const [altText, setAltText] = useState(`Poster of ${movie.title}`);
 
   const reviews = movie.movieReviewsByMovieId.nodes;
   const reviewCount = reviews.length;
@@ -32,6 +33,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
       ? reviews.reduce((acc, review) => acc + (review?.rating || 0), 0) /
         reviewCount
       : 0;
+  // ... (keeping other handlers the same, skipping to return for replace)
 
   const handleViewReviews = () => {
     dispatch(actions.openViewReviews(movie.id));
@@ -69,17 +71,15 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
         <div className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20">
           <Image
             src={imgSrc}
-            alt={`Poster of ${movie.title}`}
+            alt={altText}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={() => {
               setImgSrc("/placeholder-movie.png");
+              setAltText(`${movie.title} - Image unavailable`);
             }}
           />
-          {/* Fallback for Image errors requires state, let's skip re-implementing that complex logic for now unless requested.
-               The user just asked for "Next.js Image component".
-            */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
 
           <div className="absolute bottom-0 left-0 p-4 w-full">
