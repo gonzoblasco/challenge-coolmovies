@@ -22,7 +22,7 @@ export const ReviewListDialog: FC = () => {
   );
   const { data: userData } = useCurrentUserQuery();
   const { data: reviewsData, loading: reviewsLoading } = useMovieReviewsQuery({
-    variables: { id: selectedMovieId as any },
+    variables: { id: selectedMovieId! },
     skip: !selectedMovieId,
   });
   const currentUser = userData?.currentUser;
@@ -71,7 +71,13 @@ export const ReviewListDialog: FC = () => {
           ) : (
             reviewsData.movieById.movieReviewsByMovieId.nodes.map((review) => {
               if (!review) return null;
-              return <ReviewCard key={review.id} review={review} />;
+              return (
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  currentUser={currentUser}
+                />
+              );
             })
           )}
         </div>
