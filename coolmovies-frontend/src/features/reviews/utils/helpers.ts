@@ -14,7 +14,7 @@ export const constructFilter = ({
 }: FilterParams): MovieReviewFilter | undefined => {
   const filters: MovieReviewFilter[] = [];
 
-  if (ratingFilter) {
+  if (ratingFilter !== null) {
     filters.push({ rating: { equalTo: ratingFilter } });
   }
 
