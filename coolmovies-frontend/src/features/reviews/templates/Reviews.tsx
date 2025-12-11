@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../state";
+import { useAppSelector } from "../../../state";
 import { useAllMoviesQuery, Movie } from "../../../generated/graphql";
 import { MovieCard } from "../components/MovieCard";
 import { ReviewListDialog } from "../components/ReviewListDialog";
@@ -11,7 +11,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const PAGE_SIZE = 12;
 
 const Reviews = () => {
-  const dispatch = useAppDispatch();
   const [page, setPage] = useState(0);
 
   const {
