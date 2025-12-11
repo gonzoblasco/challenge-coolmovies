@@ -1,10 +1,26 @@
 import React, { FC } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  useDeleteCommentMutation,
+  CurrentUserQuery,
+} from "../../../generated/graphql";
+import { TEXT } from "@/constants/text";
 
 interface Comment {
   id: string;
+  userId: string;
   title?: string | null;
   body?: string | null;
   userByUserId?: {
@@ -15,9 +31,28 @@ interface Comment {
 
 interface CommentListProps {
   comments: (Comment | null)[];
+  currentUser: CurrentUserQuery["currentUser"] | null | undefined;
 }
 
-export const CommentList: FC<CommentListProps> = ({ comments }) => {
+export const CommentList: FC<CommentListProps> = ({
+  comments,
+  currentUser,
+}) => {
+  const [deleteComment] = useDeleteCommentMutation();
+  const [commentToDelete, setCommentToDelete] = React.useState<string | null>(
+    null
+  );
+
+  const confirmDelete = async () => {
+    if (!commentToDelete) return;
+    try {
+      await deleteComment({ id: commentToDelete }).unwrap();
+      setCommentToDelete(null);
+    } catch (error) {
+      console.error("Failed to delete comment:", error);
+    }
+  };
+
   if (!comments || comments.length === 0) {
     return null;
   }
@@ -30,6 +65,8 @@ export const CommentList: FC<CommentListProps> = ({ comments }) => {
       </h5>
       {comments.map((comment) => {
         if (!comment) return null;
+        const isOwner = currentUser && comment.userId === currentUser.id;
+
         return (
           <div
             key={comment.id}
@@ -39,6 +76,17 @@ export const CommentList: FC<CommentListProps> = ({ comments }) => {
               <span className="font-semibold text-xs">
                 {comment.userByUserId?.name || "Anonymous"}
               </span>
+              {isOwner && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 text-muted-foreground hover:text-destructive"
+                  onClick={() => setCommentToDelete(comment.id)}
+                  aria-label="Delete comment"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              )}
             </div>
             {comment.title && (
               <div className="font-medium text-xs mb-1">{comment.title}</div>
@@ -47,6 +95,30 @@ export const CommentList: FC<CommentListProps> = ({ comments }) => {
           </div>
         );
       })}
+      <AlertDialog
+        open={!!commentToDelete}
+        onOpenChange={(open) => !open && setCommentToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {TEXT.DELETE_CONFIRMATION_TITLE}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {TEXT.DELETE_COMMENT_CONFIRMATION_DESC}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{TEXT.CANCEL}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {TEXT.DELETE}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -83,6 +83,7 @@ query MovieReviews($id: UUID!, $filter: MovieReviewFilter) {
             id
             title
             body
+            userId
             userByUserId {
               id
               name
@@ -139,5 +140,23 @@ fragment NewComment on Comment {
   userByUserId {
     id
     name
+  }
+}
+
+mutation DeleteComment($id: UUID!) {
+  deleteCommentById(input: { id: $id }) {
+    comment {
+      id
+      movieReviewId
+    }
+  }
+}
+
+mutation DeleteReview($id: UUID!) {
+  deleteMovieReviewById(input: { id: $id }) {
+    movieReview {
+      id
+      movieId
+    }
   }
 }
