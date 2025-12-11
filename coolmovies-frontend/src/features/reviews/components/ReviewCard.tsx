@@ -18,18 +18,10 @@ import { Star, Pencil, Check, X, Trash2 } from "lucide-react";
 import {
   useUpdateReviewMutation,
   useDeleteReviewMutation,
-  MovieReviewsQuery,
   CurrentUserQuery,
 } from "../../../generated/graphql";
 import { TEXT } from "@/constants/text";
-
-type Review = NonNullable<
-  NonNullable<
-    NonNullable<
-      NonNullable<MovieReviewsQuery["movieById"]>["movieReviewsByMovieId"]
-    >["nodes"]
-  >[0]
->;
+import { Review } from "../types";
 import { CommentList } from "./CommentList";
 import { CommentForm } from "./CommentForm";
 
