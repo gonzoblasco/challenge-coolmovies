@@ -59,9 +59,7 @@ export const ReviewListDialog: FC = () => {
       }
     }, 500);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm]);
-
+  }, [searchTerm, searchFilter]);
   const updateFilter = (key: string, value: string | number | null) => {
     const newQuery = { ...router.query };
     if (value) {
@@ -171,7 +169,7 @@ export const ReviewListDialog: FC = () => {
             onChange={(e) => updateFilter("user", e.target.value || null)}
           >
             <option value="">All Users</option>
-            {allUsersData?.allUsers?.nodes.map((user) => (
+            {(allUsersData?.allUsers?.nodes ?? []).map((user) => (
               <option key={user?.id} value={user?.id}>
                 {user?.name}
               </option>
