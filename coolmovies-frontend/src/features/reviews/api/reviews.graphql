@@ -122,3 +122,13 @@ mutation CreateComment(
     }
   }
 }
+
+fragment NewComment on Comment {
+  id
+  title
+  body
+  userByUserId {
+    id
+    name
+  }
+}

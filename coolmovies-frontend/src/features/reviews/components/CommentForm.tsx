@@ -1,11 +1,11 @@
 import React, { FC, useState } from "react";
-import { gql } from "@apollo/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   useCreateCommentMutation,
   useCurrentUserQuery,
+  NewCommentFragmentDoc,
 } from "../../../generated/graphql";
 import { Send } from "lucide-react";
 
@@ -46,17 +46,7 @@ export const CommentForm: FC<CommentFormProps> = ({
 
           const newCommentRef = cache.writeFragment({
             data: newComment,
-            fragment: gql`
-              fragment NewComment on Comment {
-                id
-                title
-                body
-                userByUserId {
-                  id
-                  name
-                }
-              }
-            `,
+            fragment: NewCommentFragmentDoc,
           });
 
           const reviewCacheId = cache.identify({
