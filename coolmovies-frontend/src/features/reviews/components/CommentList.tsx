@@ -9,6 +9,7 @@ import {
 
 interface Comment {
   id: string;
+  userId: string;
   title?: string | null;
   body?: string | null;
   userByUserId?: {
@@ -48,8 +49,7 @@ export const CommentList: FC<CommentListProps> = ({
       </h5>
       {comments.map((comment) => {
         if (!comment) return null;
-        const isOwner =
-          currentUser && comment.userByUserId?.id === currentUser.id;
+        const isOwner = currentUser && comment.userId === currentUser.id;
 
         return (
           <div
