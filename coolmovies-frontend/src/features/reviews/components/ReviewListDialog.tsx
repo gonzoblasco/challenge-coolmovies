@@ -21,13 +21,13 @@ import { useAppDispatch, useAppSelector } from "../../../state";
 import { actions } from "../state/slice";
 import {
   useCurrentUserQuery,
-  useMovieReviewsQuery,
   useAllMoviesQuery,
   useAllUsersQuery,
-  MovieReviewFilter,
 } from "../../../generated/graphql";
 import { ReviewCard } from "./ReviewCard";
 import { useReviewFilters } from "../hooks/useReviewFilters";
+import { useReviews } from "../hooks/useReviews";
+import { constructFilter } from "../utils/helpers";
 
 export const ReviewListDialog: FC = () => {
   const dispatch = useAppDispatch();
@@ -49,32 +49,13 @@ export const ReviewListDialog: FC = () => {
     clearFilters,
   } = useReviewFilters();
 
-  const constructFilter = (): MovieReviewFilter | undefined => {
-    const filters: MovieReviewFilter[] = [];
-
-    if (ratingFilter) {
-      filters.push({ rating: { equalTo: ratingFilter } });
-    }
-
-    if (userFilter) {
-      filters.push({ userReviewerId: { equalTo: userFilter } });
-    }
-
-    if (searchFilter) {
-      filters.push({
-        or: [
-          { title: { includesInsensitive: searchFilter } },
-          { body: { includesInsensitive: searchFilter } },
-        ],
-      });
-    }
-
-    return filters.length > 0 ? { and: filters } : undefined;
-  };
-
-  const { data: reviewsData, isLoading: reviewsLoading } = useMovieReviewsQuery(
-    { id: selectedMovieId!, filter: constructFilter() },
-    { skip: !selectedMovieId }
+  const { data: reviewsData, isLoading: reviewsLoading } = useReviews(
+    selectedMovieId,
+    constructFilter({
+      ratingFilter: ratingFilter ?? null,
+      userFilter: userFilter ?? null,
+      searchFilter: searchFilter ?? "",
+    })
   );
   const selectedMovie = moviesData?.allMovies?.nodes?.find(
     (m) => m?.id === selectedMovieId

@@ -17,8 +17,8 @@ import { actions } from "../state/slice";
 import {
   useCurrentUserQuery,
   useAllMoviesQuery,
-  useCreateReviewMutation,
 } from "../../../generated/graphql";
+import { useCreateReview } from "../hooks/useCreateReview";
 import { Star } from "lucide-react";
 
 export const CreateReviewDialog: FC = () => {
@@ -52,7 +52,7 @@ export const CreateReviewDialog: FC = () => {
     }
   }, [isWriteReviewOpen]);
 
-  const [createReview, { isLoading: loading }] = useCreateReviewMutation();
+  const [createReview, { isLoading: loading }] = useCreateReview();
 
   const handleClose = () => {
     dispatch(actions.closeWriteReview());
