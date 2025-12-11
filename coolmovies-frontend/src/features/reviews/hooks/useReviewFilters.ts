@@ -1,20 +1,20 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useDebounce } from "../../../hooks/useDebounce";
 
 export const useReviewFilters = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   // Parse filters from URL
-  const ratingFilter = router.query.rating
-    ? parseInt(router.query.rating as string)
+  const ratingFilter = searchParams.get("rating")
+    ? parseInt(searchParams.get("rating")!)
     : undefined;
-  const userFilter = router.query.user
-    ? (router.query.user as string)
-    : undefined;
-  const searchFilter = router.query.search
-    ? (router.query.search as string)
-    : undefined;
+  const userFilter = searchParams.get("user") || undefined;
+  const searchFilter = searchParams.get("search") || undefined;
 
   // Local state for search
   const [searchTerm, setSearchTerm] = useState(searchFilter || "");
@@ -23,13 +23,13 @@ export const useReviewFilters = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const updateFilter = (key: string, value: string | number | null) => {
-    const newQuery = { ...router.query };
+    const params = new URLSearchParams(searchParams.toString());
     if (value) {
-      newQuery[key] = String(value);
+      params.set(key, String(value));
     } else {
-      delete newQuery[key];
+      params.delete(key);
     }
-    router.push({ query: newQuery }, undefined, { shallow: true });
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   // Sync local search term with URL on mount/update (e.g. back button or initial load)
@@ -37,7 +37,6 @@ export const useReviewFilters = () => {
     if ((searchFilter || "") !== searchTerm) {
       setSearchTerm(searchFilter || "");
     }
-    // We only want to sync when the URL filter changes externally
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchFilter]);
 
@@ -52,11 +51,7 @@ export const useReviewFilters = () => {
   }, [debouncedSearchTerm]);
 
   const clearFilters = () => {
-    const newQuery = { ...router.query };
-    delete newQuery.rating;
-    delete newQuery.user;
-    delete newQuery.search;
-    router.push({ query: newQuery }, undefined, { shallow: true });
+    router.push(pathname, { scroll: false });
   };
 
   return {

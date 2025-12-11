@@ -1,7 +1,7 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 
 export type CreateStoreOptions = {
-  epicDependencies?: EpicDependencies;
+  epicDependencies: EpicDependencies;
 };
 
 export type EpicDependencies = {

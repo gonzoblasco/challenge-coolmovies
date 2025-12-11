@@ -61,25 +61,11 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
   const saveEdit = async () => {
     try {
       await updateReview({
-        variables: {
-          id: review.id,
-          patch: {
-            title: editForm.title,
-            body: editForm.body,
-            rating: editForm.rating,
-          },
-        },
-        optimisticResponse: {
-          updateMovieReviewById: {
-            __typename: "UpdateMovieReviewPayload",
-            movieReview: {
-              ...review,
-              __typename: "MovieReview",
-              title: editForm.title,
-              body: editForm.body,
-              rating: editForm.rating,
-            },
-          },
+        id: review.id,
+        patch: {
+          title: editForm.title,
+          body: editForm.body,
+          rating: editForm.rating,
         },
       });
       setIsEditing(false);

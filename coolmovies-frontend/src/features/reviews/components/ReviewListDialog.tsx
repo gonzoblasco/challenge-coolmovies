@@ -1,5 +1,6 @@
+"use client";
+
 import React, { FC } from "react";
-// import { useRouter } from "next/router";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +22,7 @@ import { actions } from "../state/slice";
 import {
   useCurrentUserQuery,
   useMovieReviewsQuery,
+  useAllMoviesQuery,
   useAllUsersQuery,
   MovieReviewFilter,
 } from "../../../generated/graphql";
@@ -29,11 +31,11 @@ import { useReviewFilters } from "../hooks/useReviewFilters";
 
 export const ReviewListDialog: FC = () => {
   const dispatch = useAppDispatch();
-  // const router = useRouter();
-  const { movies, selectedMovieId, isViewReviewsOpen } = useAppSelector(
+  const { selectedMovieId, isViewReviewsOpen } = useAppSelector(
     (state) => state.reviews
   );
   const { data: userData } = useCurrentUserQuery();
+  const { data: moviesData } = useAllMoviesQuery(); // Access cached movies
   const { data: allUsersData } = useAllUsersQuery();
   const currentUser = userData?.currentUser;
 
@@ -70,19 +72,18 @@ export const ReviewListDialog: FC = () => {
     return filters.length > 0 ? { and: filters } : undefined;
   };
 
-  const { data: reviewsData, loading: reviewsLoading } = useMovieReviewsQuery({
-    variables: {
-      id: selectedMovieId!,
-      filter: constructFilter(),
-    },
-    skip: !selectedMovieId,
-  });
-
-  const selectedMovie = movies.find((m) => m.id === selectedMovieId);
+  const { data: reviewsData, isLoading: reviewsLoading } = useMovieReviewsQuery(
+    { id: selectedMovieId!, filter: constructFilter() },
+    { skip: !selectedMovieId }
+  );
+  const selectedMovie = moviesData?.allMovies?.nodes?.find(
+    (m) => m?.id === selectedMovieId
+  );
+  const allUsers = allUsersData?.allUsers?.nodes;
 
   const handleClose = () => {
-    clearFilters();
     dispatch(actions.closeViewReviews());
+    clearFilters(); // Clear filters on close
   };
 
   const handleWriteReview = () => {
@@ -110,53 +111,60 @@ export const ReviewListDialog: FC = () => {
           </DialogTitle>
         </DialogHeader>
 
-        {/* Filters Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-2 border-b">
+        <div className="flex flex-col gap-4 py-4 border-b pb-4">
           <Input
-            placeholder="Search reviews..."
+            placeholder="Search reviews by title or body..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-
-          <Select
-            value={ratingFilter ? ratingFilter.toString() : "all"}
-            onValueChange={(val) =>
-              updateFilter("rating", val === "all" ? null : parseInt(val))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="All Ratings" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Ratings</SelectItem>
-              {[5, 4, 3, 2, 1].map((r) => (
-                <SelectItem key={r} value={r.toString()}>
-                  {r} Stars
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={userFilter || "all"}
-            onValueChange={(val) =>
-              updateFilter("user", val === "all" ? null : val)
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="All Users" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Users</SelectItem>
-              {(allUsersData?.allUsers?.nodes ?? [])
-                .filter((user) => !!user)
-                .map((user) => (
-                  <SelectItem key={user!.id} value={user!.id}>
-                    {user!.name}
+          <div className="flex gap-2">
+            <Select
+              value={ratingFilter ? String(ratingFilter) : "all"}
+              onValueChange={(value) =>
+                updateFilter("rating", value === "all" ? null : parseInt(value))
+              }
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by Rating" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Ratings</SelectItem>
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <SelectItem key={rating} value={String(rating)}>
+                    {rating} Star{rating > 1 ? "s" : ""}
                   </SelectItem>
                 ))}
-            </SelectContent>
-          </Select>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={userFilter || "all"}
+              onValueChange={(value) =>
+                updateFilter("user", value === "all" ? null : value)
+              }
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by User" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Users</SelectItem>
+                {allUsers?.map(
+                  (user) =>
+                    user && (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.name}
+                      </SelectItem>
+                    )
+                )}
+              </SelectContent>
+            </Select>
+
+            {(ratingFilter || userFilter || searchTerm) && (
+              <Button variant="outline" onClick={clearFilters}>
+                Clear Filters
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto pr-2 space-y-4 py-4">
