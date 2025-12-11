@@ -3,6 +3,16 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Trash2 } from "lucide-react";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   useDeleteCommentMutation,
   CurrentUserQuery,
 } from "../../../generated/graphql";
@@ -28,10 +38,15 @@ export const CommentList: FC<CommentListProps> = ({
   currentUser,
 }) => {
   const [deleteComment] = useDeleteCommentMutation();
+  const [commentToDelete, setCommentToDelete] = React.useState<string | null>(
+    null
+  );
 
-  const handleDelete = async (commentId: string) => {
+  const confirmDelete = async () => {
+    if (!commentToDelete) return;
     try {
-      await deleteComment({ id: commentId }).unwrap();
+      await deleteComment({ id: commentToDelete }).unwrap();
+      setCommentToDelete(null);
     } catch (error) {
       console.error("Failed to delete comment:", error);
     }
@@ -65,7 +80,7 @@ export const CommentList: FC<CommentListProps> = ({
                   variant="ghost"
                   size="icon"
                   className="h-5 w-5 text-muted-foreground hover:text-destructive"
-                  onClick={() => handleDelete(comment.id)}
+                  onClick={() => setCommentToDelete(comment.id)}
                   aria-label="Delete comment"
                 >
                   <Trash2 className="w-3 h-3" />
@@ -79,6 +94,29 @@ export const CommentList: FC<CommentListProps> = ({
           </div>
         );
       })}
+      <AlertDialog
+        open={!!commentToDelete}
+        onOpenChange={(open) => !open && setCommentToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              comment.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
