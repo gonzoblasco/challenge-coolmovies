@@ -9,7 +9,7 @@ const config: CodegenConfig = {
       plugins: [
         'typescript',
         'typescript-operations',
-        'typescript-react-apollo',
+        'typescript-rtk-query',
       ],
     },
     'src/generated/graphql.schema.json': {
@@ -18,6 +18,8 @@ const config: CodegenConfig = {
   },
   config: {
     inputValueDeprecation: true,
+    importBaseApiFrom: '../state/api',
+    exportHooks: true,
   },
 };
 
