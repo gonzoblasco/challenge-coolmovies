@@ -72,7 +72,7 @@ export const ReviewListDialog: FC = () => {
 
   const { data: reviewsData, loading: reviewsLoading } = useMovieReviewsQuery({
     variables: {
-      id: selectedMovieId as any,
+      id: selectedMovieId!,
       filter: constructFilter(),
     },
     skip: !selectedMovieId,
