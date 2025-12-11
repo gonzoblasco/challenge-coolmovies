@@ -6,19 +6,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Star, Pencil, Check, X } from "lucide-react";
 import {
   useUpdateReviewMutation,
-  useCurrentUserQuery,
+  MovieReviewsQuery,
+  CurrentUserQuery,
 } from "../../../generated/graphql";
+
+type Review = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<MovieReviewsQuery["movieById"]>["movieReviewsByMovieId"]
+    >["nodes"]
+  >[0]
+>;
 import { CommentList } from "./CommentList";
 import { CommentForm } from "./CommentForm";
 
 interface ReviewCardProps {
-  review: any; // Using any for simplicity as referencing generated types can be tricky if not exported
+  review: Review;
+  currentUser: CurrentUserQuery["currentUser"] | null | undefined;
 }
 
-export const ReviewCard: FC<ReviewCardProps> = ({ review }) => {
-  const { data: userData } = useCurrentUserQuery();
+export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
   const [updateReview] = useUpdateReviewMutation();
-  const currentUser = userData?.currentUser;
 
   // Formatting helper
   const isOwner = currentUser && review.userReviewerId === currentUser.id;
@@ -65,16 +73,12 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review }) => {
           updateMovieReviewById: {
             __typename: "UpdateMovieReviewPayload",
             movieReview: {
+              ...review,
               __typename: "MovieReview",
-              id: review.id,
               title: editForm.title,
               body: editForm.body,
               rating: editForm.rating,
-              // Preserve other fields
-              movieReviewId: review.movieReviewId,
-              userReviewerId: review.userReviewerId,
-              movieId: review.movieId,
-            } as any,
+            },
           },
         },
       });

@@ -174,7 +174,13 @@ export const ReviewListDialog: FC = () => {
           ) : (
             reviewsData.movieById.movieReviewsByMovieId.nodes.map((review) => {
               if (!review) return null;
-              return <ReviewCard key={review.id} review={review} />;
+              return (
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  currentUser={currentUser}
+                />
+              );
             })
           )}
         </div>

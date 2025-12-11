@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   useCreateCommentMutation,
   useCurrentUserQuery,
+  NewCommentFragmentDoc,
 } from "../../../generated/graphql";
 import { Send } from "lucide-react";
 
@@ -39,7 +40,35 @@ export const CommentForm: FC<CommentFormProps> = ({
           reviewId: reviewId,
           userId: currentUser.id,
         },
-        refetchQueries: ["MovieReviews"], // Refetch reviews to show new comment
+        update: (cache, { data }) => {
+          const newComment = data?.createComment?.comment;
+          if (!newComment) return;
+
+          const newCommentRef = cache.writeFragment({
+            data: newComment,
+            fragment: NewCommentFragmentDoc,
+          });
+
+          const reviewCacheId = cache.identify({
+            __typename: "MovieReview",
+            id: reviewId,
+          });
+
+          if (!reviewCacheId) return;
+
+          cache.modify({
+            id: reviewCacheId,
+            fields: {
+              commentsByMovieReviewId(existingCommentConnection = {}) {
+                const existingNodes = existingCommentConnection.nodes || [];
+                return {
+                  ...existingCommentConnection,
+                  nodes: [...existingNodes, newCommentRef],
+                };
+              },
+            },
+          });
+        },
       });
       setForm({ title: "", body: "" });
       onSuccess();
@@ -65,6 +94,7 @@ export const CommentForm: FC<CommentFormProps> = ({
       className="space-y-3 mt-4 border-l-2 border-primary/20 pl-4 py-2"
     >
       <Input
+        aria-label="Comment title"
         placeholder="Title (optional)"
         value={form.title}
         onChange={(e) => setForm({ ...form, title: e.target.value })}
