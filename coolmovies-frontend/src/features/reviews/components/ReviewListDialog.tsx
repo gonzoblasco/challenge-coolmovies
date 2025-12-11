@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import React, { FC } from "react";
+// import { useRouter } from "next/router";
 import {
   Dialog,
   DialogContent,
@@ -25,10 +25,11 @@ import {
   MovieReviewFilter,
 } from "../../../generated/graphql";
 import { ReviewCard } from "./ReviewCard";
+import { useReviewFilters } from "../hooks/useReviewFilters";
 
 export const ReviewListDialog: FC = () => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
+  // const router = useRouter();
   const { movies, selectedMovieId, isViewReviewsOpen } = useAppSelector(
     (state) => state.reviews
   );
@@ -36,46 +37,15 @@ export const ReviewListDialog: FC = () => {
   const { data: allUsersData } = useAllUsersQuery();
   const currentUser = userData?.currentUser;
 
-  // Local state for search to handle debounce
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // Parse filters from URL
-  const ratingFilter = router.query.rating
-    ? parseInt(router.query.rating as string)
-    : undefined;
-  const userFilter = router.query.user
-    ? (router.query.user as string)
-    : undefined;
-  const searchFilter = router.query.search
-    ? (router.query.search as string)
-    : undefined;
-
-  // Sync local search term with URL on mount/update
-  useEffect(() => {
-    if (searchFilter !== searchTerm) {
-      setSearchTerm(searchFilter || "");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilter]);
-
-  // Debounce search update to URL
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchTerm !== searchFilter) {
-        updateFilter("search", searchTerm || null);
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchTerm, searchFilter]);
-  const updateFilter = (key: string, value: string | number | null) => {
-    const newQuery = { ...router.query };
-    if (value) {
-      newQuery[key] = String(value);
-    } else {
-      delete newQuery[key];
-    }
-    router.push({ query: newQuery }, undefined, { shallow: true });
-  };
+  const {
+    searchTerm,
+    setSearchTerm,
+    ratingFilter,
+    userFilter,
+    searchFilter,
+    updateFilter,
+    clearFilters,
+  } = useReviewFilters();
 
   const constructFilter = (): MovieReviewFilter | undefined => {
     const filters: MovieReviewFilter[] = [];
@@ -111,11 +81,7 @@ export const ReviewListDialog: FC = () => {
   const selectedMovie = movies.find((m) => m.id === selectedMovieId);
 
   const handleClose = () => {
-    const newQuery = { ...router.query };
-    delete newQuery.rating;
-    delete newQuery.user;
-    delete newQuery.search;
-    router.push({ query: newQuery }, undefined, { shallow: true });
+    clearFilters();
     dispatch(actions.closeViewReviews());
   };
 
@@ -182,11 +148,13 @@ export const ReviewListDialog: FC = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Users</SelectItem>
-              {(allUsersData?.allUsers?.nodes ?? []).map((user) => (
-                <SelectItem key={user?.id} value={user?.id}>
-                  {user?.name}
-                </SelectItem>
-              ))}
+              {(allUsersData?.allUsers?.nodes ?? [])
+                .filter((user) => !!user)
+                .map((user) => (
+                  <SelectItem key={user!.id} value={user!.id}>
+                    {user!.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>
