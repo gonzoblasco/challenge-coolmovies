@@ -63,11 +63,11 @@ mutation UpdateReview($id: UUID!, $patch: MovieReviewPatch!) {
   }
 }
 
-query MovieReviews($id: UUID!) {
+query MovieReviews($id: UUID!, $filter: MovieReviewFilter) {
   movieById(id: $id) {
     id
     title
-    movieReviewsByMovieId {
+    movieReviewsByMovieId(filter: $filter, orderBy: [PRIMARY_KEY_DESC]) {
       nodes {
         id
         title
@@ -78,7 +78,7 @@ query MovieReviews($id: UUID!) {
         userByUserReviewerId {
           name
         }
-        commentsByMovieReviewId {
+        commentsByMovieReviewId(orderBy: [PRIMARY_KEY_ASC]) {
           nodes {
             id
             title
@@ -90,6 +90,15 @@ query MovieReviews($id: UUID!) {
           }
         }
       }
+    }
+  }
+}
+
+query AllUsers {
+  allUsers {
+    nodes {
+      id
+      name
     }
   }
 }
