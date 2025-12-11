@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC } from "react";
 import {
   Dialog,
@@ -117,16 +119,16 @@ export const ReviewListDialog: FC = () => {
           />
           <div className="flex gap-2">
             <Select
-              value={ratingFilter ? String(ratingFilter) : ""}
+              value={ratingFilter ? String(ratingFilter) : "all"}
               onValueChange={(value) =>
-                updateFilter("rating", value ? parseInt(value) : undefined)
+                updateFilter("rating", value === "all" ? null : parseInt(value))
               }
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by Rating" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Ratings</SelectItem>
+                <SelectItem value="all">All Ratings</SelectItem>
                 {[1, 2, 3, 4, 5].map((rating) => (
                   <SelectItem key={rating} value={String(rating)}>
                     {rating} Star{rating > 1 ? "s" : ""}
@@ -136,16 +138,16 @@ export const ReviewListDialog: FC = () => {
             </Select>
 
             <Select
-              value={userFilter || ""}
+              value={userFilter || "all"}
               onValueChange={(value) =>
-                updateFilter("user", value || undefined)
+                updateFilter("user", value === "all" ? null : value)
               }
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by User" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Users</SelectItem>
+                <SelectItem value="all">All Users</SelectItem>
                 {allUsers?.map(
                   (user) =>
                     user && (
