@@ -19,15 +19,17 @@ export const CommentForm: FC<CommentFormProps> = ({
   onCancel,
   onSuccess,
 }) => {
-  const { data: userData } = useCurrentUserQuery();
+  const { data: userData, loading: userLoading } = useCurrentUserQuery();
   const [createComment, { loading }] = useCreateCommentMutation();
   const [form, setForm] = useState({ title: "", body: "" });
+  const [error, setError] = useState<string | null>(null);
 
   const currentUser = userData?.currentUser;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser || !form.body.trim()) return;
+    setError(null);
 
     try {
       await createComment({
@@ -43,8 +45,11 @@ export const CommentForm: FC<CommentFormProps> = ({
       onSuccess();
     } catch (error) {
       console.error("Failed to post comment:", error);
+      setError("Failed to post comment. Please try again.");
     }
   };
+
+  if (userLoading) return null;
 
   if (!currentUser) {
     return (
@@ -66,12 +71,13 @@ export const CommentForm: FC<CommentFormProps> = ({
         className="h-8 text-sm"
       />
       <Textarea
+        aria-label="Comment body"
         placeholder="Write a comment..."
         value={form.body}
         onChange={(e) => setForm({ ...form, body: e.target.value })}
         className="min-h-[60px] text-sm"
-        required
       />
+      {error && <div className="text-sm text-destructive">{error}</div>}
       <div className="flex justify-end gap-2">
         <Button size="sm" variant="ghost" type="button" onClick={onCancel}>
           Cancel
