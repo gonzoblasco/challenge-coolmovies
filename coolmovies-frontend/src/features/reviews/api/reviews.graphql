@@ -11,6 +11,7 @@ query AllMovies {
           title
           body
           rating
+          userReviewerId
           userByUserReviewerId {
             name
           }
@@ -32,6 +33,36 @@ mutation CreateReview($title: String!, $body: String!, $rating: Int!, $movieId: 
       movieId
       userByUserReviewerId {
         name
+      }
+    }
+  }
+}
+
+mutation UpdateReview($id: UUID!, $patch: MovieReviewPatch!) {
+  updateMovieReviewById(input: {id: $id, movieReviewPatch: $patch}) {
+    movieReview {
+      id
+      title
+      body
+      rating
+    }
+  }
+}
+
+query MovieReviews($id: UUID!) {
+  movieById(id: $id) {
+    id
+    title
+    movieReviewsByMovieId {
+      nodes {
+        id
+        title
+        body
+        rating
+        userReviewerId
+        userByUserReviewerId {
+          name
+        }
       }
     }
   }
