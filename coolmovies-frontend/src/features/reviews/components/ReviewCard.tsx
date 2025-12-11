@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Star, Pencil, Check, X, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   useUpdateReviewMutation,
   useDeleteReviewMutation,
@@ -78,8 +79,10 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
         },
       });
       setIsEditing(false);
+      toast.success("Review updated successfully");
     } catch (error) {
       console.error("Failed to update review:", error);
+      toast.error("Failed to update review");
     }
   };
 
@@ -87,8 +90,10 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
     try {
       await deleteReview({ id: review.id }).unwrap();
       setShowDeleteDialog(false);
+      toast.success("Review deleted successfully");
     } catch (error) {
       console.error("Failed to delete review:", error);
+      toast.error("Failed to delete review");
     }
   };
 

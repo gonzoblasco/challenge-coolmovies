@@ -20,6 +20,7 @@ import {
 } from "../../../generated/graphql";
 import { useCreateReview } from "../hooks/useCreateReview";
 import { Star } from "lucide-react";
+import { toast } from "sonner";
 
 export const CreateReviewDialog: FC = () => {
   const dispatch = useAppDispatch();
@@ -77,8 +78,10 @@ export const CreateReviewDialog: FC = () => {
       // Close dialog on success
       dispatch(actions.closeWriteReview());
       dispatch(actions.openViewReviews(selectedMovieId));
+      toast.success("Review published successfully!");
     } catch (error) {
       console.error("Failed to create review", error);
+      toast.error("Failed to publish review. Please try again.");
     }
   };
 
