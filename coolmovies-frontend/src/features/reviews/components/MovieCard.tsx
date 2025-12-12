@@ -68,17 +68,9 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
       }`}
     >
       <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
-        <div
-          className="relative w-full overflow-visible aspect-[2/3] bg-muted/20 cursor-pointer rounded-sm group/poster focus-visible:outline-2 focus-visible:outline-primary"
+        <button
+          className="relative w-full overflow-visible aspect-[2/3] bg-muted/20 cursor-pointer rounded-sm group/poster focus-visible:outline-2 focus-visible:outline-primary appearance-none border-0 p-0 font-inherit text-left"
           onClick={handleViewReviews}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleViewReviews();
-            }
-          }}
-          role="button"
-          tabIndex={0}
           aria-label={`Read reviews for ${movie.title}`}
         >
           <Image
@@ -101,7 +93,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
               Reviews
             </p>
           </div>
-        </div>
+        </button>
 
         <CardContent className="flex-grow p-4 flex flex-col justify-end">
           <div className="flex items-center justify-between">
