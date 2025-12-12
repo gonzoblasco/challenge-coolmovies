@@ -24,6 +24,7 @@ import { useCreateReview } from "../hooks/useCreateReview";
 import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { extractErrorMessage } from "@/utils/errorHandling";
+import { reviewSchema } from "@/lib/validation";
 
 export const CreateReviewDialog: FC = () => {
   const router = useRouter();
@@ -51,10 +52,11 @@ export const CreateReviewDialog: FC = () => {
     [moviesData?.allMovies?.nodes, selectedMovieId]
   );
 
-  const [rating, setRating] = useState<number>(0);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [rating, setRating] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (isWriteReviewOpen) {
@@ -62,6 +64,7 @@ export const CreateReviewDialog: FC = () => {
       setTitle("");
       setBody("");
       setHoverRating(0);
+      setErrors({});
     }
   }, [isWriteReviewOpen]);
 
@@ -82,7 +85,21 @@ export const CreateReviewDialog: FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!selectedMovieId || !currentUser || !rating) return;
+    if (!selectedMovieId || !currentUser) return;
+
+    // Validate form
+    const validation = reviewSchema.safeParse({ title, body, rating });
+    if (!validation.success) {
+      const fieldErrors = validation.error.errors.reduce((acc, err) => {
+        if (err.path[0]) {
+          acc[err.path[0] as string] = err.message;
+        }
+        return acc;
+      }, {} as Record<string, string>);
+      setErrors(fieldErrors);
+      return;
+    }
+    setErrors({});
 
     try {
       await createReview({
@@ -130,7 +147,11 @@ export const CreateReviewDialog: FC = () => {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Great Movie!"
               autoFocus
+              className={errors.title ? "border-red-500" : ""}
             />
+            {errors.title && (
+              <p className="text-sm text-red-500">{errors.title}</p>
+            )}
           </div>
 
           <div className="grid gap-2">
@@ -190,6 +211,9 @@ export const CreateReviewDialog: FC = () => {
                 {rating ? `${rating}/5` : "Select a rating"}
               </span>
             </div>
+            {errors.rating && (
+              <p className="text-sm text-red-500">{errors.rating}</p>
+            )}
           </div>
 
           <div className="grid gap-2">
@@ -200,7 +224,11 @@ export const CreateReviewDialog: FC = () => {
               onChange={(e) => setBody(e.target.value)}
               placeholder="Tell us what you thought..."
               rows={4}
+              className={errors.body ? "border-red-500" : ""}
             />
+            {errors.body && (
+              <p className="text-sm text-red-500">{errors.body}</p>
+            )}
           </div>
         </div>
 
