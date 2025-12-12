@@ -53,6 +53,18 @@ describe("MovieCard Component", () => {
     expect(screen.getByText(/2.*Reviews/)).toBeInTheDocument();
   });
 
+  it("renders 'N/A' when release date is invalid", () => {
+    const movieInvalidDate: Partial<graphqlHooks.Movie> = {
+      ...mockMovie,
+      releaseDate: "invalid-date-string",
+    };
+    renderWithProviders(
+      <MovieCard movie={movieInvalidDate as unknown as graphqlHooks.Movie} />
+    );
+
+    expect(screen.getByText(/N\/A/)).toBeInTheDocument();
+  });
+
   it("renders 0 reviews when no reviews exist", () => {
     const movieNoReviews: Partial<graphqlHooks.Movie> = {
       ...mockMovie,
