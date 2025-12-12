@@ -2,14 +2,12 @@ import React, { PropsWithChildren } from "react";
 import { render } from "@testing-library/react";
 import type { RenderOptions } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-
-import reviewsReducer from "./features/reviews/state/slice";
+import { createStore, AppStore, RootState } from "./state/store";
 
 // Mocks removed as they are unused by tests
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
-  preloadedState?: any;
-  store?: any;
+  preloadedState?: Partial<RootState>;
+  store?: AppStore;
 }
 
 export function renderWithProviders(
@@ -17,10 +15,7 @@ export function renderWithProviders(
   {
     preloadedState = {},
     // Create a new store instance for every test
-    store = configureStore({
-      reducer: { reviews: reviewsReducer } as any,
-      preloadedState,
-    }),
+    store = createStore(preloadedState),
     ...renderOptions
   }: ExtendedRenderOptions = {}
 ) {
@@ -31,6 +26,5 @@ export function renderWithProviders(
       </Provider>
     );
   }
-  // @ts-ignore
   return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
 }
