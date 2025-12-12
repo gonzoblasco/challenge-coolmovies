@@ -29,6 +29,7 @@ import {
 import { ReviewCard } from "./ReviewCard";
 import { useReviewFilters } from "../hooks/useReviewFilters";
 import { useReviews } from "../hooks/useReviews";
+import { useScrollRestoration } from "@/hooks/useScrollRestoration"; // Imported Hook
 import { constructFilter } from "../utils/helpers";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Loading } from "@/components/common/Loading";
@@ -92,31 +93,9 @@ export const ReviewListDialog: FC = () => {
   };
 
   // Scroll Restoration Logic
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container || !selectedMovieId) return;
-
-    const key = `reviews-scroll-${selectedMovieId}`;
-
-    const handleScroll = () => {
-      sessionStorage.setItem(key, String(container.scrollTop));
-    };
-
-    container.addEventListener("scroll", handleScroll);
-
-    // Restore scroll on mount/data load if available
-    const savedScroll = sessionStorage.getItem(key);
-    if (savedScroll) {
-      // Small timeout to allow content to render
-      setTimeout(() => {
-        if (container) container.scrollTop = parseInt(savedScroll);
-      }, 0);
-    }
-
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [selectedMovieId, reviewsLoading]); // Re-run when movie changes or loading finishes
+  const scrollContainerRef = useScrollRestoration(
+    selectedMovieId && !reviewsLoading ? `reviews-scroll-${selectedMovieId}` : "loading"
+  );
 
   if (!selectedMovie) return null;
 
