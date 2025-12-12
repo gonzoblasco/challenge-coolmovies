@@ -135,7 +135,7 @@ describe("CreateReviewDialog Component", () => {
     // Hover over the 3rd star - first 3 stars should be highlighted
     fireEvent.mouseEnter(rate3Button);
     
-    const star1 = screen.getByLabelText("Rate 1 stars").querySelector('svg');
+    const star1 = screen.getByLabelText("Rate 1 star").querySelector('svg');
     const star2 = screen.getByLabelText("Rate 2 stars").querySelector('svg');
     const star3 = screen.getByLabelText("Rate 3 stars").querySelector('svg');
     const star4 = screen.getByLabelText("Rate 4 stars").querySelector('svg');

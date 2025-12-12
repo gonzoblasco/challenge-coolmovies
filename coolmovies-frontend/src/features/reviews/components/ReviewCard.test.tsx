@@ -129,16 +129,18 @@ describe("ReviewCard Component", () => {
   });
 
   it("edits review flow", async () => {
-    const updateReviewMock = jest.fn().mockResolvedValue({
-      data: {
-        updateMovieReviewById: {
-          movieReview: {
-            ...mockReview,
-            title: "Updated Title",
-            body: "Updated Body",
+    const updateReviewMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockResolvedValue({
+        data: {
+          updateMovieReviewById: {
+            movieReview: {
+              ...mockReview,
+              title: "Updated Title",
+              body: "Updated Body",
+            },
           },
         },
-      },
+      }),
     });
     (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
       updateReviewMock,
@@ -272,7 +274,9 @@ describe("ReviewCard Component", () => {
   });
 
   it("updates rating in edit mode", async () => {
-    const updateReviewMock = jest.fn().mockResolvedValue({});
+    const updateReviewMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockResolvedValue({}),
+    });
     (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
       updateReviewMock,
       { isLoading: false },
@@ -285,7 +289,7 @@ describe("ReviewCard Component", () => {
     fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
 
     // Click 5th star (rating 5)
-    fireEvent.click(screen.getByRole("button", { name: "Rate 5 stars" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Rate 5 stars" }));
 
     fireEvent.click(screen.getByRole("button", { name: "Save review" }));
 
@@ -339,5 +343,152 @@ describe("ReviewCard Component", () => {
       // Comments list should be shown
       expect(screen.getByText("Comment 1")).toBeInTheDocument();
     });
+  });
+
+  describe("Keyboard navigation for star rating", () => {
+    it("changes rating with arrow keys", async () => {
+      const updateReviewMock = jest.fn().mockReturnValue({
+        unwrap: jest.fn().mockResolvedValue({}),
+      });
+      (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
+        updateReviewMock,
+        { isLoading: false },
+      ]);
+
+      renderWithProviders(
+        <ReviewCard review={mockReview} currentUser={mockUser} />
+      );
+
+      // Enter edit mode
+      fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+
+      // Get the radiogroup container
+      const radiogroup = screen.getByRole("radiogroup", { name: "Rating" });
+
+      // ArrowRight should increase rating
+      fireEvent.keyDown(radiogroup, { key: "ArrowRight" });
+      
+      // Verify 5 stars is now checked
+      expect(screen.getByRole("radio", { name: "Rate 5 stars" })).toHaveAttribute("aria-checked", "true");
+      
+      // ArrowLeft should decrease rating  
+      fireEvent.keyDown(radiogroup, { key: "ArrowLeft" });
+      expect(screen.getByRole("radio", { name: "Rate 4 stars" })).toHaveAttribute("aria-checked", "true");
+
+      // ArrowUp should increase rating
+      fireEvent.keyDown(radiogroup, { key: "ArrowUp" });
+      expect(screen.getByRole("radio", { name: "Rate 5 stars" })).toHaveAttribute("aria-checked", "true");
+
+      // ArrowDown should decrease rating
+      fireEvent.keyDown(radiogroup, { key: "ArrowDown" });
+      expect(screen.getByRole("radio", { name: "Rate 4 stars" })).toHaveAttribute("aria-checked", "true");
+    });
+
+    it("changes rating with number keys 1-5", async () => {
+      renderWithProviders(
+        <ReviewCard review={mockReview} currentUser={mockUser} />
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+
+      const radiogroup = screen.getByRole("radiogroup", { name: "Rating" });
+
+      // Press number 1
+      fireEvent.keyDown(radiogroup, { key: "1" });
+      expect(screen.getByRole("radio", { name: "Rate 1 star" })).toHaveAttribute("aria-checked", "true");
+
+      // Press number 5
+      fireEvent.keyDown(radiogroup, { key: "5" });
+      expect(screen.getByRole("radio", { name: "Rate 5 stars" })).toHaveAttribute("aria-checked", "true");
+
+      // Press number 3
+      fireEvent.keyDown(radiogroup, { key: "3" });
+      expect(screen.getByRole("radio", { name: "Rate 3 stars" })).toHaveAttribute("aria-checked", "true");
+    });
+
+    it("respects rating bounds (1-5)", async () => {
+      const lowRatingReview = { ...mockReview, rating: 1 };
+      renderWithProviders(
+        <ReviewCard review={lowRatingReview} currentUser={mockUser} />
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+
+      const radiogroup = screen.getByRole("radiogroup", { name: "Rating" });
+
+      // Try to go below 1
+      fireEvent.keyDown(radiogroup, { key: "ArrowLeft" });
+      expect(screen.getByRole("radio", { name: "Rate 1 star" })).toHaveAttribute("aria-checked", "true");
+    });
+
+    it("selects rating with Enter/Space on star button", async () => {
+      renderWithProviders(
+        <ReviewCard review={mockReview} currentUser={mockUser} />
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+
+      const star3 = screen.getByRole("radio", { name: "Rate 3 stars" });
+
+      // Enter key should select the star
+      fireEvent.keyDown(star3, { key: "Enter" });
+      expect(star3).toHaveAttribute("aria-checked", "true");
+
+      // Space key should also select
+      const star2 = screen.getByRole("radio", { name: "Rate 2 stars" });
+      fireEvent.keyDown(star2, { key: " " });
+      expect(star2).toHaveAttribute("aria-checked", "true");
+    });
+
+    it("handles max rating bound", async () => {
+      const highRatingReview = { ...mockReview, rating: 5 };
+      renderWithProviders(
+        <ReviewCard review={highRatingReview} currentUser={mockUser} />
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+
+      const radiogroup = screen.getByRole("radiogroup", { name: "Rating" });
+
+      // Try to go above 5
+      fireEvent.keyDown(radiogroup, { key: "ArrowRight" });
+      expect(screen.getByRole("radio", { name: "Rate 5 stars" })).toHaveAttribute("aria-checked", "true");
+    });
+  });
+
+  it("renders without comments button when no comments exist", () => {
+    const reviewWithNoComments = {
+      ...mockReview,
+      commentsByMovieReviewId: { nodes: [] },
+    };
+    renderWithProviders(
+      <ReviewCard review={reviewWithNoComments} currentUser={mockUser} />
+    );
+    
+    expect(screen.queryByText(/Show Comments/)).not.toBeInTheDocument();
+  });
+
+  it("renders Anonymous when reviewer name is missing", () => {
+    const reviewWithoutName = {
+      ...mockReview,
+      userByUserReviewerId: null,
+    } as unknown as Review;
+    
+    renderWithProviders(
+      <ReviewCard review={reviewWithoutName} currentUser={mockUser} />
+    );
+    
+    expect(screen.getByText("— Anonymous")).toBeInTheDocument();
+  });
+
+  it("does not show edit/delete buttons when user is not owner", () => {
+    const otherUser = { ...mockUser, id: "other-user" };
+    
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={otherUser} />
+    );
+    
+    expect(screen.queryByRole("button", { name: /Edit review/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Delete review" })).not.toBeInTheDocument();
   });
 });
