@@ -68,32 +68,38 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
       }`}
     >
       <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
-        <button
-          className="relative w-full overflow-visible aspect-[2/3] bg-muted/20 cursor-pointer rounded-sm group/poster focus-visible:outline-2 focus-visible:outline-primary appearance-none border-0 p-0 font-inherit text-left"
-          onClick={handleViewReviews}
-          aria-label={`Read reviews for ${movie.title}`}
-        >
+        <div className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20 rounded-sm group/poster">
           <Image
             src={imgSrc}
             alt={altText}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105 group-focus/poster:scale-90"
+            className="object-cover transition-transform duration-300 group-hover/poster:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={() => {
               setImgSrc("/placeholder-movie.png");
               setAltText(`${movie.title} - Image unavailable`);
             }}
           />
-          <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-            <h3 className="text-xl font-bold text-white mb-1 line-clamp-1 truncate">
+          <button
+            onClick={handleViewReviews}
+            className="absolute inset-0 w-full h-full focus:outline-none focus:ring-2 focus:ring-primary z-10"
+            aria-label={`Read reviews for ${movie.title}`}
+          >
+            <span className="sr-only">Read reviews for {movie.title}</span>
+          </button>
+          <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none z-20">
+            <h3
+              className="text-xl font-bold text-white mb-1 line-clamp-1 truncate"
+              aria-hidden="true"
+            >
               {movie.title}
             </h3>
-            <p className="text-sm text-gray-300 font-medium">
+            <p className="text-sm text-gray-300 font-medium" aria-hidden="true">
               {new Date(movie.releaseDate).getFullYear()} • {reviewCount}{" "}
               Reviews
             </p>
           </div>
-        </button>
+        </div>
 
         <CardContent className="flex-grow p-4 flex flex-col justify-end">
           <div className="flex items-center justify-between">
