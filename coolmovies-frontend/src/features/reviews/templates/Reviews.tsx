@@ -23,15 +23,12 @@ const Reviews = () => {
     offset: page * PAGE_SIZE,
   });
 
-  const { error: sliceError } = useAppSelector((state) => state.reviews);
-
   // Combine errors if necessary, or just use queryError
 
-  const errorMessage =
-    queryError
-      ? (console.error("Failed to load movies:", queryError),
-        "We could not load the movies. Please try reloading the page.")
-      : sliceError;
+  const errorMessage = queryError
+    ? (console.error("Failed to load movies:", queryError),
+      "We could not load the movies. Please try reloading the page.")
+    : null;
   const movies = data?.allMovies?.nodes || [];
   const totalCount = data?.allMovies?.totalCount || 0;
 
@@ -63,11 +60,14 @@ const Reviews = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div
+          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+          role="status"
+          aria-live="polite"
+          aria-busy={loading}
+        >
           {loading ? (
             <div
-              role="status"
-              aria-live="polite"
               className="col-span-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
             >
               <span className="sr-only">Loading movies...</span>

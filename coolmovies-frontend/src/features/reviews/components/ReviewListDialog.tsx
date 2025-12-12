@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   Dialog,
@@ -91,6 +91,33 @@ export const ReviewListDialog: FC = () => {
     if (!open) handleClose();
   };
 
+  // Scroll Restoration Logic
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || !selectedMovieId) return;
+
+    const key = `reviews-scroll-${selectedMovieId}`;
+
+    const handleScroll = () => {
+      sessionStorage.setItem(key, String(container.scrollTop));
+    };
+
+    container.addEventListener("scroll", handleScroll);
+
+    // Restore scroll on mount/data load if available
+    const savedScroll = sessionStorage.getItem(key);
+    if (savedScroll) {
+      // Small timeout to allow content to render
+      setTimeout(() => {
+        if (container) container.scrollTop = parseInt(savedScroll);
+      }, 0);
+    }
+
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [selectedMovieId, reviewsLoading]); // Re-run when movie changes or loading finishes
+
   if (!selectedMovie) return null;
 
   return (
@@ -164,7 +191,13 @@ export const ReviewListDialog: FC = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-2 space-y-4 py-4">
+        <div 
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto pr-2 space-y-4 py-4"
+          role="status"
+          aria-live="polite"
+          aria-busy={reviewsLoading}
+        >
           <ErrorBoundary name="ReviewList">
             {reviewsLoading ? (
               <Loading lines={4} />

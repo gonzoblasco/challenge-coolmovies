@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, memo } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Trash2 } from "lucide-react";
@@ -17,6 +17,8 @@ import {
   CurrentUserQuery,
 } from "../../../generated/graphql";
 import { TEXT } from "@/constants/text";
+import { extractErrorMessage } from "@/utils/errorHandling";
+import { toast } from "sonner";
 
 interface Comment {
   id: string;
@@ -34,7 +36,7 @@ interface CommentListProps {
   currentUser: CurrentUserQuery["currentUser"] | null | undefined;
 }
 
-export const CommentList: FC<CommentListProps> = ({
+export const CommentList: FC<CommentListProps> = memo(({
   comments,
   currentUser,
 }) => {
@@ -50,6 +52,8 @@ export const CommentList: FC<CommentListProps> = ({
       setCommentToDelete(null);
     } catch (error) {
       console.error("Failed to delete comment:", error);
+      const message = extractErrorMessage(error);
+      toast.error(`Failed to delete comment: ${message}`);
     }
   };
 
@@ -122,4 +126,4 @@ export const CommentList: FC<CommentListProps> = ({
       </AlertDialog>
     </div>
   );
-};
+});
