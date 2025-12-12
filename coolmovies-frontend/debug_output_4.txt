@@ -1,0 +1,100 @@
+
+> test
+> jest src/features/reviews/components/ReviewListDialog.test.tsx
+
+FAIL src/features/reviews/components/ReviewListDialog.test.tsx
+  ● Test suite failed to run
+
+      [31mx[0m await isn't allowed in non-async function
+         ,-[[36;1;4m/Users/gonzoblasco/Proyectos/coolmovies/coolmovies-frontend/src/features/reviews/components/ReviewListDialog.test.tsx[0m:267:1]
+     [2m264[0m |       });
+     [2m265[0m | 
+     [2m266[0m |       await waitFor(() => {
+     [2m267[0m |       await waitFor(() => {
+         : [35;1m            ^^^^^^^[0m
+     [2m268[0m |         const lastCall = (useReviews as jest.Mock).mock.lastCall;
+     [2m269[0m |         console.log("DEBUG: useReviews last call:", JSON.stringify(lastCall, null, 2));
+     [2m270[0m |         expect(useReviews).toHaveBeenLastCalledWith("1", undefined);
+         `----
+
+
+    Caused by:
+        Syntax Error
+
+      at Object.transformSync (node_modules/next/src/build/swc/index.ts:1201:25)
+      at transformSync (node_modules/next/src/build/swc/index.ts:1288:19)
+      at Object.process (node_modules/next/src/build/swc/jest-transformer.ts:105:25)
+      at ScriptTransformer.transformSource (node_modules/@jest/transform/build/index.js:422:31)
+      at ScriptTransformer._transformAndBuildScript (node_modules/@jest/transform/build/index.js:519:40)
+      at ScriptTransformer.transform (node_modules/@jest/transform/build/index.js:558:19)
+
+---------------------------------------------|---------|----------|---------|---------|-------------------
+File                                         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------------------------------|---------|----------|---------|---------|-------------------
+All files                                    |       0 |        0 |       0 |       0 |                   
+ src                                         |       0 |        0 |       0 |       0 |                   
+  test-utils.tsx                             |       0 |        0 |       0 |       0 | 1-32              
+ src/app                                     |       0 |        0 |       0 |       0 |                   
+  ClientExample.tsx                          |       0 |      100 |       0 |       0 | 3-6               
+  Quote.tsx                                  |       0 |      100 |       0 |       0 | 3-13              
+  error.tsx                                  |       0 |        0 |       0 |       0 | 3-28              
+  global-error.tsx                           |       0 |        0 |       0 |       0 | 3-20              
+  loading.tsx                                |       0 |      100 |       0 |       0 | 1-3               
+  page.tsx                                   |       0 |      100 |       0 |       0 | 1-6               
+  providers.tsx                              |       0 |      100 |       0 |       0 | 17-26             
+ src/app/reviews                             |       0 |      100 |       0 |       0 |                   
+  page.tsx                                   |       0 |      100 |       0 |       0 | 3-6               
+ src/components/common                       |       0 |        0 |       0 |       0 |                   
+  ErrorBoundary.tsx                          |       0 |        0 |       0 |       0 | 3-63              
+  Loading.tsx                                |       0 |        0 |       0 |       0 | 1-13              
+ src/components/ui                           |       0 |        0 |       0 |       0 |                   
+  alert-dialog.tsx                           |       0 |      100 |     100 |       0 | 1-138             
+  button.tsx                                 |       0 |        0 |       0 |       0 | 1-56              
+  card.tsx                                   |       0 |      100 |     100 |       0 | 1-79              
+  dialog.tsx                                 |       0 |      100 |     100 |       0 | 1-119             
+  input.tsx                                  |       0 |      100 |       0 |       0 | 1-22              
+  label.tsx                                  |       0 |      100 |     100 |       0 | 1-24              
+  select.tsx                                 |       0 |        0 |     100 |       0 | 1-157             
+  skeleton.tsx                               |       0 |      100 |       0 |       0 | 1-15              
+  sonner.tsx                                 |       0 |      100 |       0 |       0 | 3-27              
+  textarea.tsx                               |       0 |      100 |       0 |       0 | 1-22              
+  tooltip.tsx                                |       0 |        0 |     100 |       0 | 1-28              
+ src/constants                               |       0 |      100 |     100 |       0 |                   
+  text.ts                                    |       0 |      100 |     100 |       0 | 1                 
+ src/features/example/components/FetchButton |       0 |      100 |       0 |       0 |                   
+  FetchButton.tsx                            |       0 |      100 |       0 |       0 | 1-21              
+ src/features/example/state                  |       0 |      100 |       0 |       0 |                   
+  slice.ts                                   |       0 |      100 |       0 |       0 | 1-39              
+ src/features/example/templates              |       0 |        0 |       0 |       0 |                   
+  Example.tsx                                |       0 |        0 |       0 |       0 | 1-94              
+ src/features/reviews/components             |       0 |        0 |       0 |       0 |                   
+  CommentForm.tsx                            |       0 |        0 |       0 |       0 | 1-76              
+  CommentList.tsx                            |       0 |        0 |       0 |       0 | 1-100             
+  CreateReviewDialog.tsx                     |       0 |        0 |       0 |       0 | 3-162             
+  MovieCard.tsx                              |       0 |        0 |       0 |       0 | 1-101             
+  ReviewCard.tsx                             |       0 |        0 |       0 |       0 | 1-283             
+  ReviewListDialog.tsx                       |       0 |        0 |       0 |       0 | 3-189             
+ src/features/reviews/hooks                  |       0 |        0 |       0 |       0 |                   
+  useCreateReview.ts                         |       0 |      100 |       0 |       0 | 2-5               
+  useReviewFilters.ts                        |       0 |        0 |       0 |       0 | 3-84              
+  useReviews.ts                              |       0 |      100 |       0 |       0 | 2-5               
+ src/features/reviews/state                  |       0 |      100 |       0 |       0 |                   
+  slice.ts                                   |       0 |      100 |       0 |       0 | 1-46              
+ src/features/reviews/templates              |       0 |        0 |       0 |       0 |                   
+  Reviews.tsx                                |       0 |        0 |       0 |       0 | 1-131             
+ src/features/reviews/utils                  |       0 |        0 |       0 |       0 |                   
+  helpers.ts                                 |       0 |        0 |       0 |       0 | 10-34             
+ src/hooks                                   |       0 |      100 |       0 |       0 |                   
+  useDebounce.ts                             |       0 |      100 |       0 |       0 | 1-16              
+ src/lib                                     |       0 |      100 |       0 |       0 |                   
+  utils.ts                                   |       0 |      100 |       0 |       0 | 1-5               
+ src/state                                   |       0 |        0 |       0 |       0 |                   
+  api.ts                                     |       0 |        0 |       0 |       0 | 1-32              
+  enhancedApi.ts                             |       0 |        0 |       0 |       0 | 1-39              
+  store.ts                                   |       0 |      100 |       0 |       0 | 1-30              
+---------------------------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        1.785 s
+Ran all test suites matching src/features/reviews/components/ReviewListDialog.test.tsx.
