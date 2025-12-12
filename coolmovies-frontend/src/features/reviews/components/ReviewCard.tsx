@@ -192,6 +192,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
                       <AlertDialogCancel>{TEXT.CANCEL}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
                         {isDeleting ? "Deleting..." : TEXT.DELETE}
