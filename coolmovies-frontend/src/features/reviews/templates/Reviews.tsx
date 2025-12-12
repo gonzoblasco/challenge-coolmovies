@@ -26,7 +26,10 @@ const Reviews = () => {
   const { error: sliceError } = useAppSelector((state) => state.reviews);
 
   // Combine errors if necessary, or just use queryError
-  const error = queryError ? "Failed to load movies" : sliceError;
+
+  const errorMessage = queryError
+    ? "We could not load the movies. Please try reloading the page."
+    : sliceError;
   const movies = data?.allMovies?.nodes || [];
   const totalCount = data?.allMovies?.totalCount || 0;
 
@@ -49,14 +52,12 @@ const Reviews = () => {
           Movie Reviews
         </h1>
 
-        {error && (
+        {errorMessage && (
           <div
             className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-md mb-8 text-center"
             role="alert"
           >
-            <span className="block sm:inline">
-              Error: {JSON.stringify(error)}
-            </span>
+            <span className="block sm:inline">{errorMessage}</span>
           </div>
         )}
 
@@ -91,7 +92,7 @@ const Reviews = () => {
         </div>
 
         {/* Pagination Controls */}
-        {!loading && !error && totalCount > 0 && (
+        {!loading && !errorMessage && totalCount > 0 && (
           <div className="mt-12 flex items-center justify-center gap-4">
             <Button
               variant="outline"
