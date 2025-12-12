@@ -7,8 +7,9 @@ import {
   useCurrentUserQuery,
   NewCommentFragmentDoc,
 } from "../../../generated/graphql";
-import { Send } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { extractErrorMessage } from "@/utils/errorHandling";
 
 interface CommentFormProps {
   reviewId: string;
@@ -43,9 +44,8 @@ export const CommentForm: FC<CommentFormProps> = ({
       onSuccess();
     } catch (error) {
       console.error("Failed to post comment:", error);
-      const message = error instanceof Error 
-        ? error.message 
-        : (error as any)?.data?.message || (error as any)?.message || 'Unknown error';
+      console.error("Failed to post comment:", error);
+      const message = extractErrorMessage(error);
       setError(`Failed to post comment: ${message}`);
       toast.error(`Failed to post comment: ${message}`, {
         action: {
@@ -97,7 +97,10 @@ export const CommentForm: FC<CommentFormProps> = ({
         </Button>
         <Button size="sm" type="submit" disabled={loading || !form.body.trim()}>
           {loading ? (
-            "Posting..."
+            <>
+              <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+              Posting...
+            </>
           ) : (
             <>
               <Send className="w-3 h-3 mr-2" />

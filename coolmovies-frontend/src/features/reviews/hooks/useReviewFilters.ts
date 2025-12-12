@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useDebounce } from "../../../hooks/useDebounce";
+import { useDebounce } from "use-debounce";
 
 /**
  * Manages review filters with URL synchronization and debouncing.
@@ -31,7 +31,7 @@ export const useReviewFilters = () => {
   const [searchTerm, setSearchTerm] = useState(searchFilter || "");
 
   // Debounce the local search term
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 500);
 
   const updateFilter = (key: string, value: string | number | null) => {
     const params = new URLSearchParams(searchParams.toString());

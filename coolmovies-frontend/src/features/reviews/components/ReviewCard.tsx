@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Star, Pencil, Check, X, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { extractErrorMessage } from "@/utils/errorHandling";
 import {
   useUpdateReviewMutation,
   useDeleteReviewMutation,
@@ -53,6 +54,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
 
   // Delete confirmation state
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleteProcessing, setIsDeleteProcessing] = useState(false);
 
   const startEdit = () => {
     setIsEditing(true);
@@ -82,9 +84,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
       toast.success("Review updated successfully");
     } catch (error) {
       console.error("Failed to update review:", error);
-      const message = error instanceof Error 
-        ? error.message 
-        : (error as any)?.data?.message || (error as any)?.message || 'Unknown error';
+      const message = extractErrorMessage(error);
       toast.error(`Failed to update review: ${message}`, {
         action: {
           label: "Retry",
@@ -95,21 +95,23 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
   };
 
   const handleDelete = async () => {
+    if (isDeleteProcessing) return;
+    setIsDeleteProcessing(true);
     try {
       await deleteReview({ id: review.id }).unwrap();
       setShowDeleteDialog(false);
       toast.success("Review deleted successfully");
     } catch (error) {
       console.error("Failed to delete review:", error);
-      const message = error instanceof Error 
-        ? error.message 
-        : (error as any)?.data?.message || (error as any)?.message || 'Unknown error';
+      const message = extractErrorMessage(error);
       toast.error(`Failed to delete review: ${message}`, {
         action: {
           label: "Retry",
           onClick: () => handleDelete(),
         },
       });
+    } finally {
+      setIsDeleteProcessing(false);
     }
   };
 
@@ -291,11 +293,21 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
                         <AlertDialogFooter>
                           <AlertDialogCancel>{TEXT.CANCEL}</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={handleDelete}
-                            disabled={isDeleting}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDelete();
+                            }}
+                            disabled={isDeleting || isDeleteProcessing}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
-                            {isDeleting ? "Deleting..." : TEXT.DELETE}
+                            {(isDeleting || isDeleteProcessing) ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Deleting...
+                              </>
+                            ) : (
+                              TEXT.DELETE
+                            )}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

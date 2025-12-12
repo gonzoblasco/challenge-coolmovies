@@ -9,12 +9,17 @@ exports[`Reviews Component matches snapshot 1`] = `
     class="max-w-7xl mx-auto"
   >
     <h1
+      aria-hidden="true"
       class="text-4xl font-extrabold tracking-tight text-center mb-12 sm:text-5xl text-primary"
+      data-aria-hidden="true"
     >
       Movie Reviews
     </h1>
     <div
+      aria-busy="false"
+      aria-live="polite"
       class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+      role="status"
     >
       <div
         class="h-full transition-all duration-700 opacity-0 translate-y-8"

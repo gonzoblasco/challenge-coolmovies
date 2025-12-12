@@ -541,4 +541,14 @@ describe("ReviewCard Component", () => {
     expect(screen.queryByRole("button", { name: /Edit review/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Delete review" })).not.toBeInTheDocument();
   });
+  it("handles decimal ratings gracefully", () => {
+    const decimalRatingReview = { ...mockReview, rating: 4.7 };
+    
+    renderWithProviders(
+      <ReviewCard review={decimalRatingReview} currentUser={mockUser} />
+    );
+    
+    // Check formatted aria-label
+    expect(screen.getByRole("img", { name: "4.7 out of 5 stars" })).toBeInTheDocument();
+  });
 });

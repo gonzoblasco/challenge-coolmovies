@@ -13,8 +13,8 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/reviews",
 }));
 
-jest.mock("../../../hooks/useDebounce", () => ({
-  useDebounce: (value: string) => value, // Return immediately for testing
+jest.mock("use-debounce", () => ({
+  useDebounce: (value: string) => [value], // Return immediately for testing
 }));
 
 describe("useReviewFilters", () => {

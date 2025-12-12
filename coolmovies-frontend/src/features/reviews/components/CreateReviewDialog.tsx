@@ -23,6 +23,7 @@ import {
 import { useCreateReview } from "../hooks/useCreateReview";
 import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { extractErrorMessage } from "@/utils/errorHandling";
 
 export const CreateReviewDialog: FC = () => {
   const router = useRouter();
@@ -98,9 +99,7 @@ export const CreateReviewDialog: FC = () => {
       toast.success("Review published successfully!");
     } catch (error) {
       console.error("Failed to create review", error);
-      const message = error instanceof Error 
-        ? error.message 
-        : (error as any)?.data?.message || (error as any)?.message || 'Unknown error';
+      const message = extractErrorMessage(error);
       toast.error(`Failed to publish review: ${message}`, {
         action: {
           label: "Retry",

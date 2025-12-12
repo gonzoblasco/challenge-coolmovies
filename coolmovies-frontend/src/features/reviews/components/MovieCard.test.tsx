@@ -170,4 +170,29 @@ describe("MovieCard Component", () => {
       expect.anything()
     );
   });
+  it("renders with default fallback when imgUrl is null", () => {
+    const movieNoImage: Partial<graphqlHooks.Movie> = {
+      ...mockMovie,
+      imgUrl: null as any,
+    };
+    renderWithProviders(
+      <MovieCard movie={movieNoImage as unknown as graphqlHooks.Movie} />
+    );
+
+    // Should not crash, and might render an image placeholder or just the title container
+    expect(screen.getByText("Test Movie")).toBeInTheDocument();
+  });
+
+  it("renders correctly with a very long title", () => {
+    const longTitle = "A".repeat(200);
+    const movieLongTitle: Partial<graphqlHooks.Movie> = {
+      ...mockMovie,
+      title: longTitle,
+    };
+    renderWithProviders(
+      <MovieCard movie={movieLongTitle as unknown as graphqlHooks.Movie} />
+    );
+
+    expect(screen.getByText(longTitle)).toBeInTheDocument();
+  });
 });
