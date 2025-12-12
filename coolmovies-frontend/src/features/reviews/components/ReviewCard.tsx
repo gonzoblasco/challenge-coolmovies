@@ -322,7 +322,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
           <CardContent className="p-4 pt-2">
             <p 
               className="text-sm text-foreground/90 whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(review.body) }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(review.body || "") }}
             />
             <div className="mt-4 flex justify-between items-center">
               <div className="flex gap-2">

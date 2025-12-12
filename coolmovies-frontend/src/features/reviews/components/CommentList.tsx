@@ -127,3 +127,5 @@ export const CommentList: FC<CommentListProps> = memo(({
     </div>
   );
 });
+
+CommentList.displayName = "CommentList";

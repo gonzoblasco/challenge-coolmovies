@@ -5,10 +5,11 @@ export const sanitizeHtml = (dirty: string) => {
   if (typeof window === 'undefined') {
     // Server-side
     // dynamically require jsdom to prevent webpack from bundling it for the client
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line
     const { JSDOM } = require('jsdom');
-    const window = new JSDOM('').window;
-    sanitizer = DOMPurify(window as unknown as Window);
+    const jsdomWindow = new JSDOM('').window;
+    // Use type assertion to satisfy DOMPurify's type requirements
+    sanitizer = DOMPurify(jsdomWindow as unknown as typeof globalThis);
   } else {
     // Client-side
     sanitizer = DOMPurify(window);

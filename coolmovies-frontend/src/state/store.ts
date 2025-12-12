@@ -23,6 +23,7 @@ export const createStore = (preloadedState?: any) => {
 };
 
 import { RootState } from './types';
+export type { RootState };
 export type AppStore = ReturnType<typeof createStore>;
 // RootState is now imported from './types'
 export type AppDispatch = AppStore['dispatch'];
