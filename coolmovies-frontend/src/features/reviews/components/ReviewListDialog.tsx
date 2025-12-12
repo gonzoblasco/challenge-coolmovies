@@ -74,12 +74,7 @@ export const ReviewListDialog: FC = () => {
   const allUsers = allUsersData?.allUsers?.nodes;
 
   const handleClose = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("action");
-    params.delete("movieId");
-    // Also clear filters when closing manually to reset state for next time?
-    // Or keep them? User requirements were "Clear Filters on close" in previous impl.
-    // Let's use clean URL logic.
+    // On close, clear all URL parameters to reset the view.
     router.push(pathname, { scroll: false });
   };
 
