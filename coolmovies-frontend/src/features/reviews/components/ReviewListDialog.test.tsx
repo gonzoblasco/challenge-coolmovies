@@ -28,7 +28,6 @@ jest.mock("../hooks/useReviews", () => ({
 }));
 
 
-
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(() => ({
     push: jest.fn(),
