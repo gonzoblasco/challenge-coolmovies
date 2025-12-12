@@ -29,7 +29,7 @@ import {
 import { ReviewCard } from "./ReviewCard";
 import { useReviewFilters } from "../hooks/useReviewFilters";
 import { useReviews } from "../hooks/useReviews";
-import { FixedSizeList } from "react-window";
+import { List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { constructFilter } from "../utils/helpers";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
@@ -193,33 +193,31 @@ export const ReviewListDialog: FC = () => {
               </div>
             ) : (
               <AutoSizer>
-                {({ height, width }) => (
-                  <FixedSizeList
-                    height={height}
-                    width={width}
-                    itemCount={reviewsData.movieById!.movieReviewsByMovieId!.nodes.length}
-                    itemSize={300} // Approximate height for reviews
-                    itemData={{
-                      reviews: reviewsData.movieById!.movieReviewsByMovieId!.nodes,
-                      currentUser,
-                    }}
-                    className="pr-2"
-                  >
-                    {({ index, style, data }) => {
-                      const review = data.reviews[index];
-                      if (!review) return null;
-                      return (
-                        <div style={style} className="pb-4">
+                {({ height, width }) => {
+                  const reviews = reviewsData.movieById!.movieReviewsByMovieId!.nodes;
+                  return (
+                    <List
+                      style={{ height, width }}
+                      rowCount={reviews.length}
+                      rowHeight={300}
+                      className="pr-2"
+                      rowProps={{ reviews, currentUser }}
+                      rowComponent={({ index, style, reviews: reviewList, currentUser: user }) => {
+                        const review = reviewList[index];
+                        if (!review) return null;
+                        return (
+                          <div style={style} className="pb-4">
                             <ReviewCard
                               key={review.id}
                               review={review}
-                              currentUser={data.currentUser}
+                              currentUser={user}
                             />
-                        </div>
-                      );
-                    }}
-                  </FixedSizeList>
-                )}
+                          </div>
+                        );
+                      }}
+                    />
+                  );
+                }}
               </AutoSizer>
             )}
           </ErrorBoundary>

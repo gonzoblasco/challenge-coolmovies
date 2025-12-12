@@ -57,26 +57,34 @@ jest.mock("react-virtualized-auto-sizer", () => ({ children }) =>
 );
 
 jest.mock("react-window", () => ({
-  FixedSizeList: ({ children, itemCount, itemSize, itemData, ...props }) => (
-    <div data-testid="virtual-list">
-      {Array.from({ length: itemCount }).map((_, index) =>
-        children({
-          index,
-          style: { width: "100%", height: itemSize },
-          data: itemData,
-        })
-      )}
+  // react-window v2 API: uses List with rowComponent prop
+  List: ({ rowComponent: RowComponent, rowCount, rowHeight, rowProps = {}, style, ...props }) => (
+    <div data-testid="virtual-list" style={style}>
+      {Array.from({ length: rowCount }).map((_, index) => (
+        <RowComponent
+          key={index}
+          index={index}
+          style={{ width: "100%", height: rowHeight }}
+          {...rowProps}
+        />
+      ))}
     </div>
   ),
-  VariableSizeList: ({ children, itemCount, itemSize, itemData, ...props }) => (
-    <div data-testid="virtual-list">
-      {Array.from({ length: itemCount }).map((_, index) =>
-        children({
-          index,
-          style: { width: "100%", height: typeof itemSize === 'function' ? itemSize(index) : itemSize },
-          data: itemData,
-        })
-      )}
+  Grid: ({ cellComponent: CellComponent, rowCount, columnCount, rowHeight, columnWidth, cellProps = {}, style, ...props }) => (
+    <div data-testid="virtual-grid" style={style}>
+      {Array.from({ length: rowCount * columnCount }).map((_, i) => {
+        const rowIndex = Math.floor(i / columnCount);
+        const columnIndex = i % columnCount;
+        return (
+          <CellComponent
+            key={i}
+            rowIndex={rowIndex}
+            columnIndex={columnIndex}
+            style={{ width: columnWidth, height: rowHeight }}
+            {...cellProps}
+          />
+        );
+      })}
     </div>
   ),
 }));
