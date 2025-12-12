@@ -69,7 +69,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
     >
       <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
         <div
-          className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20 cursor-pointer"
+          className="relative w-full overflow-visible aspect-[2/3] bg-muted/20 cursor-pointer rounded-sm group/poster focus-visible:outline-2 focus-visible:outline-primary"
           onClick={handleViewReviews}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
@@ -85,7 +85,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
             src={imgSrc}
             alt={altText}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 group-hover:scale-105 group-focus/poster:scale-90"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={() => {
               setImgSrc("/placeholder-movie.png");
