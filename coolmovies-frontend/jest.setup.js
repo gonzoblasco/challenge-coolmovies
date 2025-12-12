@@ -70,6 +70,7 @@ jest.mock("react-window", () => ({
       ))}
     </div>
   ),
+  // Keep Grid mock for backward compatibility if needed
   Grid: ({ cellComponent: CellComponent, rowCount, columnCount, rowHeight, columnWidth, cellProps = {}, style, ...props }) => (
     <div data-testid="virtual-grid" style={style}>
       {Array.from({ length: rowCount * columnCount }).map((_, i) => {

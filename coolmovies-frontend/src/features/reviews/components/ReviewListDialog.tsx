@@ -29,12 +29,32 @@ import {
 import { ReviewCard } from "./ReviewCard";
 import { useReviewFilters } from "../hooks/useReviewFilters";
 import { useReviews } from "../hooks/useReviews";
-import { useScrollRestoration } from "../../../hooks/useScrollRestoration";
-import { FixedSizeList } from "react-window";
+import { List, RowComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { constructFilter } from "../utils/helpers";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Loading } from "@/components/common/Loading";
+
+// Define the row component type for react-window v2
+interface ReviewRowProps {
+  reviews: NonNullable<NonNullable<ReturnType<typeof import('../hooks/useReviews').useReviews>['data']>['movieById']>['movieReviewsByMovieId']['nodes'];
+  currentUser: { id: string; name: string } | null | undefined;
+}
+
+// Use function instead of FC to return ReactElement as required by react-window v2
+const ReviewRow = ({ index, style, reviews, currentUser }: RowComponentProps<ReviewRowProps>): React.ReactElement => {
+  const review = reviews[index];
+  if (!review) return <></>;
+  return (
+    <div style={style} className="pb-4">
+      <ReviewCard
+        key={review.id}
+        review={review}
+        currentUser={currentUser}
+      />
+    </div>
+  );
+};
 
 export const ReviewListDialog: FC = () => {
   const router = useRouter();
@@ -62,9 +82,6 @@ export const ReviewListDialog: FC = () => {
     updateFilter,
     clearFilters,
   } = useReviewFilters();
-
-  // Scroll restoration for the review list
-  const scrollRef = useScrollRestoration(`review-list-${selectedMovieId || 'none'}`);
 
   const { data: reviewsData, isLoading: reviewsLoading } = useReviews(
     selectedMovieId,
@@ -200,29 +217,14 @@ export const ReviewListDialog: FC = () => {
                 {({ height, width }) => {
                   const reviews = reviewsData.movieById!.movieReviewsByMovieId!.nodes;
                   return (
-                    <FixedSizeList
-                      height={height}
-                      width={width}
-                      itemCount={reviews.length}
-                      itemSize={300}
-                      itemData={{ reviews, currentUser }}
-                      outerRef={scrollRef}
+                    <List
+                      style={{ height, width }}
+                      rowCount={reviews.length}
+                      rowHeight={300}
+                      rowComponent={ReviewRow}
+                      rowProps={{ reviews, currentUser }}
                       className="pr-2"
-                    >
-                      {({ index, style, data }) => {
-                        const review = data.reviews[index];
-                        if (!review) return null;
-                        return (
-                          <div style={style} className="pb-4">
-                            <ReviewCard
-                              key={review.id}
-                              review={review}
-                              currentUser={data.currentUser}
-                            />
-                          </div>
-                        );
-                      }}
-                    </FixedSizeList>
+                    />
                   );
                 }}
               </AutoSizer>
