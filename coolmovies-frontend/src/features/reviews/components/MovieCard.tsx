@@ -80,13 +80,8 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
               setAltText(`${movie.title} - Image unavailable`);
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
-
-          <div className="absolute bottom-0 left-0 p-4 w-full">
-            <h3
-              className="text-xl font-bold text-white mb-1 line-clamp-1 truncate"
-              title={movie.title}
-            >
+          <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+            <h3 className="text-xl font-bold text-white mb-1 line-clamp-1 truncate">
               {movie.title}
             </h3>
             <p className="text-sm text-gray-300 font-medium">

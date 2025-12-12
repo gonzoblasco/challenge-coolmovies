@@ -220,7 +220,7 @@ describe("Reviews Component", () => {
     expect(await screen.findByText("Great")).toBeInTheDocument();
 
     // Click edit
-    const editBtn = await screen.findByRole("button", { name: "Edit review" });
+    const editBtn = await screen.findByRole("button", { name: /edit review/i });
     fireEvent.click(editBtn);
 
     // Change inputs
