@@ -9,7 +9,7 @@ import {
 } from "../../../generated/graphql";
 import { Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { extractErrorMessage } from "@/utils/errorHandling";
+import { errorService } from "@/services/errorService";
 import { commentSchema } from "@/lib/validation";
 
 interface CommentFormProps {
@@ -51,9 +51,8 @@ export const CommentForm: FC<CommentFormProps> = ({
       setForm({ title: "", body: "" });
       onSuccess();
     } catch (error) {
-      console.error("Failed to post comment:", error);
-      console.error("Failed to post comment:", error);
-      const message = extractErrorMessage(error);
+      errorService.log(error, "CommentForm.submitComment");
+      const message = errorService.getUserFriendlyMessage(error);
       setError(`Failed to post comment: ${message}`);
       toast.error(`Failed to post comment: ${message}`, {
         action: {

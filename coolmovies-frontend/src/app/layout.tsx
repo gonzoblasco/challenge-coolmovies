@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/sonner";
+import { GlobalErrorBoundary } from "@/components/GlobalErrorBoundary";
 
 export const metadata = {
   title: "Coolmovies Frontend",
@@ -23,7 +24,9 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Providers>
-          {children}
+          <GlobalErrorBoundary>
+            {children}
+          </GlobalErrorBoundary>
           <Toaster />
         </Providers>
       </body>

@@ -23,7 +23,7 @@ import {
 import { useCreateReview } from "../hooks/useCreateReview";
 import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { extractErrorMessage } from "@/utils/errorHandling";
+import { errorService } from "@/services/errorService";
 import { reviewSchema } from "@/lib/validation";
 
 export const CreateReviewDialog: FC = () => {
@@ -115,8 +115,8 @@ export const CreateReviewDialog: FC = () => {
 
       toast.success("Review published successfully!");
     } catch (error) {
-      console.error("Failed to create review", error);
-      const message = extractErrorMessage(error);
+      errorService.log(error, "CreateReviewDialog.handleSubmit");
+      const message = errorService.getUserFriendlyMessage(error);
       toast.error(`Failed to publish review: ${message}`, {
         action: {
           label: "Retry",

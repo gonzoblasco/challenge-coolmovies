@@ -1,12 +1,22 @@
 import React, { useState } from "react";
+import { errorService } from "@/services/errorService";
+import dynamic from "next/dynamic";
 import { useAppSelector } from "../../../state";
 import { useAllMoviesQuery, Movie } from "../../../generated/graphql";
 import { MovieCard } from "../components/MovieCard";
-import { ReviewListDialog } from "../components/ReviewListDialog";
-import { CreateReviewDialog } from "../components/CreateReviewDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+
+// Lazy load dialogs
+const ReviewListDialog = dynamic(
+  () => import("../components/ReviewListDialog").then((mod) => mod.ReviewListDialog),
+  { ssr: false }
+);
+const CreateReviewDialog = dynamic(
+  () => import("../components/CreateReviewDialog").then((mod) => mod.CreateReviewDialog),
+  { ssr: false }
+);
 
 const PAGE_SIZE = 12;
 
@@ -26,7 +36,7 @@ const Reviews = () => {
   // Combine errors if necessary, or just use queryError
 
   const errorMessage = queryError
-    ? (console.error("Failed to load movies:", queryError),
+    ? (errorService.log(queryError, "Reviews.useAllMoviesQuery"),
       "We could not load the movies. Please try reloading the page.")
     : null;
   const movies = data?.allMovies?.nodes || [];

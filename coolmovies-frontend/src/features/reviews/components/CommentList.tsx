@@ -17,7 +17,7 @@ import {
   CurrentUserQuery,
 } from "../../../generated/graphql";
 import { TEXT } from "@/constants/text";
-import { extractErrorMessage } from "@/utils/errorHandling";
+import { errorService } from "@/services/errorService";
 import { toast } from "sonner";
 
 interface Comment {
@@ -51,8 +51,8 @@ export const CommentList: FC<CommentListProps> = memo(({
       await deleteComment({ id: commentToDelete }).unwrap();
       setCommentToDelete(null);
     } catch (error) {
-      console.error("Failed to delete comment:", error);
-      const message = extractErrorMessage(error);
+      errorService.log(error, "CommentList.confirmDelete");
+      const message = errorService.getUserFriendlyMessage(error);
       toast.error(`Failed to delete comment: ${message}`);
     }
   };

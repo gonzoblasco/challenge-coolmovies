@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Star, Pencil, Check, X, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { extractErrorMessage } from "@/utils/errorHandling";
+import { errorService } from "@/services/errorService";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { useThrottle } from "@/hooks/useThrottle";
 import {
@@ -85,8 +85,8 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
       setIsEditing(false);
       toast.success("Review updated successfully");
     } catch (error) {
-      console.error("Failed to update review:", error);
-      const message = extractErrorMessage(error);
+      errorService.log(error, "ReviewCard.saveEdit");
+      const message = errorService.getUserFriendlyMessage(error);
       toast.error(`Failed to update review: ${message}`, {
         action: {
           label: "Retry",
@@ -104,8 +104,8 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
       setShowDeleteDialog(false);
       toast.success("Review deleted successfully");
     } catch (error) {
-      console.error("Failed to delete review:", error);
-      const message = extractErrorMessage(error);
+      errorService.log(error, "ReviewCard.handleDelete");
+      const message = errorService.getUserFriendlyMessage(error);
       toast.error(`Failed to delete review: ${message}`, {
         action: {
           label: "Retry",
