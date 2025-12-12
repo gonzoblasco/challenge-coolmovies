@@ -1,9 +1,7 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
-
 export type CreateStoreOptions = {
-  epicDependencies: EpicDependencies;
+  // epicDependencies?: EpicDependencies; // Deprecated/Unused
 };
 
 export type EpicDependencies = {
-  client: ApolloClient<NormalizedCacheObject>;
+  // client: ApolloClient<NormalizedCacheObject>; // Deprecated
 };

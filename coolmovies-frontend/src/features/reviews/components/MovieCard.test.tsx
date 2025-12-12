@@ -119,7 +119,7 @@ describe("MovieCard Component", () => {
     );
 
     const poster = screen.getByRole("button", {
-      name: "Read reviews for Test Movie",
+      name: "View reviews for Test Movie",
     });
     fireEvent.click(poster);
 
@@ -140,7 +140,7 @@ describe("MovieCard Component", () => {
     );
 
     const poster = screen.getByRole("button", {
-      name: "Read reviews for Test Movie",
+      name: "View reviews for Test Movie",
     });
 
     poster.focus();
@@ -159,7 +159,7 @@ describe("MovieCard Component", () => {
     );
 
     const poster = screen.getByRole("button", {
-      name: "Read reviews for Test Movie",
+      name: "View reviews for Test Movie",
     });
 
     poster.focus();

@@ -1,5 +1,5 @@
 "use client";
-import "../lib/observable-polyfill";
+
 
 /**
  * Providers Component - App Router Compatible
@@ -17,44 +17,17 @@ import "../lib/observable-polyfill";
 import React, { FC, useRef, PropsWithChildren } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { createStore } from "../state";
-import {
-  ApolloClient,
-  ApolloProvider,
-  InMemoryCache,
-  HttpLink,
-} from "@apollo/client";
+
 
 export const Providers: FC<PropsWithChildren> = ({ children }) => {
   // Initialize store once per client session using useRef
   // This ensures the store is created immediately on first render (not in useEffect)
   // Supporting proper SSR/RSC in App Router
-  const storeRef = useRef(
-    createStore({
-      epicDependencies: {
-        client: new ApolloClient({
-          cache: new InMemoryCache(),
-          link: new HttpLink({
-            uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "/graphql",
-          }),
-        }),
-      },
-    })
-  );
-
-  // Extract the Apollo Client from the store's epic dependencies
-  // This is needed for the ApolloProvider wrapper (used by legacy example epic)
-  const clientRef = useRef(
-    new ApolloClient({
-      cache: new InMemoryCache(),
-      link: new HttpLink({
-        uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "/graphql",
-      }),
-    })
-  );
+  const storeRef = useRef(createStore());
 
   return (
     <ReduxProvider store={storeRef.current}>
-      <ApolloProvider client={clientRef.current}>{children}</ApolloProvider>
+      {children}
     </ReduxProvider>
   );
 };

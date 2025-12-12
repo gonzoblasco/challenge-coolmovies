@@ -24,19 +24,9 @@ exports[`Reviews Component matches snapshot 1`] = `
           <div
             class="relative w-full overflow-hidden aspect-[2/3] bg-muted/20 rounded-sm group/poster"
           >
-            <img
-              alt="Poster of Cool Movie"
-              class="object-cover transition-transform duration-300 group-hover/poster:scale-105"
-              data-nimg="fill"
-              decoding="async"
-              loading="lazy"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              src="http://localhost/_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=3840&q=75"
-              srcset="/_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=256&q=75 256w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=384&q=75 384w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=640&q=75 640w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=750&q=75 750w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=828&q=75 828w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=1080&q=75 1080w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=1200&q=75 1200w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=1920&q=75 1920w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=2048&q=75 2048w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=3840&q=75 3840w"
-              style="position: absolute; height: 100%; width: 100%; left: 0px; top: 0px; right: 0px; bottom: 0px; color: transparent;"
-            />
             <button
-              class="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary z-10"
+              aria-label="View reviews for Cool Movie"
+              class="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-4 focus-visible:ring-primary focus-visible:ring-inset z-30 rounded-sm peer"
             >
               <span
                 class="sr-only"
@@ -45,6 +35,17 @@ exports[`Reviews Component matches snapshot 1`] = `
                 Cool Movie
               </span>
             </button>
+            <img
+              alt="Poster of Cool Movie"
+              class="object-cover transition-transform duration-300 group-hover/poster:scale-105 peer-focus:scale-90"
+              data-nimg="fill"
+              decoding="async"
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              src="http://localhost/_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=3840&q=75"
+              srcset="/_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=256&q=75 256w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=384&q=75 384w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=640&q=75 640w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=750&q=75 750w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=828&q=75 828w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=1080&q=75 1080w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=1200&q=75 1200w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=1920&q=75 1920w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=2048&q=75 2048w, /_next/image?url=http%3A%2F%2Fexample.com%2Fimage.jpg&w=3840&q=75 3840w"
+              style="position: absolute; height: 100%; width: 100%; left: 0px; top: 0px; right: 0px; bottom: 0px; color: transparent;"
+            />
             <div
               class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none z-20"
             >
