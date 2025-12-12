@@ -1,6 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -33,10 +34,17 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Loading } from "@/components/common/Loading";
 
 export const ReviewListDialog: FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-  const { selectedMovieId, isViewReviewsOpen } = useAppSelector(
-    (state) => state.reviews
-  );
+  const pathname = usePathname();
+
+  // URL State
+  const movieId = searchParams.get("movieId");
+  const action = searchParams.get("action");
+  const isViewReviewsOpen = action === "view-reviews" && !!movieId;
+  const selectedMovieId = isViewReviewsOpen ? movieId : null;
+
   const { data: userData } = useCurrentUserQuery();
   const { data: moviesData } = useAllMoviesQuery(); // Access cached movies
   const { data: allUsersData } = useAllUsersQuery();
@@ -66,14 +74,16 @@ export const ReviewListDialog: FC = () => {
   const allUsers = allUsersData?.allUsers?.nodes;
 
   const handleClose = () => {
-    dispatch(actions.closeViewReviews());
-    clearFilters(); // Clear filters on close
+    // On close, clear all URL parameters to reset the view.
+    router.push(pathname, { scroll: false });
   };
 
   const handleWriteReview = () => {
-    dispatch(actions.closeViewReviews());
     if (selectedMovieId) {
-      dispatch(actions.openWriteReview(selectedMovieId));
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("action", "write-review");
+      params.set("movieId", selectedMovieId);
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
     }
   };
 
