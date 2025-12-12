@@ -68,7 +68,19 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
       }`}
     >
       <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
-        <div className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20">
+        <div
+          className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20 cursor-pointer"
+          onClick={handleViewReviews}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleViewReviews();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label={`Read reviews for ${movie.title}`}
+        >
           <Image
             src={imgSrc}
             alt={altText}
