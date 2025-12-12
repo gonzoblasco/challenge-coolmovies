@@ -36,7 +36,6 @@ exports[`Reviews Component matches snapshot 1`] = `
               style="position: absolute; height: 100%; width: 100%; left: 0px; top: 0px; right: 0px; bottom: 0px; color: transparent;"
             />
             <button
-              aria-label="Read reviews for Cool Movie"
               class="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary z-10"
             >
               <span
