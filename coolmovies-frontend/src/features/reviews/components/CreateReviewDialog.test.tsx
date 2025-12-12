@@ -121,24 +121,67 @@ describe("CreateReviewDialog Component", () => {
   it("handles hover rating state", () => {
     renderWithProviders(<CreateReviewDialog />);
     
-    const rate5 = screen.getByLabelText("Rate 5 stars");
+    const rate3Button = screen.getByLabelText("Rate 3 stars");
+    const rate5Button = screen.getByLabelText("Rate 5 stars");
     
-    // Default text
-    expect(screen.getByText("Select a rating")).toBeInTheDocument();
+    // Initially, no rating selected - all stars should have muted color
+    const allStars = screen.getAllByLabelText(/Rate \d stars?/);
+    allStars.forEach(button => {
+      const star = button.querySelector('svg');
+      expect(star).toHaveClass('text-muted-foreground/30');
+      expect(star).not.toHaveClass('fill-yellow-400');
+    });
     
-    // Hover
-    fireEvent.mouseEnter(rate5);
-    // UI doesn't explicitly show text change for hover, but updates star classes.
-    // However, the component doesn't update text "Select a rating" on hover?
-    // Line 152: {rating ? `${rating}/5` : "Select a rating"}
-    // It uses `rating`, not `hoverRating` for text.
-    // But `hoverRating` affects star color.
+    // Hover over the 3rd star - first 3 stars should be highlighted
+    fireEvent.mouseEnter(rate3Button);
     
-    // To test `setHoverRating(0)` (onMouseLeave):
-    fireEvent.mouseLeave(rate5);
+    const star1 = screen.getByLabelText("Rate 1 stars").querySelector('svg');
+    const star2 = screen.getByLabelText("Rate 2 stars").querySelector('svg');
+    const star3 = screen.getByLabelText("Rate 3 stars").querySelector('svg');
+    const star4 = screen.getByLabelText("Rate 4 stars").querySelector('svg');
+    const star5 = screen.getByLabelText("Rate 5 stars").querySelector('svg');
     
-    // This is hard to assert visually without checking classes.
-    // But firing the events covers the lines.
-    // We can assume firing mouseLeave triggers the handler.
+    expect(star1).toHaveClass('fill-yellow-400');
+    expect(star1).toHaveClass('text-yellow-400');
+    expect(star2).toHaveClass('fill-yellow-400');
+    expect(star2).toHaveClass('text-yellow-400');
+    expect(star3).toHaveClass('fill-yellow-400');
+    expect(star3).toHaveClass('text-yellow-400');
+    
+    // Stars 4 and 5 should remain unhighlighted
+    expect(star4).toHaveClass('text-muted-foreground/30');
+    expect(star4).not.toHaveClass('fill-yellow-400');
+    expect(star5).toHaveClass('text-muted-foreground/30');
+    expect(star5).not.toHaveClass('fill-yellow-400');
+    
+    // Mouse leave - all stars should revert to muted
+    fireEvent.mouseLeave(rate3Button);
+    
+    allStars.forEach(button => {
+      const star = button.querySelector('svg');
+      expect(star).toHaveClass('text-muted-foreground/30');
+      expect(star).not.toHaveClass('fill-yellow-400');
+    });
+    
+    // Now click to set a rating, then hover over a different star
+    fireEvent.click(rate3Button);
+    
+    // Hover over 5th star - all 5 should be highlighted
+    fireEvent.mouseEnter(rate5Button);
+    
+    allStars.forEach(button => {
+      const star = button.querySelector('svg');
+      expect(star).toHaveClass('fill-yellow-400');
+      expect(star).toHaveClass('text-yellow-400');
+    });
+    
+    // Mouse leave - should revert to the clicked rating (3 stars)
+    fireEvent.mouseLeave(rate5Button);
+    
+    expect(star1).toHaveClass('fill-yellow-400');
+    expect(star2).toHaveClass('fill-yellow-400');
+    expect(star3).toHaveClass('fill-yellow-400');
+    expect(star4).not.toHaveClass('fill-yellow-400');
+    expect(star5).not.toHaveClass('fill-yellow-400');
   });
 });
