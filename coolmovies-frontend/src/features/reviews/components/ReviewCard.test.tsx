@@ -172,7 +172,6 @@ describe("ReviewCard Component", () => {
 
     const deleteBtn = screen.getByRole("button", { name: "Deleting..." });
     expect(deleteBtn).toBeDisabled();
-    expect(deleteBtn).toHaveClass("opacity-50 pointer-events-none");
   });
 
   it("shows loading state when editing", () => {
@@ -192,6 +191,5 @@ describe("ReviewCard Component", () => {
     expect(saveBtn).toBeDisabled();
     // Check if the spinner is present (which implies loading state logic was hit)
     expect(saveBtn.querySelector(".animate-spin")).toBeInTheDocument();
-    expect(saveBtn).toHaveClass("opacity-50 pointer-events-none");
   });
 });

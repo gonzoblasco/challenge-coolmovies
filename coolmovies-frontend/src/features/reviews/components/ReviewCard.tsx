@@ -193,9 +193,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
                       <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
-                        className={`bg-destructive text-destructive-foreground hover:bg-destructive/90 ${
-                          isDeleting ? "opacity-50 pointer-events-none" : ""
-                        }`}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
                         {isDeleting ? "Deleting..." : TEXT.DELETE}
                       </AlertDialogAction>
@@ -232,9 +230,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
               <Button
                 size="sm"
                 onClick={saveEdit}
-                className={`h-8 w-8 p-0 ${
-                  isUpdating ? "opacity-50 pointer-events-none" : ""
-                }`}
+                className="h-8 w-8 p-0"
                 disabled={!editForm.title || !editForm.body || isUpdating}
                 aria-label="Save review"
               >
