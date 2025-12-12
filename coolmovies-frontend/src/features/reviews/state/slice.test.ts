@@ -1,4 +1,5 @@
 import reducer, { actions, ReviewsState } from './slice';
+import { Movie } from '../../../generated/graphql';
 
 describe('reviews slice', () => {
   const initialState: ReviewsState = {
@@ -23,13 +24,13 @@ describe('reviews slice', () => {
 
   describe('fetchMoviesSuccess', () => {
     it('should set movies and loading to false', () => {
-      const movies = [
+      const movies: Partial<Movie>[] = [
         { id: '1', title: 'Movie 1' },
         { id: '2', title: 'Movie 2' },
-      ] as any[];
+      ];
       const actual = reducer(
         { ...initialState, loading: true },
-        actions.fetchMoviesSuccess(movies)
+        actions.fetchMoviesSuccess(movies as Movie[])
       );
       expect(actual.loading).toBe(false);
       expect(actual.movies).toEqual(movies);

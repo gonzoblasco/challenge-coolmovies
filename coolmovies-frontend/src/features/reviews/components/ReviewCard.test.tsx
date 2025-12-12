@@ -4,6 +4,7 @@ import { ReviewCard } from "./ReviewCard";
 import { renderWithProviders } from "../../../test-utils";
 import * as graphqlHooks from "../../../generated/graphql";
 import { TEXT } from "@/constants/text";
+import { Review } from "../types";
 
 jest.mock("../../../generated/graphql", () => ({
   useUpdateReviewMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
@@ -15,25 +16,41 @@ jest.mock("../../../generated/graphql", () => ({
 }));
 
 describe("ReviewCard Component", () => {
-  const mockUser = { id: "user-1", name: "Test User" } as any;
+  // Extract the User type from CurrentUserQuery
+  type User = NonNullable<graphqlHooks.CurrentUserQuery["currentUser"]>;
+
+  const mockUser: User = {
+    id: "user-1",
+    name: "Test User",
+    __typename: "User",
+  };
+
   const mockReview = {
     id: "r1",
     title: "Review Title",
     body: "Review Body",
     rating: 4,
     userReviewerId: "user-1",
-    userByUserReviewerId: { name: "Test User" },
+    userByUserReviewerId: {
+      id: "user-1",
+      name: "Test User",
+      __typename: "User" as const,
+    },
     commentsByMovieReviewId: {
       nodes: [
         {
           id: "c1",
           body: "Comment 1",
-          userByUserId: { name: "Commenter 1" },
+          userByUserId: {
+            id: "user-2",
+            name: "Commenter 1",
+            __typename: "User" as const,
+          },
           userId: "user-2",
         },
       ],
     },
-  } as any;
+  } as Review;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -68,7 +85,8 @@ describe("ReviewCard Component", () => {
   });
 
   it("deletes review flow", async () => {
-    const deleteReviewMock = jest.fn().mockReturnValue({
+    const deleteReviewMock = jest.fn().mockResolvedValue({
+      data: {},
       unwrap: jest.fn().mockResolvedValue({}),
     });
     (graphqlHooks.useDeleteReviewMutation as jest.Mock).mockReturnValue([
@@ -95,19 +113,14 @@ describe("ReviewCard Component", () => {
   });
 
   it("edits review flow", async () => {
-    const updateReviewMock = jest.fn().mockReturnValue({
-      unwrap: jest.fn().mockResolvedValue({}), // RTK Query standard
+    const updateReviewMock = jest.fn().mockResolvedValue({
+      data: {},
+      unwrap: jest.fn().mockResolvedValue({}),
     });
-    // However, useUpdateReviewMutation in component does NOT use unwrap() in catch block?
-    // Let's check code:
-    // await updateReview({...}); -> returns promise with { data } or { error }
-    // Actually typically RTK mutation returns { unwrap: ... }.
-    // Detailed check: component code says: `await updateReview({...})` without .unwrap().
-    // So mocking the return value of the function is enough.
 
     (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
-      updateReviewMock, // Function
-      { isLoading: false }, // result object
+      updateReviewMock,
+      { isLoading: false },
     ]);
 
     renderWithProviders(

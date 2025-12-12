@@ -11,16 +11,19 @@ jest.mock("../../../generated/graphql", () => ({
 }));
 
 describe("CommentList Component", () => {
-  const mockUser = {
+  // Extract the User type from CurrentUserQuery
+  type User = NonNullable<graphqlHooks.CurrentUserQuery["currentUser"]>;
+
+  const mockUser: User = {
     id: "user-1",
     name: "Test User",
     __typename: "User",
-  } as any;
-  const otherUser = {
+  };
+  const otherUser: User = {
     id: "user-2",
     name: "Other User",
     __typename: "User",
-  } as any;
+  };
 
   const mockComments = [
     {

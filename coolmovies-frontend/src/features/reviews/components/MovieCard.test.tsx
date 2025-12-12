@@ -15,15 +15,18 @@ jest.mock("../../../generated/graphql", () => ({
 }));
 
 describe("MovieCard Component", () => {
-  const mockMovie = {
+  const mockMovie: Partial<graphqlHooks.Movie> = {
     id: "1",
     title: "Test Movie",
     releaseDate: "2023-01-01",
     imgUrl: "http://example.com/image.jpg",
     movieReviewsByMovieId: {
-      nodes: [{ id: "r1" }, { id: "r2" }],
-    },
-  } as any;
+      nodes: [
+        { id: "r1", rating: 4 } as unknown as graphqlHooks.MovieReview,
+        { id: "r2", rating: 5 } as unknown as graphqlHooks.MovieReview,
+      ],
+    } as unknown as graphqlHooks.MovieReviewsConnection,
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -34,7 +37,9 @@ describe("MovieCard Component", () => {
   });
 
   it("renders movie information", () => {
-    renderWithProviders(<MovieCard movie={mockMovie} />);
+    renderWithProviders(
+      <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
+    );
 
     expect(screen.getByText("Test Movie")).toBeInTheDocument();
     expect(screen.getByText(/2022/)).toBeInTheDocument();
@@ -44,17 +49,23 @@ describe("MovieCard Component", () => {
   // Removed: Component doesn't handle null dates properly, shows 1969
 
   it("renders 0 reviews when no reviews exist", () => {
-    const movieNoReviews = {
+    const movieNoReviews: Partial<graphqlHooks.Movie> = {
       ...mockMovie,
-      movieReviewsByMovieId: { nodes: [] },
+      movieReviewsByMovieId: {
+        nodes: [],
+      } as unknown as graphqlHooks.MovieReviewsConnection,
     };
-    renderWithProviders(<MovieCard movie={movieNoReviews} />);
+    renderWithProviders(
+      <MovieCard movie={movieNoReviews as unknown as graphqlHooks.Movie} />
+    );
 
     expect(screen.getByText(/0.*Reviews/)).toBeInTheDocument();
   });
 
   it("dispatches openViewReviews on 'Read' button click", () => {
-    renderWithProviders(<MovieCard movie={mockMovie} />);
+    renderWithProviders(
+      <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Read" }));
 
@@ -67,7 +78,9 @@ describe("MovieCard Component", () => {
   });
 
   it("dispatches openWriteReview on 'Review' button click", () => {
-    renderWithProviders(<MovieCard movie={mockMovie} />);
+    renderWithProviders(
+      <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Review" }));
 
