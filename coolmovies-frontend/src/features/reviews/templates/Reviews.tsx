@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { errorService } from "@/services/errorService";
 import dynamic from "next/dynamic";
 import { useAppSelector } from "../../../state";
-import { useAllMoviesQuery, Movie } from "../../../generated/graphql";
+import { useAllMoviesQuery, Movie, api } from "../../../generated/graphql";
 import { MovieCard } from "../components/MovieCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,20 @@ const Reviews = () => {
     offset: page * PAGE_SIZE,
   });
 
+  // Prefetch next page
+  const prefetchMovies = api.usePrefetch('AllMovies');
+  const totalCount = data?.allMovies?.totalCount || 0;
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
+  React.useEffect(() => {
+    if (page < totalPages - 1) {
+      prefetchMovies({
+        first: PAGE_SIZE,
+        offset: (page + 1) * PAGE_SIZE,
+      });
+    }
+  }, [page, totalPages, prefetchMovies]);
+
   // Combine errors if necessary, or just use queryError
 
   const errorMessage = queryError
@@ -42,9 +56,6 @@ const Reviews = () => {
       "We could not load the movies. Please try reloading the page.")
     : null;
   const movies = data?.allMovies?.nodes || [];
-  const totalCount = data?.allMovies?.totalCount || 0;
-
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   const handlePrevious = () => {
     setPage((p) => Math.max(0, p - 1));

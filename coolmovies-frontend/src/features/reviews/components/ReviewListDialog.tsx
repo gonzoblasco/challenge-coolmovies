@@ -29,7 +29,8 @@ import {
 import { ReviewCard } from "./ReviewCard";
 import { useReviewFilters } from "../hooks/useReviewFilters";
 import { useReviews } from "../hooks/useReviews";
-import { useScrollRestoration } from "@/hooks/useScrollRestoration"; // Imported Hook
+import * as ReactWindow from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 import { constructFilter } from "../utils/helpers";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Loading } from "@/components/common/Loading";
@@ -92,10 +93,7 @@ export const ReviewListDialog: FC = () => {
     if (!open) handleClose();
   };
 
-  // Scroll Restoration Logic
-  const scrollContainerRef = useScrollRestoration(
-    selectedMovieId && !reviewsLoading ? `reviews-scroll-${selectedMovieId}` : "loading"
-  );
+
 
   if (!selectedMovie) return null;
 
@@ -171,8 +169,7 @@ export const ReviewListDialog: FC = () => {
         </div>
 
         <div 
-          ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto pr-2 space-y-4 py-4"
+          className="flex-1 min-h-0 py-4"
           role="status"
           aria-live="polite"
           aria-busy={reviewsLoading}
@@ -195,18 +192,35 @@ export const ReviewListDialog: FC = () => {
                 )}
               </div>
             ) : (
-              reviewsData.movieById.movieReviewsByMovieId.nodes.map(
-                (review) => {
-                  if (!review) return null;
-                  return (
-                    <ReviewCard
-                      key={review.id}
-                      review={review}
-                      currentUser={currentUser}
-                    />
-                  );
-                }
-              )
+              <AutoSizer>
+                {({ height, width }) => (
+                  <ReactWindow.FixedSizeList
+                    height={height}
+                    width={width}
+                    itemCount={reviewsData.movieById!.movieReviewsByMovieId!.nodes.length}
+                    itemSize={300} // Approximate height for reviews
+                    itemData={{
+                      reviews: reviewsData.movieById!.movieReviewsByMovieId!.nodes,
+                      currentUser,
+                    }}
+                    className="pr-2"
+                  >
+                    {({ index, style, data }) => {
+                      const review = data.reviews[index];
+                      if (!review) return null;
+                      return (
+                        <div style={style} className="pb-4">
+                            <ReviewCard
+                              key={review.id}
+                              review={review}
+                              currentUser={data.currentUser}
+                            />
+                        </div>
+                      );
+                    }}
+                  </ReactWindow.FixedSizeList>
+                )}
+              </AutoSizer>
             )}
           </ErrorBoundary>
         </div>
