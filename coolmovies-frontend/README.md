@@ -33,6 +33,13 @@ A modern movie review application built with Next.js 15, featuring a beautiful d
 - Yarn package manager
 - Docker (for backend)
 
+## 🧠 Key Decisions
+
+- **Why RTK Query over Apollo**: Better TypeScript integration, smaller bundle size, and finer control over cache behavior (tags, optimistic updates).
+- **Why URL state for filters**: Ensures deep-linking support, easy sharing of filtered views, and proper browser history navigation back/forward support.
+- **Why Shadcn/UI**: Provides a modern, accessible, and highly customizable component library based on Radix UI, avoiding the runtime overhead of styled-components/Emotion found in legacy MUI.
+- **Why Minimal Redux Slice**: Most state is derived from the server (handled by RTK Query) or URL. We only keep strictly ephemeral/global UI state in Redux to avoid duplication and inconsistencies.
+
 ### Backend Setup
 
 ```bash

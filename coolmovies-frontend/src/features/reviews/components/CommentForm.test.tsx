@@ -138,7 +138,7 @@ describe("CommentForm Component", () => {
     fireEvent.click(screen.getByRole("button", { name: "Reply" }));
 
     expect(
-      await screen.findByText("Failed to post comment. Please try again.")
+      await screen.findByText("Failed to post comment: Failed")
     ).toBeInTheDocument();
 
     // Verify form data is preserved
@@ -183,7 +183,7 @@ describe("CommentForm Component", () => {
     fireEvent.click(screen.getByRole("button", { name: "Reply" }));
 
     const errorMsg = await screen.findByText(
-      "Failed to post comment. Please try again."
+      "Failed to post comment: Failed"
     );
     expect(errorMsg).toBeInTheDocument();
 
@@ -196,7 +196,7 @@ describe("CommentForm Component", () => {
 
     // Error should be gone
     expect(
-      screen.queryByText("Failed to post comment. Please try again.")
+      screen.queryByText("Failed to post comment: Failed")
     ).not.toBeInTheDocument();
   });
 
@@ -226,5 +226,37 @@ describe("CommentForm Component", () => {
       target: { value: "hi" },
     });
     expect(submitBtn).not.toBeDisabled();
+  });
+  it("handles RTK Query error object", async () => {
+    const createCommentMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockRejectedValue({ data: { message: "Server Error" } }),
+    });
+
+    (graphqlHooks.useCurrentUserQuery as jest.Mock).mockReturnValue({
+      data: { currentUser: mockUser },
+      isLoading: false,
+    });
+    (graphqlHooks.useCreateCommentMutation as jest.Mock).mockReturnValue([
+      createCommentMock,
+      { isLoading: false },
+    ]);
+
+    renderWithProviders(
+      <CommentForm
+        reviewId={reviewId}
+        onCancel={mockOnCancel}
+        onSuccess={mockOnSuccess}
+      />
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Write a comment..."), {
+      target: { value: "My Comment" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Reply" }));
+
+    expect(
+      await screen.findByText("Failed to post comment: Server Error")
+    ).toBeInTheDocument();
   });
 });
