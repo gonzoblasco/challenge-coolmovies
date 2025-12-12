@@ -1,4 +1,5 @@
 import { api } from '../generated/graphql';
+import { RootState } from './types';
 
 export const enhancedApi = api.enhanceEndpoints({
   endpoints: {
@@ -24,16 +25,15 @@ export const enhancedApi = api.enhanceEndpoints({
         const patchResult = dispatch(
           api.util.updateQueryData('MovieReviews', { id: movieId, filter: undefined }, (draft) => {
             // Access current user from cache to fake the author
-             // @ts-ignore - Accessing the root state type which is not easily available here without circular dependency
-            const state = getState() as any;
+            const state = getState() as RootState;
             // Trying to find currentUser in the cache
             const currentUserQuery = api.endpoints.CurrentUser.select(undefined)(state);
             const user = currentUserQuery.data?.currentUser;
 
             if (draft.movieById?.movieReviewsByMovieId?.nodes) {
               draft.movieById.movieReviewsByMovieId.nodes.unshift({
-                // @ts-ignore - Partial review object
-                id: 'temp-id-' + Date.now(),
+                // Generate a more robust temporary ID to avoid collisions
+                id: `temp-id-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                 title,
                 body,
                 rating,

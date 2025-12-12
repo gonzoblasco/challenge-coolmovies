@@ -22,8 +22,9 @@ export const createStore = (preloadedState?: any) => {
   return createdStore;
 };
 
+import { RootState } from './types';
 export type AppStore = ReturnType<typeof createStore>;
-export type RootState = ReturnType<typeof rootReducer>;
+// RootState is now imported from './types'
 export type AppDispatch = AppStore['dispatch'];
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
