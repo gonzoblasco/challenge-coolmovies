@@ -97,7 +97,7 @@ export const CommentForm: FC<CommentFormProps> = ({
         onChange={(e) => setForm({ ...form, body: e.target.value })}
         className="min-h-[60px] text-sm"
       />
-      {error && <div className="text-sm text-destructive">{error}</div>}
+      {error && <div className="text-sm text-destructive" role="alert">{error}</div>}
       <div className="flex justify-end gap-2">
         <Button size="sm" variant="ghost" type="button" onClick={onCancel}>
           Cancel

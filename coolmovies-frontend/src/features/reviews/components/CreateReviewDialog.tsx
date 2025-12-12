@@ -150,7 +150,7 @@ export const CreateReviewDialog: FC = () => {
               className={errors.title ? "border-red-500" : ""}
             />
             {errors.title && (
-              <p className="text-sm text-red-500">{errors.title}</p>
+              <p className="text-sm text-red-500" role="alert">{errors.title}</p>
             )}
           </div>
 
@@ -212,7 +212,7 @@ export const CreateReviewDialog: FC = () => {
               </span>
             </div>
             {errors.rating && (
-              <p className="text-sm text-red-500">{errors.rating}</p>
+              <p className="text-sm text-red-500" role="alert">{errors.rating}</p>
             )}
           </div>
 
@@ -227,7 +227,7 @@ export const CreateReviewDialog: FC = () => {
               className={errors.body ? "border-red-500" : ""}
             />
             {errors.body && (
-              <p className="text-sm text-red-500">{errors.body}</p>
+              <p className="text-sm text-red-500" role="alert">{errors.body}</p>
             )}
           </div>
         </div>
