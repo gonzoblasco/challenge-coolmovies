@@ -204,7 +204,7 @@ export const ReviewListDialog: FC = () => {
                       rowProps={{ reviews, currentUser }}
                       rowComponent={({ index, style, reviews: reviewList, currentUser: user }) => {
                         const review = reviewList[index];
-                        if (!review) return null;
+                        if (!review) return <></>;
                         return (
                           <div style={style} className="pb-4">
                             <ReviewCard
