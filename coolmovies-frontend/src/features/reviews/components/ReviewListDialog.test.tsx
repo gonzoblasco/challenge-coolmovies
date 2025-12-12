@@ -122,9 +122,38 @@ describe("ReviewListDialog Component", () => {
   });
 
   it("allows editing a review", async () => {
-    // This logic is mostly handled inside ReviewCard now, so integrated test in Reviews.test.tsx covers it better,
-    // but checking rendering here is good.
+    const updateReviewMock = jest.fn();
+    (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
+      updateReviewMock, // The mutation trigger function
+      { isLoading: false }, // The mutation result object
+    ]);
+
     renderComponent();
-    expect(await screen.findByText("Great")).toBeInTheDocument();
+
+    // Find and click the edit button
+    const editButton = await screen.findByRole("button", {
+      name: /edit review/i,
+    });
+    fireEvent.click(editButton);
+
+    // Change the title
+    const titleInput = screen.getByPlaceholderText("Review Title");
+    fireEvent.change(titleInput, { target: { value: "Updated Title" } });
+
+    // Save
+    const saveButton = screen.getByRole("button", { name: /save review/i });
+    fireEvent.click(saveButton);
+
+    // Verify mutation was called with correct args
+    await waitFor(() => {
+      expect(updateReviewMock).toHaveBeenCalledWith({
+        id: "r1",
+        patch: {
+          title: "Updated Title",
+          body: "Loved it", // Original body
+          rating: 5, // Original rating
+        },
+      });
+    });
   });
 });

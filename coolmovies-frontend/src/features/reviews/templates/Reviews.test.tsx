@@ -249,4 +249,9 @@ describe("Reviews Component", () => {
     // Note: Logic for "Optimistic update" usually handled by RTK Query cache updates or manual state updates.
     // Since we mock the hook, we verify the call.
   });
+
+  it("matches snapshot", () => {
+    const { container } = renderWithProviders(<Reviews />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 });
