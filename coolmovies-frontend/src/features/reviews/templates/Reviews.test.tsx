@@ -20,6 +20,7 @@ jest.mock("../../../generated/graphql", () => ({
     enhanceEndpoints: jest.fn(() => ({
       injectEndpoints: jest.fn(),
     })),
+    usePrefetch: jest.fn(() => jest.fn()),
   },
 }));
 
@@ -126,27 +127,13 @@ describe("Reviews Component", () => {
       isLoading: true,
     });
 
-    renderWithProviders(<Reviews />, {
-      preloadedState: {
-        reviews: {
-          loading: true,
-          movies: [],
-        },
-      },
-    });
+    renderWithProviders(<Reviews />);
 
     expect(screen.queryByText("Cool Movie")).not.toBeInTheDocument();
   });
 
   it("renders movies after loading", async () => {
-    renderWithProviders(<Reviews />, {
-      preloadedState: {
-        reviews: {
-          loading: false,
-          movies: mockMovies, // Should be populated by fetchMoviesSuccess but we mock the query here
-        },
-      },
-    });
+    renderWithProviders(<Reviews />);
 
     // The component fetches movies via useAllMoviesQuery (mocked) and renders MovieCard
     expect(await screen.findByText("Cool Movie")).toBeInTheDocument();
@@ -159,14 +146,7 @@ describe("Reviews Component", () => {
       new URLSearchParams("movieId=1&action=view-reviews")
     );
 
-    renderWithProviders(<Reviews />, {
-      preloadedState: {
-        reviews: {
-          loading: false,
-          movies: mockMovies,
-        },
-      },
-    });
+    renderWithProviders(<Reviews />);
 
     // The dialog should be open and showing the review (from mocked useMovieReviewsQuery)
     expect(await screen.findByText("Great")).toBeInTheDocument();
@@ -198,14 +178,7 @@ describe("Reviews Component", () => {
       { isLoading: false },
     ]);
 
-    renderWithProviders(<Reviews />, {
-      preloadedState: {
-        reviews: {
-          loading: false,
-          movies: mockMovies,
-        },
-      },
-    });
+    renderWithProviders(<Reviews />);
 
     // Verify initial state
     expect(await screen.findByText("Great")).toBeInTheDocument();

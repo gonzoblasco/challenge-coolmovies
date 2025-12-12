@@ -26,6 +26,13 @@ jest.mock("sonner", () => ({
   },
 }));
 
+jest.mock("../../../services/errorService", () => ({
+  errorService: {
+    log: jest.fn(),
+    getUserFriendlyMessage: jest.fn((err: any) => err.data?.message || err.message || "mock error message"),
+  },
+}));
+
 describe("ReviewCard Component", () => {
   // Extract the User type from CurrentUserQuery
   type User = NonNullable<graphqlHooks.CurrentUserQuery["currentUser"]>;

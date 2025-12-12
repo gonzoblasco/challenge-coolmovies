@@ -10,6 +10,15 @@ jest.mock("../../../generated/graphql", () => ({
   useDeleteCommentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
 }));
 
+jest.mock("../../../services/errorService", () => ({
+  errorService: {
+    log: jest.fn(),
+    getUserFriendlyMessage: jest.fn(() => "mock error message"),
+  },
+}));
+
+import { errorService } from "../../../services/errorService";
+
 describe("CommentList Component", () => {
   // Extract the User type from CurrentUserQuery
   type User = NonNullable<graphqlHooks.CurrentUserQuery["currentUser"]>;
@@ -110,9 +119,6 @@ describe("CommentList Component", () => {
   });
 
   it("handles delete error gracefully", async () => {
-    const consoleSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
     const deleteCommentMock = jest.fn().mockReturnValue({
       unwrap: jest.fn().mockRejectedValue(new Error("Failed")),
     });
@@ -130,12 +136,10 @@ describe("CommentList Component", () => {
 
     await waitFor(() => {
       expect(deleteCommentMock).toHaveBeenCalled();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Failed to delete comment:",
-        expect.any(Error)
+      expect(errorService.log).toHaveBeenCalledWith(
+        expect.any(Error),
+        "CommentList.confirmDelete"
       );
     });
-
-    consoleSpy.mockRestore();
   });
 });

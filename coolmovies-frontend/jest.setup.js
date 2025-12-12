@@ -40,11 +40,43 @@ jest.mock("./src/state/enhancedApi", () => ({
         initiate: jest.fn(() => ({ unwrap: jest.fn() })),
       }
     },
+    usePrefetch: jest.fn(() => jest.fn()),
     useAllMoviesQuery: jest.fn(() => ({ data: { allMovies: { nodes: [] } }, isLoading: false, error: null })),
     useMovieReviewsQuery: jest.fn(() => ({ data: { movieById: { movieReviewsByMovieId: { nodes: [] } } }, isLoading: false, error: null })),
+    useCurrentUserQuery: jest.fn(() => ({ data: { currentUser: null }, isLoading: false, error: null })),
+    useAllUsersQuery: jest.fn(() => ({ data: { allUsers: { nodes: [] } }, isLoading: false, error: null })),
     useCreateReviewMutation: jest.fn(() => [jest.fn(() => ({ unwrap: jest.fn() })), { isLoading: false }]),
     useCreateCommentMutation: jest.fn(() => [jest.fn(() => ({ unwrap: jest.fn() })), { isLoading: false }]),
     useDeleteCommentMutation: jest.fn(() => [jest.fn(() => ({ unwrap: jest.fn() })), { isLoading: false }]),
     useDeleteReviewMutation: jest.fn(() => [jest.fn(() => ({ unwrap: jest.fn() })), { isLoading: false }]),
   },
+}));
+// Mock react-window and auto-sizer
+jest.mock("react-virtualized-auto-sizer", () => ({ children }) =>
+  children({ height: 1000, width: 1000 })
+);
+
+jest.mock("react-window", () => ({
+  FixedSizeList: ({ children, itemCount, itemSize, itemData, ...props }) => (
+    <div data-testid="virtual-list">
+      {Array.from({ length: itemCount }).map((_, index) =>
+        children({
+          index,
+          style: { width: "100%", height: itemSize },
+          data: itemData,
+        })
+      )}
+    </div>
+  ),
+  VariableSizeList: ({ children, itemCount, itemSize, itemData, ...props }) => (
+    <div data-testid="virtual-list">
+      {Array.from({ length: itemCount }).map((_, index) =>
+        children({
+          index,
+          style: { width: "100%", height: typeof itemSize === 'function' ? itemSize(index) : itemSize },
+          data: itemData,
+        })
+      )}
+    </div>
+  ),
 }));

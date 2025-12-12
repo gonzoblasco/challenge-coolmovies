@@ -5,7 +5,6 @@ describe("Redux Store Integration", () => {
   it("should initialize with correct reducer structure", () => {
     const store = createStore();
     const state = store.getState();
-    expect(state).toHaveProperty("reviews");
     expect(state).toHaveProperty("api");
   });
 
@@ -14,10 +13,5 @@ describe("Redux Store Integration", () => {
     // Basic check to ensure the API slice is registered
     const state = store.getState();
     expect(state).toHaveProperty("api");
-  });
-
-  it("should have correct initial state for reviews", () => {
-     const store = createStore();
-     expect(store.getState().reviews.filterPanelOpen).toBe(false);
   });
 });

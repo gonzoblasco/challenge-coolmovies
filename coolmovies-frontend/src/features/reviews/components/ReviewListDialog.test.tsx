@@ -31,6 +31,7 @@ jest.mock("../../../generated/graphql", () => ({
     enhanceEndpoints: jest.fn(() => ({
       injectEndpoints: jest.fn(),
     })),
+    usePrefetch: jest.fn(() => jest.fn()),
   },
 }));
 
@@ -154,14 +155,7 @@ describe("ReviewListDialog Component", () => {
       useSearchParamsMock.mockReturnValue(new URLSearchParams(""));
     }
 
-    return renderWithProviders(<ReviewListDialog />, {
-      preloadedState: {
-        reviews: {
-          loading: false,
-          movies: [],
-        },
-      },
-    });
+    return renderWithProviders(<ReviewListDialog />);
   };
 
   it("renders reviews successfully", async () => {

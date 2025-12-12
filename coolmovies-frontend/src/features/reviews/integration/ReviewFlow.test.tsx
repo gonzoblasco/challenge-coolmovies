@@ -19,6 +19,7 @@ jest.mock("../../../generated/graphql", () => ({
     enhanceEndpoints: jest.fn(() => ({
       injectEndpoints: jest.fn(),
     })),
+    usePrefetch: jest.fn(() => jest.fn()),
   },
 }));
 
@@ -133,14 +134,7 @@ describe("Review Flow Integration", () => {
       { isLoading: false },
     ]);
 
-    const { rerender } = renderWithProviders(<Reviews />, {
-      preloadedState: {
-        reviews: {
-          loading: false,
-          movies: mockMovies,
-        },
-      },
-    });
+    const { rerender } = renderWithProviders(<Reviews />);
 
     // 1. Find Movie and Click "Review" button
     expect(
