@@ -138,7 +138,7 @@ describe("CommentForm Component", () => {
     fireEvent.click(screen.getByRole("button", { name: "Reply" }));
 
     expect(
-      await screen.findByText("Failed to post comment. Please try again.")
+      await screen.findByText("Failed to post comment: Failed")
     ).toBeInTheDocument();
 
     // Verify form data is preserved
@@ -183,7 +183,7 @@ describe("CommentForm Component", () => {
     fireEvent.click(screen.getByRole("button", { name: "Reply" }));
 
     const errorMsg = await screen.findByText(
-      "Failed to post comment. Please try again."
+      "Failed to post comment: Failed"
     );
     expect(errorMsg).toBeInTheDocument();
 
@@ -196,7 +196,7 @@ describe("CommentForm Component", () => {
 
     // Error should be gone
     expect(
-      screen.queryByText("Failed to post comment. Please try again.")
+      screen.queryByText("Failed to post comment: Failed")
     ).not.toBeInTheDocument();
   });
 

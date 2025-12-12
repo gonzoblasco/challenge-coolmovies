@@ -43,8 +43,9 @@ export const CommentForm: FC<CommentFormProps> = ({
       onSuccess();
     } catch (error) {
       console.error("Failed to post comment:", error);
-      setError("Failed to post comment. Please try again.");
-      toast.error("Failed to post comment", {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      setError(`Failed to post comment: ${message}`);
+      toast.error(`Failed to post comment: ${message}`, {
         action: {
           label: "Retry",
           onClick: () => submitComment(),

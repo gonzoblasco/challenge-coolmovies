@@ -36,7 +36,7 @@ export const CreateReviewDialog: FC = () => {
   const isWriteReviewOpen = action === "write-review" && !!movieId;
   const selectedMovieId = isWriteReviewOpen ? movieId : null;
 
-  const { loading: sliceLoading } = useAppSelector((state) => state.reviews);
+
 
   // Use RTK Query to get cache access to movies
   const { data: moviesData } = useAllMoviesQuery();
@@ -98,7 +98,8 @@ export const CreateReviewDialog: FC = () => {
       toast.success("Review published successfully!");
     } catch (error) {
       console.error("Failed to create review", error);
-      toast.error("Failed to publish review", {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Failed to publish review: ${message}`, {
         action: {
           label: "Retry",
           onClick: () => handleSubmit(),
