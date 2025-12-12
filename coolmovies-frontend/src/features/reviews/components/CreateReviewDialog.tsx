@@ -36,8 +36,11 @@ export const CreateReviewDialog: FC = () => {
   const { data: userData } = useCurrentUserQuery();
 
   const currentUser = userData?.currentUser;
-  const selectedMovie = moviesData?.allMovies?.nodes.find(
-    (m: any) => m?.id === selectedMovieId
+
+  const selectedMovie = React.useMemo(
+    () =>
+      moviesData?.allMovies?.nodes.find((m: any) => m?.id === selectedMovieId),
+    [moviesData?.allMovies?.nodes, selectedMovieId]
   );
 
   const [rating, setRating] = useState<number>(0);

@@ -4,6 +4,17 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useDebounce } from "../../../hooks/useDebounce";
 
+/**
+ * Manages review filters with URL synchronization and debouncing.
+ * 
+ * Why: Filters need to persist across navigation and support back/forward buttons.
+ * Debouncing prevents excessive URL updates during typing.
+ * 
+ * @returns {Object} Filter state and updater functions
+ * @example
+ * const { ratingFilter, updateFilter } = useReviewFilters();
+ * updateFilter('rating', 5); // Updates URL to ?rating=5
+ */
 export const useReviewFilters = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
