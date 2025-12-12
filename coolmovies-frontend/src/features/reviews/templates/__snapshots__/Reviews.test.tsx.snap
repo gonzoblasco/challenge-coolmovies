@@ -27,14 +27,7 @@ exports[`Reviews Component matches snapshot 1`] = `
             <button
               aria-label="View reviews for Cool Movie"
               class="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-4 focus-visible:ring-primary focus-visible:ring-inset z-30 rounded-sm peer"
-            >
-              <span
-                class="sr-only"
-              >
-                Read reviews for 
-                Cool Movie
-              </span>
-            </button>
+            />
             <img
               alt="Poster of Cool Movie"
               class="object-cover transition-transform duration-300 group-hover/poster:scale-105 peer-focus:scale-90"

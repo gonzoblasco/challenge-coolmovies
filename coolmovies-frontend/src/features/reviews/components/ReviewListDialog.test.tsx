@@ -27,13 +27,6 @@ jest.mock("../hooks/useReviews", () => ({
   useReviews: jest.fn(),
 }));
 
-jest.mock("../../../state/enhancedApi", () => ({
-  enhancedApi: {
-    reducer: jest.fn(),
-    reducerPath: "api",
-    middleware: jest.fn(),
-  },
-}));
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(() => ({
@@ -116,6 +109,7 @@ describe("ReviewListDialog Component", () => {
       preloadedState: {
         reviews: {
           loading: false,
+          movies: [],
         },
       },
     });

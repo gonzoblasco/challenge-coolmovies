@@ -23,21 +23,6 @@ jest.mock("../../../generated/graphql", () => ({
   },
 }));
 
-jest.mock("../../../state/enhancedApi", () => ({
-  enhancedApi: {
-    reducer: jest.fn(),
-    reducerPath: "api",
-    middleware: jest.fn(),
-    endpoints: {
-      AllMovies: {},
-      MovieReviews: {},
-      CreateReview: {},
-      CreateComment: {},
-      DeleteComment: {},
-      DeleteReview: {},
-    },
-  },
-}));
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(() => ({
@@ -69,6 +54,9 @@ const mockMovies = [
     userCreatorId: "user-creator-1",
     movieReviewsByMovieId: {
       nodes: [],
+      edges: [],
+      pageInfo: { hasNextPage: false, hasPreviousPage: false },
+      totalCount: 0,
     },
   },
 ];
@@ -96,6 +84,9 @@ const mockReviews = {
           },
         },
       ],
+      edges: [],
+      pageInfo: { hasNextPage: false, hasPreviousPage: false },
+      totalCount: 1,
     },
   },
 };
@@ -140,9 +131,6 @@ describe("Reviews Component", () => {
         reviews: {
           loading: true,
           movies: [],
-          selectedMovieId: null,
-          isWriteReviewOpen: false,
-          isViewReviewsOpen: false,
         },
       },
     });
@@ -156,9 +144,6 @@ describe("Reviews Component", () => {
         reviews: {
           loading: false,
           movies: mockMovies, // Should be populated by fetchMoviesSuccess but we mock the query here
-          selectedMovieId: null,
-          isWriteReviewOpen: false,
-          isViewReviewsOpen: false,
         },
       },
     });
