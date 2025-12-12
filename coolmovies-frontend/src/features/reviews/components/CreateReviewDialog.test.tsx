@@ -118,6 +118,27 @@ describe("CreateReviewDialog Component", () => {
     });
   });
 
+  it("handles RTK Query error object", async () => {
+    const createReviewMock = jest.fn().mockReturnValue({
+        unwrap: jest.fn().mockRejectedValue({ data: { message: "Detailed Server Error" } })
+    });
+    (useCreateReview as jest.Mock).mockReturnValue([createReviewMock, { isLoading: false }]);
+
+    renderWithProviders(<CreateReviewDialog />);
+
+    // Fill form
+    fireEvent.change(screen.getByLabelText("Title"), { target: { value: "My Review" } });
+    fireEvent.change(screen.getByLabelText("Review"), { target: { value: "It was good." } });
+    fireEvent.click(screen.getByLabelText("Rate 5 stars"));
+
+    // Submit
+    fireEvent.click(screen.getByRole("button", { name: "Submit Review" }));
+
+    await waitFor(() => {
+        expect(require("sonner").toast.error).toHaveBeenCalledWith("Failed to publish review: Detailed Server Error", expect.objectContaining({ action: expect.any(Object) }));
+    });
+  });
+
   it("handles hover rating state", () => {
     renderWithProviders(<CreateReviewDialog />);
     
