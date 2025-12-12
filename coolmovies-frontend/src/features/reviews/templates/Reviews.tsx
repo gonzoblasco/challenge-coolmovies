@@ -27,9 +27,11 @@ const Reviews = () => {
 
   // Combine errors if necessary, or just use queryError
 
-  const errorMessage = queryError
-    ? "We could not load the movies. Please try reloading the page."
-    : sliceError;
+  const errorMessage =
+    queryError
+      ? (console.error("Failed to load movies:", queryError),
+        "We could not load the movies. Please try reloading the page.")
+      : sliceError;
   const movies = data?.allMovies?.nodes || [];
   const totalCount = data?.allMovies?.totalCount || 0;
 
