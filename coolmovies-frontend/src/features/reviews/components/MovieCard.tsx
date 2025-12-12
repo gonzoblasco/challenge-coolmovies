@@ -33,7 +33,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
   const averageRating =
     reviewCount > 0
       ? reviews.reduce((acc, review) => acc + (review?.rating || 0), 0) /
-        reviewCount
+      reviewCount
       : 0;
 
   const date = movie.releaseDate ? new Date(movie.releaseDate) : undefined;
@@ -67,11 +67,10 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`w-4 h-4 ${
-              star <= Math.round(rating)
-                ? "text-yellow-400 fill-yellow-400"
-                : "text-muted-foreground/30"
-            }`}
+            className={`w-4 h-4 ${star <= Math.round(rating)
+              ? "text-yellow-400 fill-yellow-400"
+              : "text-muted-foreground/30"
+              }`}
           />
         ))}
       </div>
@@ -81,29 +80,29 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
   return (
     <div
       ref={ref}
-      className={`h-full transition-all duration-700 ${
-        inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-      }`}
+      className={`h-full transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
     >
       <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card border-border/40 group">
         <div className="relative w-full overflow-hidden aspect-[2/3] bg-muted/20 rounded-sm group/poster">
+          <button
+            onClick={handleViewReviews}
+            className="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-4 focus-visible:ring-primary focus-visible:ring-inset z-30 rounded-sm peer"
+            aria-label={`View reviews for ${movie.title}`}
+          >
+            <span className="sr-only">Read reviews for {movie.title}</span>
+          </button>
           <Image
             src={imgSrc}
             alt={altText}
             fill
-            className="object-cover transition-transform duration-300 group-hover/poster:scale-105"
+            className="object-cover transition-transform duration-300 group-hover/poster:scale-105 peer-focus:scale-90"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={() => {
               setImgSrc("/placeholder-movie.png");
               setAltText(`${movie.title} - Image unavailable`);
             }}
           />
-          <button
-            onClick={handleViewReviews}
-            className="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary z-10"
-          >
-            <span className="sr-only">Read reviews for {movie.title}</span>
-          </button>
           <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none z-20">
             <h3
               className="text-xl font-bold text-white mb-1 line-clamp-1 truncate"

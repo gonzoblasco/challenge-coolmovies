@@ -1,152 +1,99 @@
-/** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
-// @ts-nocheck
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
-  Button,
-  Paper,
-  TextField,
   Tooltip,
-  Typography,
-  Zoom,
-} from "@mui/material";
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useAppDispatch, useAppSelector } from "../../../state";
 import { exampleActions } from "../state";
-import { memo } from "react";
+import { memo, useState } from "react";
 import {
   useCurrentUserQuery,
   useLazyCurrentUserQuery,
 } from "../../../generated/graphql";
 import { FetchButton } from "../components/FetchButton";
-
-const primary = "#1976d2";
+import { cn } from "@/lib/utils";
 
 const Example = () => {
   const dispatch = useAppDispatch();
   const exampleState = useAppSelector((state) => state.example);
 
+  // RTK Query hook
   const [fetchUser, { data, isLoading: loading }] = useLazyCurrentUserQuery();
+
+  // For the moment, we keep the Redux dispatch for 'fetch' but we might need to remove the epic later.
+  // The 'fetch' action was triggering an epic. We will deal with logic migration in next text.
+
   return (
-    <div css={styles.root}>
-      <Paper elevation={3} css={styles.navBar}>
-        <Typography>{"EcoPortal"}</Typography>
-      </Paper>
+    <div className="flex flex-col items-center min-h-screen w-full bg-background text-foreground">
+      <div className="w-full bg-primary h-[50px] flex items-center px-4 shadow-sm">
+        <p className="text-primary-foreground font-medium">EcoPortal</p>
+      </div>
 
-      <div css={styles.body}>
-        <Typography variant={"h1"} css={styles.heading}>
-          {"EcoPortal Coolmovies Test"}
-        </Typography>
-        <Typography variant={"subtitle1"} css={styles.subtitle}>
-          {`Thank you for taking the time to take our test. We really appreciate it. 
-        All the information on what is required can be found in the README at the root of this repo.`}
-        </Typography>
-        <Typography variant={"subtitle1"} css={styles.subtitle}>
-          {`I would recommend using Redux for a lot of your global state management. 
-          For data fetching, you can use either Redux Observable or Apollo Hooks. Which you can see examples of below.`}
-        </Typography>
+      <div className="w-full p-8 flex flex-col items-center max-w-4xl mx-auto space-y-8">
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold tracking-tight">
+            EcoPortal Coolmovies Test
+          </h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto font-light">
+            Thank you for taking the time to take our test. We really appreciate
+            it. All the information on what is required can be found in the
+            README at the root of this repo.
+          </p>
+          <p className="text-muted-foreground max-w-2xl mx-auto font-light">
+            I would recommend using Redux for a lot of your global state
+            management. For data fetching, you can use either Redux Observable
+            or Apollo Hooks. Which you can see examples of below.
+          </p>
+        </div>
 
-        <Typography variant={"h4"} css={styles.subHeading}>
-          {"State:"}
-        </Typography>
+        <h4 className="text-xl font-semibold mt-4">State:</h4>
 
-        <Tooltip
-          title={`Side Effect Count from Epic (Gets run on odd values): ${exampleState.sideEffectCount}`}
-          arrow
-        >
-          <Button
-            variant={"contained"}
-            onClick={() => dispatch(exampleActions.increment())}
-          >
-            {`Redux Increment: ${exampleState.value}`}
-          </Button>
-        </Tooltip>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="default"
+                onClick={() => dispatch(exampleActions.increment())}
+              >
+                Redux Increment: {exampleState.value}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                Side Effect Count (Legacy): {exampleState.sideEffectCount}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
-        <Typography variant={"h4"} css={styles.subHeading}>
-          {"Data Fetching:"}
-        </Typography>
+        <h4 className="text-xl font-semibold mt-4">Data Fetching:</h4>
 
-        <div css={styles.mainControls}>
-          <FetchButton
-            onClick={() => dispatch(exampleActions.fetch())}
-            label={"Fetch User using Redux Observable"}
-          />
-          <Zoom in={Boolean(exampleState.fetchData)} unmountOnExit mountOnEnter>
-            <TextField
-              css={styles.dataInput}
-              multiline
-              label={"User Data from GraphQL using Redux Observable"}
-              defaultValue={JSON.stringify(exampleState.fetchData)}
-            />
-          </Zoom>
+        <div className="flex flex-col gap-4 w-full max-w-md">
+
 
           <FetchButton
             onClick={() => fetchUser()}
-            label={"Fetch User using Apollo Hooks"}
+            label={"Fetch User using RTK Query"}
             disabled={loading}
           />
-          <Zoom in={Boolean(data)} unmountOnExit mountOnEnter>
-            <TextField
-              css={styles.dataInput}
-              multiline
-              label={"User Data from GraphQL using Apollo Hooks"}
-              defaultValue={JSON.stringify(data)}
-            />
-          </Zoom>
+          {data && (
+            <div className="animate-in fade-in zoom-in duration-300">
+              <label className="text-sm font-medium mb-1 block">User Data from GraphQL using RTK Query</label>
+              <textarea
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                readOnly
+                value={JSON.stringify(data, null, 2)}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-};
-
-const styles = {
-  root: css({
-    height: "100vh",
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  }),
-  navBar: css({
-    background: primary,
-    height: 50,
-    alignSelf: "stretch",
-    display: "flex",
-    alignItems: "center",
-    padding: 16,
-    borderRadius: 0,
-    p: {
-      color: "white",
-    },
-  }),
-  body: css({
-    alignSelf: "stretch",
-    padding: 32,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  }),
-  heading: css({ marginTop: 16, fontSize: "2.75rem", textAlign: "center" }),
-  subHeading: css({
-    margin: "16px 0",
-    fontSize: "1.25rem",
-    textAlign: "center",
-  }),
-  subtitle: css({
-    fontWeight: 300,
-    textAlign: "center",
-    maxWidth: 600,
-    margin: "24px 0",
-    color: "rgba(0, 0, 0, 0.6)",
-  }),
-  mainControls: css({
-    display: "flex",
-    flexDirection: "column",
-    gap: 8,
-    alignItems: "center",
-  }),
-  dataInput: css({
-    alignSelf: "stretch",
-    margin: "32px 0",
-  }),
 };
 
 export default memo(Example);
