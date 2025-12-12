@@ -20,6 +20,12 @@ export const enhancedApi = api.enhanceEndpoints({
     CreateReview: {
       invalidatesTags: ['Movie', { type: 'Review', id: 'LIST' }],
     },
+    UpdateReview: {
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Review', id },
+        { type: 'Review', id: 'LIST' },
+      ],
+    },
     CreateComment: {
       invalidatesTags: (result, error, { reviewId }) => [
         { type: 'Review', id: reviewId },
