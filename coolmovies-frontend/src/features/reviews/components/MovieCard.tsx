@@ -33,6 +33,10 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
       ? reviews.reduce((acc, review) => acc + (review?.rating || 0), 0) /
         reviewCount
       : 0;
+
+  const year = movie.releaseDate
+    ? new Date(movie.releaseDate).getFullYear()
+    : "N/A";
   // ... (keeping other handlers the same, skipping to return for replace)
 
   const handleViewReviews = () => {
@@ -102,8 +106,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
               {movie.title}
             </h3>
             <p className="text-sm text-gray-300 font-medium" aria-hidden="true">
-              {new Date(movie.releaseDate).getFullYear()} • {reviewCount}{" "}
-              Reviews
+              {year} • {reviewCount} Reviews
             </p>
           </div>
         </div>
