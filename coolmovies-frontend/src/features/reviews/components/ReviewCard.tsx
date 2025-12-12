@@ -118,15 +118,49 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
 
           <div className="flex items-center gap-4">
             {isEditing ? (
-              <div className="flex items-center">
+              <div 
+                className="flex items-center"
+                role="radiogroup"
+                aria-label="Rating"
+                onKeyDown={(e) => {
+                  // Handle number keys 1-5 for direct rating selection
+                  const num = parseInt(e.key);
+                  if (num >= 1 && num <= 5) {
+                    e.preventDefault();
+                    setEditForm((prev) => ({ ...prev, rating: num }));
+                    return;
+                  }
+                  
+                  // Handle arrow keys for navigation
+                  if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+                    e.preventDefault();
+                    const newRating = Math.min(5, editForm.rating + 1);
+                    setEditForm((prev) => ({ ...prev, rating: newRating }));
+                  } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+                    e.preventDefault();
+                    const newRating = Math.max(1, editForm.rating - 1);
+                    setEditForm((prev) => ({ ...prev, rating: newRating }));
+                  }
+                }}
+              >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
                     type="button"
+                    role="radio"
+                    aria-checked={star === editForm.rating}
+                    tabIndex={star === editForm.rating ? 0 : -1}
                     onClick={() =>
                       setEditForm((prev) => ({ ...prev, rating: star }))
                     }
-                    className="focus:outline-none transition-transform hover:scale-110"
+                    onKeyDown={(e) => {
+                      // Select current star with Enter or Space
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setEditForm((prev) => ({ ...prev, rating: star }));
+                      }
+                    }}
+                    className="p-0.5 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded"
                     aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
                   >
                     <Star
@@ -140,7 +174,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
                 ))}
               </div>
             ) : (
-              <div className="flex items-center" role="img" aria-label={`${review.rating || 0} out of 5 stars`}>
+              <div className="flex items-center" role="img" aria-label={`${(review.rating || 0).toFixed(1)} out of 5 stars`}>
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}

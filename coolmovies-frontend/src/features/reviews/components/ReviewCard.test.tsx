@@ -129,16 +129,18 @@ describe("ReviewCard Component", () => {
   });
 
   it("edits review flow", async () => {
-    const updateReviewMock = jest.fn().mockResolvedValue({
-      data: {
-        updateMovieReviewById: {
-          movieReview: {
-            ...mockReview,
-            title: "Updated Title",
-            body: "Updated Body",
+    const updateReviewMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockResolvedValue({
+        data: {
+          updateMovieReviewById: {
+            movieReview: {
+              ...mockReview,
+              title: "Updated Title",
+              body: "Updated Body",
+            },
           },
         },
-      },
+      }),
     });
     (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
       updateReviewMock,
@@ -272,7 +274,9 @@ describe("ReviewCard Component", () => {
   });
 
   it("updates rating in edit mode", async () => {
-    const updateReviewMock = jest.fn().mockResolvedValue({});
+    const updateReviewMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockResolvedValue({}),
+    });
     (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
       updateReviewMock,
       { isLoading: false },
@@ -285,7 +289,7 @@ describe("ReviewCard Component", () => {
     fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
 
     // Click 5th star (rating 5)
-    fireEvent.click(screen.getByRole("button", { name: "Rate 5 stars" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Rate 5 stars" }));
 
     fireEvent.click(screen.getByRole("button", { name: "Save review" }));
 
