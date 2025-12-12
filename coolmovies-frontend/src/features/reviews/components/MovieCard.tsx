@@ -43,6 +43,13 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
     dispatch(actions.openWriteReview(movie.id));
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleViewReviews();
+    }
+  };
+
   const renderStars = (rating: number) => {
     return (
       <div className="flex items-center gap-0.5">
@@ -71,6 +78,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
         <button
           className="relative w-full overflow-visible aspect-[2/3] bg-muted/20 cursor-pointer rounded-sm group/poster focus-visible:outline-2 focus-visible:outline-primary appearance-none border-0 p-0 font-inherit text-left"
           onClick={handleViewReviews}
+          onKeyDown={handleKeyDown}
           aria-label={`Read reviews for ${movie.title}`}
         >
           <Image
