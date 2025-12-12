@@ -157,4 +157,41 @@ describe("ReviewCard Component", () => {
       });
     });
   });
+  it("shows loading state when deleting", () => {
+    (graphqlHooks.useDeleteReviewMutation as jest.Mock).mockReturnValue([
+      jest.fn(),
+      { isLoading: true },
+    ]);
+
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={mockUser} />
+    );
+
+    // Open delete dialog
+    fireEvent.click(screen.getByRole("button", { name: "Delete review" }));
+
+    const deleteBtn = screen.getByRole("button", { name: "Deleting..." });
+    expect(deleteBtn).toBeDisabled();
+    expect(deleteBtn).toHaveClass("opacity-50 pointer-events-none");
+  });
+
+  it("shows loading state when editing", () => {
+    (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
+      jest.fn(),
+      { isLoading: true },
+    ]);
+
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={mockUser} />
+    );
+
+    // Enter edit mode
+    fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+
+    const saveBtn = screen.getByRole("button", { name: "Save review" });
+    expect(saveBtn).toBeDisabled();
+    // Check if the spinner is present (which implies loading state logic was hit)
+    expect(saveBtn.querySelector(".animate-spin")).toBeInTheDocument();
+    expect(saveBtn).toHaveClass("opacity-50 pointer-events-none");
+  });
 });
