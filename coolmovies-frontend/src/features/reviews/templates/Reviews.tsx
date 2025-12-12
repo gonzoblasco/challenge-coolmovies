@@ -48,7 +48,7 @@ const Reviews = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
+    <div id="main-content" className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-extrabold tracking-tight text-center mb-12 sm:text-5xl text-primary">
           Movie Reviews
@@ -87,8 +87,8 @@ const Reviews = () => {
           ) : (
             movies
               .filter((m): m is NonNullable<typeof m> => m !== null)
-              .map((movie) => (
-                <MovieCard key={movie.id} movie={movie as Movie} />
+              .map((movie, index) => (
+                <MovieCard key={movie.id} movie={movie as Movie} index={index} />
               ))
           )}
         </div>

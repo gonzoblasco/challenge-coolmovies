@@ -140,10 +140,11 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
                 ))}
               </div>
             ) : (
-              <div className="flex items-center">
+              <div className="flex items-center" role="img" aria-label={`${review.rating || 0} out of 5 stars`}>
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
+                    aria-hidden="true"
                     className={`w-4 h-4 ${
                       star <= (review.rating || 0)
                         ? "text-yellow-400 fill-yellow-400"
