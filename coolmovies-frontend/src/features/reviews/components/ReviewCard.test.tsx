@@ -315,11 +315,6 @@ describe("ReviewCard Component", () => {
       screen.queryByPlaceholderText("Write a comment...")
     ).not.toBeInTheDocument();
 
-    // Re-open and submit
-    (graphqlHooks.useCurrentUserQuery as jest.Mock).mockReturnValue({
-      data: { currentUser: mockUser },
-      isLoading: false,
-    });
 
     fireEvent.click(screen.getAllByRole("button", { name: "Reply" })[0]);
 
