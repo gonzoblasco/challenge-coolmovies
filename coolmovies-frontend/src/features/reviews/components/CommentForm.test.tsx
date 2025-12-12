@@ -227,4 +227,36 @@ describe("CommentForm Component", () => {
     });
     expect(submitBtn).not.toBeDisabled();
   });
+  it("handles RTK Query error object", async () => {
+    const createCommentMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockRejectedValue({ data: { message: "Server Error" } }),
+    });
+
+    (graphqlHooks.useCurrentUserQuery as jest.Mock).mockReturnValue({
+      data: { currentUser: mockUser },
+      isLoading: false,
+    });
+    (graphqlHooks.useCreateCommentMutation as jest.Mock).mockReturnValue([
+      createCommentMock,
+      { isLoading: false },
+    ]);
+
+    renderWithProviders(
+      <CommentForm
+        reviewId={reviewId}
+        onCancel={mockOnCancel}
+        onSuccess={mockOnSuccess}
+      />
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Write a comment..."), {
+      target: { value: "My Comment" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Reply" }));
+
+    expect(
+      await screen.findByText("Failed to post comment: Server Error")
+    ).toBeInTheDocument();
+  });
 });

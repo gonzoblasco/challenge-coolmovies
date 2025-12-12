@@ -82,7 +82,9 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
       toast.success("Review updated successfully");
     } catch (error) {
       console.error("Failed to update review:", error);
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error 
+        ? error.message 
+        : (error as any)?.data?.message || (error as any)?.message || 'Unknown error';
       toast.error(`Failed to update review: ${message}`, {
         action: {
           label: "Retry",
@@ -99,7 +101,9 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
       toast.success("Review deleted successfully");
     } catch (error) {
       console.error("Failed to delete review:", error);
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error 
+        ? error.message 
+        : (error as any)?.data?.message || (error as any)?.message || 'Unknown error';
       toast.error(`Failed to delete review: ${message}`, {
         action: {
           label: "Retry",

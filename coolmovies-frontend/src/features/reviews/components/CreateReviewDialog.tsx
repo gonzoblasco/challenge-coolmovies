@@ -98,7 +98,9 @@ export const CreateReviewDialog: FC = () => {
       toast.success("Review published successfully!");
     } catch (error) {
       console.error("Failed to create review", error);
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error 
+        ? error.message 
+        : (error as any)?.data?.message || (error as any)?.message || 'Unknown error';
       toast.error(`Failed to publish review: ${message}`, {
         action: {
           label: "Retry",
