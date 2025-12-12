@@ -73,11 +73,7 @@ describe("State Integration", () => {
   describe("API Configuration", () => {
     it("should have the correct base URL for the GraphQL client", () => {
       // Checking how the client was initialized in api.ts
-      // We can't easily access the internal client configuration of the exported `client`
-      // without inspecting the module or if it exposes it.
-      // However, we can check if `api` service is defined
-      expect(api).toBeDefined();
-      expect(api.reducerPath).toBe("api");
+      expect(client.url).toBe("http://localhost:3000/graphql");
     });
 
     it("should enhance endpoints correctly", () => {
