@@ -11,8 +11,19 @@ jest.mock("../../../generated/graphql", () => ({
   useDeleteReviewMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
   useCreateCommentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
   useDeleteCommentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
-  useCurrentUserQuery: jest.fn(), // If CommentForm uses it
+  useCurrentUserQuery: jest.fn().mockImplementation(() => ({
+    data: undefined,
+    isLoading: false,
+    error: undefined,
+  })),
   NewCommentFragmentDoc: {},
+}));
+
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
 }));
 
 describe("ReviewCard Component", () => {
@@ -54,7 +65,13 @@ describe("ReviewCard Component", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (graphqlHooks.useCurrentUserQuery as jest.Mock).mockImplementation(() => ({
+      data: { currentUser: mockUser },
+      isLoading: false,
+    }));
   });
+
+
 
   it("renders review details", () => {
     renderWithProviders(
@@ -191,5 +208,136 @@ describe("ReviewCard Component", () => {
     expect(saveBtn).toBeDisabled();
     // Check if the spinner is present (which implies loading state logic was hit)
     expect(saveBtn.querySelector(".animate-spin")).toBeInTheDocument();
+  });
+
+  it("cancels edit mode", () => {
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={mockUser} />
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+
+    const titleInput = screen.getByDisplayValue("Review Title");
+    fireEvent.change(titleInput, { target: { value: "Changed" } });
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel edit" }));
+
+    expect(screen.getByText("Review Title")).toBeInTheDocument();
+    expect(screen.queryByDisplayValue("Changed")).not.toBeInTheDocument();
+  });
+
+  it("handles update error", async () => {
+    const updateReviewMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockRejectedValue(new Error("Failed")),
+    });
+    (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
+      updateReviewMock,
+      { isLoading: false },
+    ]);
+
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={mockUser} />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Save review" }));
+
+    await waitFor(() => {
+      expect(require("sonner").toast.error).toHaveBeenCalledWith(
+        "Failed to update review"
+      );
+    });
+  });
+
+  it("handles delete error", async () => {
+    const deleteReviewMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockRejectedValue(new Error("Failed")),
+    });
+    (graphqlHooks.useDeleteReviewMutation as jest.Mock).mockReturnValue([
+      deleteReviewMock,
+      { isLoading: false },
+    ]);
+
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={mockUser} />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete review" }));
+    fireEvent.click(screen.getByRole("button", { name: TEXT.DELETE })); // Confirm
+
+    await waitFor(() => {
+      expect(require("sonner").toast.error).toHaveBeenCalledWith(
+        "Failed to delete review"
+      );
+    });
+  });
+
+  it("updates rating in edit mode", async () => {
+    const updateReviewMock = jest.fn().mockResolvedValue({});
+    (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
+      updateReviewMock,
+      { isLoading: false },
+    ]);
+
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={mockUser} />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+
+    // Click 5th star (rating 5)
+    fireEvent.click(screen.getByRole("button", { name: "Rate 5 stars" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "Save review" }));
+
+    await waitFor(() => {
+      expect(updateReviewMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          patch: expect.objectContaining({ rating: 5 }),
+        })
+      );
+    });
+  });
+
+  it("handles reply flow interactions", async () => {
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={mockUser} />
+    );
+
+    // Open reply
+    fireEvent.click(screen.getAllByRole("button", { name: "Reply" })[0]);
+    expect(
+      screen.getByPlaceholderText("Write a comment...")
+    ).toBeInTheDocument();
+
+    // Cancel reply
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(
+      screen.queryByPlaceholderText("Write a comment...")
+    ).not.toBeInTheDocument();
+
+
+    fireEvent.click(screen.getAllByRole("button", { name: "Reply" })[0]);
+
+    const createCommentMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockResolvedValue({}),
+    });
+
+    (graphqlHooks.useCreateCommentMutation as jest.Mock).mockReturnValue([
+      createCommentMock,
+      { isLoading: false },
+    ]);
+
+    fireEvent.change(screen.getByPlaceholderText("Write a comment..."), {
+      target: { value: "New Comment" },
+    });
+    fireEvent.click(screen.getAllByRole("button", { name: "Reply" })[1]);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByPlaceholderText("Write a comment...")
+      ).not.toBeInTheDocument();
+      // Comments list should be shown
+      expect(screen.getByText("Comment 1")).toBeInTheDocument();
+    });
   });
 });

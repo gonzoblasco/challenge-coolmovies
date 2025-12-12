@@ -77,7 +77,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
           body: editForm.body,
           rating: editForm.rating,
         },
-      });
+      }).unwrap();
       setIsEditing(false);
       toast.success("Review updated successfully");
     } catch (error) {

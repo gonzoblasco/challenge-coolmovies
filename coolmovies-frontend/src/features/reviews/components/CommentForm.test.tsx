@@ -101,7 +101,7 @@ describe("CommentForm Component", () => {
     });
   });
 
-  it("displays error on failure", async () => {
+  it("displays error on failure and keeps form data", async () => {
     const createCommentMock = jest.fn().mockReturnValue({
       unwrap: jest.fn().mockRejectedValue(new Error("Failed")),
     });
@@ -123,14 +123,81 @@ describe("CommentForm Component", () => {
       />
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Write a comment..."), {
-      target: { value: "My Comment" },
+    const inputs = {
+      title: "My Title",
+      body: "My Comment",
+    };
+
+    fireEvent.change(screen.getByPlaceholderText("Title (optional)"), {
+      target: { value: inputs.title },
     });
+    fireEvent.change(screen.getByPlaceholderText("Write a comment..."), {
+      target: { value: inputs.body },
+    });
+
     fireEvent.click(screen.getByRole("button", { name: "Reply" }));
 
     expect(
       await screen.findByText("Failed to post comment. Please try again.")
     ).toBeInTheDocument();
+
+    // Verify form data is preserved
+    expect(screen.getByDisplayValue(inputs.title)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(inputs.body)).toBeInTheDocument();
+
+    // Verify onSuccess was NOT called
+    expect(mockOnSuccess).not.toHaveBeenCalled();
+  });
+
+  it("clears error and allows retry on subsequent success", async () => {
+    const unwrapMock = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("Failed"))
+      .mockResolvedValueOnce({});
+
+    const createCommentMock = jest.fn().mockReturnValue({
+      unwrap: unwrapMock,
+    });
+
+    (graphqlHooks.useCurrentUserQuery as jest.Mock).mockReturnValue({
+      data: { currentUser: mockUser },
+      isLoading: false,
+    });
+    (graphqlHooks.useCreateCommentMutation as jest.Mock).mockReturnValue([
+      createCommentMock,
+      { isLoading: false },
+    ]);
+
+    renderWithProviders(
+      <CommentForm
+        reviewId={reviewId}
+        onCancel={mockOnCancel}
+        onSuccess={mockOnSuccess}
+      />
+    );
+
+    // 1. Enter data and fail
+    fireEvent.change(screen.getByPlaceholderText("Write a comment..."), {
+      target: { value: "My Comment" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Reply" }));
+
+    const errorMsg = await screen.findByText(
+      "Failed to post comment. Please try again."
+    );
+    expect(errorMsg).toBeInTheDocument();
+
+    // 2. Retry (Success)
+    fireEvent.click(screen.getByRole("button", { name: "Reply" }));
+
+    await waitFor(() => {
+      expect(mockOnSuccess).toHaveBeenCalled();
+    });
+
+    // Error should be gone
+    expect(
+      screen.queryByText("Failed to post comment. Please try again.")
+    ).not.toBeInTheDocument();
   });
 
   it("disables submit button when body is empty", () => {
