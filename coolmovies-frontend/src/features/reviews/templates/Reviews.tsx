@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { errorService } from "@/services/errorService";
 import dynamic from "next/dynamic";
