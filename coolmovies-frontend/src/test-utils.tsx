@@ -26,8 +26,8 @@ jest.mock('./state/enhancedApi', () => ({
         initiate: jest.fn(() => ({ unwrap: jest.fn() })),
       }
     },
-    useAllMoviesQuery: jest.fn(() => ({ data: { nodes: [] }, isLoading: false, error: null })),
-    useMovieReviewsQuery: jest.fn(() => ({ data: { nodes: [] }, isLoading: false, error: null })),
+    useAllMoviesQuery: jest.fn(() => ({ data: { allMovies: { nodes: [] } }, isLoading: false, error: null })),
+    useMovieReviewsQuery: jest.fn(() => ({ data: { movieById: { movieReviewsByMovieId: { nodes: [] } } }, isLoading: false, error: null })),
     useCreateReviewMutation: jest.fn(() => [jest.fn(() => ({ unwrap: jest.fn() })), { isLoading: false }]),
     useCreateCommentMutation: jest.fn(() => [jest.fn(() => ({ unwrap: jest.fn() })), { isLoading: false }]),
     useDeleteCommentMutation: jest.fn(() => [jest.fn(() => ({ unwrap: jest.fn() })), { isLoading: false }]),
