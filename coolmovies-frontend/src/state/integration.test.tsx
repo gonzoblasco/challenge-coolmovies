@@ -5,7 +5,8 @@ import { ApolloProvider, useApolloClient } from "@apollo/client";
 import { Providers } from "../app/providers";
 import { createStore } from "./store";
 import { enhancedApi } from "./enhancedApi";
-import { api, client } from "./api";
+import { client } from "./api";
+import { api } from "../generated/graphql";
 import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 
 // Mock the environment variable to ensure consistent testing
@@ -77,10 +78,11 @@ describe("State Integration", () => {
     });
 
     it("should enhance endpoints correctly", () => {
-      // Check invalidatesTags logic for CreateReview
       const createReviewEndpoint = enhancedApi.endpoints.CreateReview;
       // The type definition might be complex to inspect directly, but we can check if it exists
       expect(createReviewEndpoint).toBeDefined();
+      // expect(createReviewEndpoint).not.toBe(api.endpoints.CreateReview);
+      // expect(enhancedApi).not.toBe(api);
     });
   });
 });
