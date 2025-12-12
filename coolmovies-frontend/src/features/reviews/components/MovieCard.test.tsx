@@ -1,5 +1,6 @@
 import React from "react";
 import { screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MovieCard } from "./MovieCard";
 import { renderWithProviders } from "../../../test-utils";
 import * as graphqlHooks from "../../../generated/graphql";
@@ -108,5 +109,59 @@ describe("MovieCard Component", () => {
         payload: "1",
       })
     );
+  });
+
+  it("dispatches openViewReviews when pressing Enter on the poster", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
+    );
+
+    const poster = screen.getByRole("button", {
+      name: "Read reviews for Test Movie",
+    });
+
+    poster.focus();
+    await user.keyboard("{Enter}");
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: expect.stringContaining("openViewReviews"),
+        payload: "1",
+      })
+    );
+  });
+
+  it("dispatches openViewReviews when pressing Space on the poster", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
+    );
+
+    const poster = screen.getByRole("button", {
+      name: "Read reviews for Test Movie",
+    });
+
+    poster.focus();
+    await user.keyboard(" ");
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: expect.stringContaining("openViewReviews"),
+        payload: "1",
+      })
+    );
+  });
+
+  it("poster has correct accessibility attributes", () => {
+    renderWithProviders(
+      <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
+    );
+
+    const poster = screen.getByRole("button", {
+      name: "Read reviews for Test Movie",
+    });
+
+    expect(poster).toHaveAttribute("aria-label", "Read reviews for Test Movie");
   });
 });
