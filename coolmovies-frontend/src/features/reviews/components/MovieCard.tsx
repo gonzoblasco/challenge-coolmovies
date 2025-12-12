@@ -89,9 +89,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
             onClick={handleViewReviews}
             className="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-4 focus-visible:ring-primary focus-visible:ring-inset z-30 rounded-sm peer"
             aria-label={`View reviews for ${movie.title}`}
-          >
-            <span className="sr-only">Read reviews for {movie.title}</span>
-          </button>
+          />
           <Image
             src={imgSrc}
             alt={altText}
@@ -144,7 +142,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
             {currentUser ? "Review" : "Log in"}
           </Button>
         </CardFooter>
-      </Card>
-    </div>
+      </Card >
+    </div >
   );
 };
