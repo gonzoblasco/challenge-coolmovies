@@ -161,9 +161,16 @@ export const ReviewListDialog: FC = () => {
             ) : !reviewsData?.movieById?.movieReviewsByMovieId?.nodes ||
               reviewsData.movieById.movieReviewsByMovieId.nodes.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                {ratingFilter || userFilter || searchFilter
-                  ? "No reviews match your filters."
-                  : "No reviews yet. Be the first to share your thoughts!"}
+                {ratingFilter || userFilter || searchFilter ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <span>No reviews match your filters.</span>
+                    <Button onClick={clearFilters} variant="link">
+                      Clear filters and view all
+                    </Button>
+                  </div>
+                ) : (
+                  "No reviews yet. Be the first to share your thoughts!"
+                )}
               </div>
             ) : (
               reviewsData.movieById.movieReviewsByMovieId.nodes.map(
