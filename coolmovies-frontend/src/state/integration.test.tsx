@@ -73,7 +73,7 @@ describe("State Integration", () => {
   describe("API Configuration", () => {
     it("should have the correct base URL for the GraphQL client", () => {
       // Checking how the client was initialized in api.ts
-      expect(client.url).toBe("http://localhost:3000/graphql");
+      expect((client as any).url).toBe("http://localhost:3000/graphql");
     });
 
     it("should enhance endpoints correctly", () => {
