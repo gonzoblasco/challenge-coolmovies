@@ -165,34 +165,8 @@ describe("Review Flow Integration", () => {
       expect.anything()
     );
 
-    // Manually rerender to simulate router update (since mock changed local variable)
-    // The component reads from the hook, so re-rendering will pick up new value
-    rerender(
-      <Reviews /> // Wrappers are preserved by renderWithProviders? No, renderWithProviders wraps.
-      // renderWithProviders returns standard RTL result.
-      // We need to match the wrapper?
-      // Actually renderWithProviders creates a new Provider each time if we just pass <Reviews>.
-      // Ideally we should use the same store.
-      // But for this test, simply re-rendering the component might work if the hook is global mock.
-    );
-    // Be careful: renderWithProviders creates a NEW store by default.
-    // If we want to persist state, we need to pass the SAME store.
-    // However, we are testing URL state which is "external".
-    // Redux state (movies) is mocked via Query hooks anyway.
-
-    // Let's rely on the fact that we mocked hooks, so Redux store recreation shouldn't matter much
-    // for *cached* data if the hooks return static mocks.
-    // But `rerender` from RTL re-uses the container.
-    // If we use `rerender(<Reviews />)`, it might lose the Providers if they were part of `render`.
-    // We should use the same wrapper logic.
-    // `renderWithProviders` usually returns `rerender` that wraps with the *same* providers?
-    // Let's check test-utils. If not, we might be in trouble.
-    // Assuming standard custom render: YES, it usually wraps the new ui in the same container.
-    // BUT does it wrap in the same Providers?
-    // Usually custom `rerender` is NOT enhancing the UI with providers again if passing raw UI.
-    // Standard RTL `rerender` just updates the children of the container.
-    // If the providers were in the wrapper option of `render`, they stay.
-
+    // Rerender to simulate the component reacting to the URL change.
+    rerender(<Reviews />);
     // 2. Dialog should open
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText(/Write a Review/i)).toBeInTheDocument();
