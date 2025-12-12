@@ -114,7 +114,7 @@ describe("CreateReviewDialog Component", () => {
     fireEvent.click(screen.getByRole("button", { name: "Submit Review" }));
 
     await waitFor(() => {
-        expect(require("sonner").toast.error).toHaveBeenCalledWith("Failed to publish review. Please try again.");
+        expect(require("sonner").toast.error).toHaveBeenCalledWith("Failed to publish review", expect.objectContaining({ action: expect.any(Object) }));
     });
   });
 

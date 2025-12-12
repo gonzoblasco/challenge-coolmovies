@@ -21,7 +21,7 @@ import {
   useAllMoviesQuery,
 } from "../../../generated/graphql";
 import { useCreateReview } from "../hooks/useCreateReview";
-import { Star } from "lucide-react";
+import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const CreateReviewDialog: FC = () => {
@@ -98,7 +98,12 @@ export const CreateReviewDialog: FC = () => {
       toast.success("Review published successfully!");
     } catch (error) {
       console.error("Failed to create review", error);
-      toast.error("Failed to publish review. Please try again.");
+      toast.error("Failed to publish review", {
+        action: {
+          label: "Retry",
+          onClick: () => handleSubmit(),
+        },
+      });
     }
   };
 
@@ -174,7 +179,14 @@ export const CreateReviewDialog: FC = () => {
             onClick={handleSubmit}
             disabled={!title || !body || !rating || loading}
           >
-            {loading ? "Submitting..." : "Submit Review"}
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              "Submit Review"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

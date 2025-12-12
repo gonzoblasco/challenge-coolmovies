@@ -8,6 +8,7 @@ import {
   NewCommentFragmentDoc,
 } from "../../../generated/graphql";
 import { Send } from "lucide-react";
+import { toast } from "sonner";
 
 interface CommentFormProps {
   reviewId: string;
@@ -44,6 +45,12 @@ export const CommentForm: FC<CommentFormProps> = ({
     } catch (error) {
       console.error("Failed to post comment:", error);
       setError("Failed to post comment. Please try again.");
+      toast.error("Failed to post comment", {
+        action: {
+          label: "Retry",
+          onClick: () => handleSubmit(e),
+        },
+      });
     }
   };
 
