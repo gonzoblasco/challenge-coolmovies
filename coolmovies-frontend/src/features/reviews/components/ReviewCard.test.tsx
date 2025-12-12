@@ -11,14 +11,11 @@ jest.mock("../../../generated/graphql", () => ({
   useDeleteReviewMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
   useCreateCommentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
   useDeleteCommentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
-  useCurrentUserQuery: jest.fn().mockImplementation(() => {
-    console.log("Mock useCurrentUserQuery called");
-    return {
-      data: undefined,
-      isLoading: false,
-      error: undefined,
-    };
-  }),
+  useCurrentUserQuery: jest.fn().mockImplementation(() => ({
+    data: undefined,
+    isLoading: false,
+    error: undefined,
+  })),
   NewCommentFragmentDoc: {},
 }));
 
