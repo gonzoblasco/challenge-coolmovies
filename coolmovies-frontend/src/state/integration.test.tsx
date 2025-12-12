@@ -37,7 +37,7 @@ describe("State Integration", () => {
 
     it("should throw error if epicDependencies are missing", () => {
       expect(() => createStore({} as any)).toThrow(
-        "epicDependencies is required for store initialization"
+        "epicDependencies is required for store initialization (needed by legacy example epic)"
       );
     });
   });
