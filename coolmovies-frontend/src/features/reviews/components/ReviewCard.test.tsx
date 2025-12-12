@@ -85,8 +85,7 @@ describe("ReviewCard Component", () => {
   });
 
   it("deletes review flow", async () => {
-    const deleteReviewMock = jest.fn().mockResolvedValue({
-      data: {},
+    const deleteReviewMock = jest.fn().mockReturnValue({
       unwrap: jest.fn().mockResolvedValue({}),
     });
     (graphqlHooks.useDeleteReviewMutation as jest.Mock).mockReturnValue([
@@ -114,10 +113,16 @@ describe("ReviewCard Component", () => {
 
   it("edits review flow", async () => {
     const updateReviewMock = jest.fn().mockResolvedValue({
-      data: {},
-      unwrap: jest.fn().mockResolvedValue({}),
+      data: {
+        updateMovieReviewById: {
+          movieReview: {
+            ...mockReview,
+            title: "Updated Title",
+            body: "Updated Body",
+          },
+        },
+      },
     });
-
     (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
       updateReviewMock,
       { isLoading: false },

@@ -43,6 +43,13 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
     dispatch(actions.openWriteReview(movie.id));
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleViewReviews();
+    }
+  };
+
   const renderStars = (rating: number) => {
     return (
       <div className="flex items-center gap-0.5">
