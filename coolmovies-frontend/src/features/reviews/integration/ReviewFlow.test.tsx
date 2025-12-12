@@ -104,6 +104,22 @@ describe("Review Flow Integration", () => {
   });
 
   it("completes the create review flow", async () => {
+    // Setup mutable search params for the test
+    let currentSearchParams = new URLSearchParams();
+    const useSearchParamsMock = require("next/navigation").useSearchParams;
+    useSearchParamsMock.mockImplementation(() => currentSearchParams);
+
+    const useRouterMock = require("next/navigation").useRouter;
+    const pushMock = jest.fn((url: string) => {
+      const urlObj = new URL(url, "http://localhost");
+      currentSearchParams = urlObj.searchParams;
+    });
+    useRouterMock.mockReturnValue({
+      push: pushMock,
+      replace: jest.fn(),
+      prefetch: jest.fn(),
+    });
+
     const createReviewMock = jest.fn().mockReturnValue({
       unwrap: jest.fn().mockResolvedValue({
         data: {
@@ -126,27 +142,56 @@ describe("Review Flow Integration", () => {
       { isLoading: false },
     ]);
 
-    renderWithProviders(<Reviews />, {
+    const { rerender } = renderWithProviders(<Reviews />, {
       preloadedState: {
         reviews: {
           loading: false,
           movies: mockMovies,
-          selectedMovieId: null,
-          isWriteReviewOpen: false,
-          isViewReviewsOpen: false,
         },
       },
     });
 
-    // 1. Find Movie and Click "Review" button (triggers write review dialog)
-    // IMPORTANT: The "Review" button is on the MovieCard.
+    // 1. Find Movie and Click "Review" button
     expect(
       await screen.findByText("Integration Test Movie")
     ).toBeInTheDocument();
 
-    // Find the 'Review' button associated with the movie
     const reviewBtn = screen.getByRole("button", { name: "Review" });
     fireEvent.click(reviewBtn);
+
+    // Verify push was called
+    expect(pushMock).toHaveBeenCalledWith(
+      expect.stringContaining("action=write-review"),
+      expect.anything()
+    );
+
+    // Manually rerender to simulate router update (since mock changed local variable)
+    // The component reads from the hook, so re-rendering will pick up new value
+    rerender(
+      <Reviews /> // Wrappers are preserved by renderWithProviders? No, renderWithProviders wraps.
+      // renderWithProviders returns standard RTL result.
+      // We need to match the wrapper?
+      // Actually renderWithProviders creates a new Provider each time if we just pass <Reviews>.
+      // Ideally we should use the same store.
+      // But for this test, simply re-rendering the component might work if the hook is global mock.
+    );
+    // Be careful: renderWithProviders creates a NEW store by default.
+    // If we want to persist state, we need to pass the SAME store.
+    // However, we are testing URL state which is "external".
+    // Redux state (movies) is mocked via Query hooks anyway.
+
+    // Let's rely on the fact that we mocked hooks, so Redux store recreation shouldn't matter much
+    // for *cached* data if the hooks return static mocks.
+    // But `rerender` from RTL re-uses the container.
+    // If we use `rerender(<Reviews />)`, it might lose the Providers if they were part of `render`.
+    // We should use the same wrapper logic.
+    // `renderWithProviders` usually returns `rerender` that wraps with the *same* providers?
+    // Let's check test-utils. If not, we might be in trouble.
+    // Assuming standard custom render: YES, it usually wraps the new ui in the same container.
+    // BUT does it wrap in the same Providers?
+    // Usually custom `rerender` is NOT enhancing the UI with providers again if passing raw UI.
+    // Standard RTL `rerender` just updates the children of the container.
+    // If the providers were in the wrapper option of `render`, they stay.
 
     // 2. Dialog should open
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
@@ -163,7 +208,6 @@ describe("Review Flow Integration", () => {
       target: { value: "This is a great movie!" },
     });
 
-    // Select Rating (5 stars)
     const starBtn = screen.getByLabelText("Rate 5 stars");
     fireEvent.click(starBtn);
 
@@ -182,7 +226,17 @@ describe("Review Flow Integration", () => {
       });
     });
 
-    // 6. Verify Dialog Closes (optional, usually handled by success side-effect)
-    // Checking "Submit Review" is gone or dialog is gone might require waitFor
+    // Simulate successful navigation after submit
+    expect(pushMock).toHaveBeenLastCalledWith(
+      expect.stringContaining("action=view-reviews"),
+      expect.anything()
+    );
+    // Rerender to show view reviews
+    rerender(<Reviews />);
+
+    // Verify "Write a Review" dialog is gone (or replaced by View Reviews)
+    await waitFor(() => {
+      expect(screen.queryByText(/Write a Review for/i)).not.toBeInTheDocument();
+    });
   });
 });

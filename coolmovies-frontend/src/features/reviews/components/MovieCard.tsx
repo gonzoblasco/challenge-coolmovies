@@ -2,8 +2,7 @@ import React, { FC, useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Movie } from "../../../generated/graphql";
-import { useAppDispatch } from "../../../state";
-import { actions } from "../state/slice";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useCurrentUserQuery } from "../../../generated/graphql";
 import { Star } from "lucide-react";
 import Image from "next/image";
@@ -14,7 +13,10 @@ interface MovieCardProps {
 }
 
 export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
-  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const { data: userData } = useCurrentUserQuery();
   const currentUser = userData?.currentUser;
 
@@ -33,14 +35,19 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
       ? reviews.reduce((acc, review) => acc + (review?.rating || 0), 0) /
         reviewCount
       : 0;
-  // ... (keeping other handlers the same, skipping to return for replace)
 
   const handleViewReviews = () => {
-    dispatch(actions.openViewReviews(movie.id));
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("movieId", movie.id);
+    params.set("action", "view-reviews");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const handleWriteReview = () => {
-    dispatch(actions.openWriteReview(movie.id));
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("movieId", movie.id);
+    params.set("action", "write-review");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {

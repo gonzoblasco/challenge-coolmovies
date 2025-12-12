@@ -168,14 +168,17 @@ describe("Reviews Component", () => {
   });
 
   it("opens view reviews dialog when requested", async () => {
+    // Mock the URL params to simulate open dialog
+    const useSearchParamsMock = require("next/navigation").useSearchParams;
+    useSearchParamsMock.mockReturnValue(
+      new URLSearchParams("movieId=1&action=view-reviews")
+    );
+
     renderWithProviders(<Reviews />, {
       preloadedState: {
         reviews: {
           loading: false,
           movies: mockMovies,
-          selectedMovieId: "1",
-          isWriteReviewOpen: false,
-          isViewReviewsOpen: true,
         },
       },
     });
@@ -186,6 +189,12 @@ describe("Reviews Component", () => {
   });
 
   it("allows editing a review", async () => {
+    // Mock the URL params to simulate open dialog
+    const useSearchParamsMock = require("next/navigation").useSearchParams;
+    useSearchParamsMock.mockReturnValue(
+      new URLSearchParams("movieId=1&action=view-reviews")
+    );
+
     const updateMock = jest.fn().mockResolvedValue({
       data: {
         updateMovieReviewById: {
@@ -209,9 +218,6 @@ describe("Reviews Component", () => {
         reviews: {
           loading: false,
           movies: mockMovies,
-          selectedMovieId: "1",
-          isWriteReviewOpen: false,
-          isViewReviewsOpen: true,
         },
       },
     });
@@ -245,9 +251,6 @@ describe("Reviews Component", () => {
         },
       });
     });
-
-    // Note: Logic for "Optimistic update" usually handled by RTK Query cache updates or manual state updates.
-    // Since we mock the hook, we verify the call.
   });
 
   it("matches snapshot", () => {

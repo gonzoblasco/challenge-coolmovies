@@ -101,16 +101,21 @@ describe("ReviewListDialog Component", () => {
     jest.clearAllMocks();
   });
 
-  const renderComponent = () => {
+  const renderComponent = (isOpen = true) => {
+    // Update mock for this specific render if needed, or rely on default
+    const useSearchParamsMock = require("next/navigation").useSearchParams;
+    if (isOpen) {
+      useSearchParamsMock.mockReturnValue(
+        new URLSearchParams("movieId=1&action=view-reviews")
+      );
+    } else {
+      useSearchParamsMock.mockReturnValue(new URLSearchParams(""));
+    }
+
     return renderWithProviders(<ReviewListDialog />, {
       preloadedState: {
         reviews: {
-          movies: [{ id: "1", title: "Cool Movie" }],
-          selectedMovieId: "1",
-          isViewReviewsOpen: true,
-          isWriteReviewOpen: false,
           loading: false,
-          error: undefined,
         },
       },
     });

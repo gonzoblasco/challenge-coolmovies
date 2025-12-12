@@ -5,9 +5,6 @@ describe('reviews slice', () => {
   const initialState: ReviewsState = {
     movies: [],
     loading: false,
-    selectedMovieId: null,
-    isWriteReviewOpen: false,
-    isViewReviewsOpen: false,
   };
 
   it('should return the initial state', () => {
@@ -66,13 +63,12 @@ describe('reviews slice', () => {
   });
 
   describe('createReviewSuccess', () => {
-    it('should set loading to false and close write review dialog', () => {
+    it('should set loading to false', () => {
       const actual = reducer(
-        { ...initialState, loading: true, isWriteReviewOpen: true },
+        { ...initialState, loading: true },
         actions.createReviewSuccess()
       );
       expect(actual.loading).toBe(false);
-      expect(actual.isWriteReviewOpen).toBe(false);
     });
   });
 
@@ -87,52 +83,5 @@ describe('reviews slice', () => {
       expect(actual.error).toEqual(error);
     });
   });
-
-  describe('openWriteReview', () => {
-    it('should set selectedMovieId and open write review dialog', () => {
-      const movieId = 'movie-123';
-      const actual = reducer(initialState, actions.openWriteReview(movieId));
-      expect(actual.selectedMovieId).toEqual(movieId);
-      expect(actual.isWriteReviewOpen).toBe(true);
-    });
-  });
-
-  describe('closeWriteReview', () => {
-    it('should close write review dialog and clear selectedMovieId', () => {
-      const actual = reducer(
-        {
-          ...initialState,
-          selectedMovieId: 'movie-123',
-          isWriteReviewOpen: true,
-        },
-        actions.closeWriteReview()
-      );
-      expect(actual.isWriteReviewOpen).toBe(false);
-      expect(actual.selectedMovieId).toBeNull();
-    });
-  });
-
-  describe('openViewReviews', () => {
-    it('should set selectedMovieId and open view reviews dialog', () => {
-      const movieId = 'movie-456';
-      const actual = reducer(initialState, actions.openViewReviews(movieId));
-      expect(actual.selectedMovieId).toEqual(movieId);
-      expect(actual.isViewReviewsOpen).toBe(true);
-    });
-  });
-
-  describe('closeViewReviews', () => {
-    it('should close view reviews dialog and clear selectedMovieId', () => {
-      const actual = reducer(
-        {
-          ...initialState,
-          selectedMovieId: 'movie-456',
-          isViewReviewsOpen: true,
-        },
-        actions.closeViewReviews()
-      );
-      expect(actual.isViewReviewsOpen).toBe(false);
-      expect(actual.selectedMovieId).toBeNull();
-    });
-  });
 });
+

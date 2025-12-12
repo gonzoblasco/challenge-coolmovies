@@ -5,17 +5,11 @@ export interface ReviewsState {
     movies: Movie[];
     loading: boolean;
     error?: string;
-    selectedMovieId: string | null;
-    isWriteReviewOpen: boolean;
-    isViewReviewsOpen: boolean;
 }
 
 const initialState: ReviewsState = {
     movies: [],
     loading: false,
-    selectedMovieId: null,
-    isWriteReviewOpen: false,
-    isViewReviewsOpen: false,
 };
 
 export const slice = createSlice({
@@ -39,28 +33,10 @@ export const slice = createSlice({
         },
         createReviewSuccess: (state) => {
             state.loading = false;
-            state.isWriteReviewOpen = false;
-            // Optimization: we could append the review locally, but refetching is safer/simpler for now as per example pattern
         },
         createReviewError: (state, action: PayloadAction<string>) => {
             state.loading = false;
             state.error = action.payload;
-        },
-        openWriteReview: (state, action: PayloadAction<string>) => {
-            state.selectedMovieId = action.payload;
-            state.isWriteReviewOpen = true;
-        },
-        closeWriteReview: (state) => {
-            state.isWriteReviewOpen = false;
-            state.selectedMovieId = null;
-        },
-        openViewReviews: (state, action: PayloadAction<string>) => {
-            state.selectedMovieId = action.payload;
-            state.isViewReviewsOpen = true;
-        },
-        closeViewReviews: (state) => {
-            state.isViewReviewsOpen = false;
-            state.selectedMovieId = null;
         }
     },
 });
