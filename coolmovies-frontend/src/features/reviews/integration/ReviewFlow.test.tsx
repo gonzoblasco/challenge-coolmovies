@@ -104,19 +104,21 @@ describe("Review Flow Integration", () => {
   });
 
   it("completes the create review flow", async () => {
-    const createReviewMock = jest.fn().mockResolvedValue({
-      data: {
-        createMovieReview: {
-          movieReview: {
-            id: "new-review-1",
-            title: "New Review",
-            body: "This is a great movie!",
-            rating: 5,
-            movieId: "1",
-            userByUserReviewerId: { name: "Test User" },
+    const createReviewMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockResolvedValue({
+        data: {
+          createMovieReview: {
+            movieReview: {
+              id: "new-review-1",
+              title: "New Review",
+              body: "This is a great movie!",
+              rating: 5,
+              movieId: "1",
+              userByUserReviewerId: { name: "Test User" },
+            },
           },
         },
-      },
+      }),
     });
 
     (graphqlHooks.useCreateReviewMutation as jest.Mock).mockReturnValue([
