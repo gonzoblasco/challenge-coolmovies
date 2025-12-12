@@ -67,17 +67,16 @@ export const useReviewFilters = () => {
   const preservedKeys = ["movieId", "action"];
 
   const clearFilters = () => {
-    const params = new URLSearchParams(searchParams.toString());
+    const newParams = new URLSearchParams();
+    const currentParams = new URLSearchParams(searchParams.toString());
     
-    // Get all keys and delete the ones that are not preserved
-    const keys = Array.from(params.keys());
-    keys.forEach(key => {
-        if (!preservedKeys.includes(key)) {
-            params.delete(key);
-        }
+    preservedKeys.forEach(key => {
+      if (currentParams.has(key)) {
+        newParams.set(key, currentParams.get(key)!);
+      }
     });
 
-    const queryString = params.toString();
+    const queryString = newParams.toString();
     const dest = queryString ? `${pathname}?${queryString}` : pathname;
     router.push(dest, { scroll: false });
   };
