@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+
 import {
   Tooltip,
   TooltipContent,
@@ -9,13 +8,10 @@ import {
 } from "@/components/ui/tooltip";
 import { useAppDispatch, useAppSelector } from "../../../state";
 import { exampleActions } from "../state";
-import { memo, useState } from "react";
-import {
-  useCurrentUserQuery,
-  useLazyCurrentUserQuery,
-} from "../../../generated/graphql";
+import { memo } from "react";
+import { useLazyCurrentUserQuery } from "../../../generated/graphql";
 import { FetchButton } from "../components/FetchButton";
-import { cn } from "@/lib/utils";
+
 
 const Example = () => {
   const dispatch = useAppDispatch();
@@ -24,8 +20,7 @@ const Example = () => {
   // RTK Query hook
   const [fetchUser, { data, isLoading: loading }] = useLazyCurrentUserQuery();
 
-  // For the moment, we keep the Redux dispatch for 'fetch' but we might need to remove the epic later.
-  // The 'fetch' action was triggering an epic. We will deal with logic migration in next text.
+
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full bg-background text-foreground">
