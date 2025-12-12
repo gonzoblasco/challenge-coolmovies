@@ -29,7 +29,7 @@ import {
 import { ReviewCard } from "./ReviewCard";
 import { useReviewFilters } from "../hooks/useReviewFilters";
 import { useReviews } from "../hooks/useReviews";
-import * as ReactWindow from "react-window";
+import { FixedSizeList } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { constructFilter } from "../utils/helpers";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
@@ -194,7 +194,7 @@ export const ReviewListDialog: FC = () => {
             ) : (
               <AutoSizer>
                 {({ height, width }) => (
-                  <ReactWindow.FixedSizeList
+                  <FixedSizeList
                     height={height}
                     width={width}
                     itemCount={reviewsData.movieById!.movieReviewsByMovieId!.nodes.length}
@@ -218,7 +218,7 @@ export const ReviewListDialog: FC = () => {
                         </div>
                       );
                     }}
-                  </ReactWindow.FixedSizeList>
+                  </FixedSizeList>
                 )}
               </AutoSizer>
             )}
