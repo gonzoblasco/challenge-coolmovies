@@ -110,6 +110,7 @@ describe("ReviewListDialog Component", () => {
       preloadedState: {
         reviews: {
           loading: false,
+          movies: [],
         },
       },
     });
