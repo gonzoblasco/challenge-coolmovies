@@ -1,6 +1,7 @@
 "use client";
 
 import React, { FC, useState, useEffect } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -24,12 +25,18 @@ import { Star } from "lucide-react";
 import { toast } from "sonner";
 
 export const CreateReviewDialog: FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const dispatch = useAppDispatch();
-  const {
-    selectedMovieId,
-    isWriteReviewOpen,
-    loading: sliceLoading,
-  } = useAppSelector((state) => state.reviews);
+
+  // URL State
+  const movieId = searchParams.get("movieId");
+  const action = searchParams.get("action");
+  const isWriteReviewOpen = action === "write-review" && !!movieId;
+  const selectedMovieId = isWriteReviewOpen ? movieId : null;
+
+  const { loading: sliceLoading } = useAppSelector((state) => state.reviews);
 
   // Use RTK Query to get cache access to movies
   const { data: moviesData } = useAllMoviesQuery();
@@ -59,8 +66,14 @@ export const CreateReviewDialog: FC = () => {
 
   const [createReview, { isLoading: loading }] = useCreateReview();
 
+  const navigateToViewReviews = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("action", "view-reviews");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
   const handleClose = () => {
-    dispatch(actions.closeWriteReview());
+    navigateToViewReviews();
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -79,9 +92,9 @@ export const CreateReviewDialog: FC = () => {
         userId: currentUser.id,
       }).unwrap();
 
-      // Close dialog on success
-      dispatch(actions.closeWriteReview());
-      dispatch(actions.openViewReviews(selectedMovieId));
+      // Close dialog on success -> Go to view reviews
+      navigateToViewReviews();
+
       toast.success("Review published successfully!");
     } catch (error) {
       console.error("Failed to create review", error);

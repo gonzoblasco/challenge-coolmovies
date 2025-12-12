@@ -40,7 +40,9 @@ export const useReviewFilters = () => {
     } else {
       params.delete(key);
     }
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    const queryString = params.toString();
+    const dest = queryString ? `${pathname}?${queryString}` : pathname;
+    router.push(dest, { scroll: false });
   };
 
   // Sync local search term with URL on mount/update (e.g. back button or initial load)
@@ -61,8 +63,22 @@ export const useReviewFilters = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTerm]);
 
+  // Preserve these keys when clearing filters
+  const preservedKeys = ["movieId", "action"];
+
   const clearFilters = () => {
-    router.push(pathname, { scroll: false });
+    const newParams = new URLSearchParams();
+    const currentParams = new URLSearchParams(searchParams.toString());
+    
+    preservedKeys.forEach(key => {
+      if (currentParams.has(key)) {
+        newParams.set(key, currentParams.get(key)!);
+      }
+    });
+
+    const queryString = newParams.toString();
+    const dest = queryString ? `${pathname}?${queryString}` : pathname;
+    router.push(dest, { scroll: false });
   };
 
   return {

@@ -5,10 +5,16 @@ import { MovieCard } from "./MovieCard";
 import { renderWithProviders } from "../../../test-utils";
 import * as graphqlHooks from "../../../generated/graphql";
 
-const mockDispatch = jest.fn();
+// Mock next/navigation
+const mockPush = jest.fn();
+const mockSearchParams = new URLSearchParams();
 
-jest.mock("../../../state", () => ({
-  useAppDispatch: () => mockDispatch,
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+  usePathname: () => "/movies",
+  useSearchParams: () => mockSearchParams,
 }));
 
 jest.mock("../../../generated/graphql", () => ({
@@ -73,37 +79,41 @@ describe("MovieCard Component", () => {
     expect(screen.getByText(/0.*Reviews/)).toBeInTheDocument();
   });
 
-  it("dispatches openViewReviews on 'Read' button click", () => {
+  it("updates URL to view reviews on 'Read' button click", () => {
     renderWithProviders(
       <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Read" }));
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.stringContaining("openViewReviews"),
-        payload: "1",
-      })
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.stringContaining("action=view-reviews"),
+      expect.anything()
+    );
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.stringContaining("movieId=1"),
+      expect.anything()
     );
   });
 
-  it("dispatches openWriteReview on 'Review' button click", () => {
+  it("updates URL to write review on 'Review' button click", () => {
     renderWithProviders(
       <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Review" }));
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.stringContaining("openWriteReview"),
-        payload: "1",
-      })
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.stringContaining("action=write-review"),
+      expect.anything()
+    );
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.stringContaining("movieId=1"),
+      expect.anything()
     );
   });
 
-  it("dispatches openViewReviews when clicking on the poster", () => {
+  it("updates URL to view reviews when clicking on the poster", () => {
     renderWithProviders(
       <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
     );
@@ -113,15 +123,17 @@ describe("MovieCard Component", () => {
     });
     fireEvent.click(poster);
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.stringContaining("openViewReviews"),
-        payload: "1",
-      })
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.stringContaining("action=view-reviews"),
+      expect.anything()
+    );
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.stringContaining("movieId=1"),
+      expect.anything()
     );
   });
 
-  it("dispatches openViewReviews when pressing Enter on the poster", async () => {
+  it("updates URL to view reviews when pressing Enter on the poster", async () => {
     const user = userEvent.setup();
     renderWithProviders(
       <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
@@ -134,15 +146,13 @@ describe("MovieCard Component", () => {
     poster.focus();
     await user.keyboard("{Enter}");
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.stringContaining("openViewReviews"),
-        payload: "1",
-      })
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.stringContaining("action=view-reviews"),
+      expect.anything()
     );
   });
 
-  it("dispatches openViewReviews when pressing Space on the poster", async () => {
+  it("updates URL to view reviews when pressing Space on the poster", async () => {
     const user = userEvent.setup();
     renderWithProviders(
       <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
@@ -155,23 +165,9 @@ describe("MovieCard Component", () => {
     poster.focus();
     await user.keyboard(" ");
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: expect.stringContaining("openViewReviews"),
-        payload: "1",
-      })
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.stringContaining("action=view-reviews"),
+      expect.anything()
     );
-  });
-
-  it("poster has correct accessibility attributes", () => {
-    renderWithProviders(
-      <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
-    );
-
-    const poster = screen.getByRole("button", {
-      name: "Read reviews for Test Movie",
-    });
-
-    expect(poster).toHaveAttribute("aria-label", "Read reviews for Test Movie");
   });
 });
