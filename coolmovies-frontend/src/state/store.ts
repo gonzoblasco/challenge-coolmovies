@@ -1,12 +1,12 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { exampleReducer } from '../features/example/state';
-import { reviewsReducer } from '../features/reviews/state';
+
 import { api } from './api';
 import { enhancedApi } from './enhancedApi';
 
 const rootReducer = combineReducers({
-  reviews: reviewsReducer,
+
   example: exampleReducer,
   [enhancedApi.reducerPath]: enhancedApi.reducer,
 });

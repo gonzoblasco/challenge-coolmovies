@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "../../../state";
-import { actions } from "../state/slice";
+
 import {
   useCurrentUserQuery,
   useAllMoviesQuery,
