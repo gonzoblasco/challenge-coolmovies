@@ -90,12 +90,12 @@ export const CreateReviewDialog: FC = () => {
     // Validate form
     const validation = reviewSchema.safeParse({ title, body, rating });
     if (!validation.success) {
-      const fieldErrors: Record<string, string> = {};
-      validation.error.errors.forEach((err) => {
+      const fieldErrors = validation.error.errors.reduce((acc, err) => {
         if (err.path[0]) {
-          fieldErrors[err.path[0] as string] = err.message;
+          acc[err.path[0] as string] = err.message;
         }
-      });
+        return acc;
+      }, {} as Record<string, string>);
       setErrors(fieldErrors);
       return;
     }
