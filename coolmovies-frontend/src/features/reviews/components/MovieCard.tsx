@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, memo } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Movie } from "../../../generated/graphql";
@@ -10,9 +10,10 @@ import { useInView } from "react-intersection-observer";
 
 interface MovieCardProps {
   movie: Movie;
+  index?: number;
 }
 
-export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
+const MovieCardComponent: FC<MovieCardProps> = ({ movie, index = 0 }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -63,10 +64,11 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
 
   const renderStars = (rating: number) => {
     return (
-      <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-0.5" role="img" aria-label={`${rating.toFixed(1)} out of 5 stars`}>
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
+            aria-hidden="true"
             className={`w-4 h-4 ${star <= Math.round(rating)
               ? "text-yellow-400 fill-yellow-400"
               : "text-muted-foreground/30"
@@ -94,6 +96,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
             src={imgSrc}
             alt={altText}
             fill
+            priority={index < 3}
             className="object-cover transition-transform duration-300 group-hover/poster:scale-105 peer-focus:scale-90"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={() => {
@@ -146,3 +149,6 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
     </div >
   );
 };
+
+export const MovieCard = memo(MovieCardComponent);
+MovieCard.displayName = 'MovieCard';

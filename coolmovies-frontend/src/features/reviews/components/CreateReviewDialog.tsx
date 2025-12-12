@@ -132,17 +132,48 @@ export const CreateReviewDialog: FC = () => {
           </div>
 
           <div className="grid gap-2">
-            <Label>Rating</Label>
-            <div className="flex items-center gap-1">
+            <Label id="rating-label">Rating</Label>
+            <div 
+              className="flex items-center gap-1"
+              role="radiogroup"
+              aria-labelledby="rating-label"
+              onKeyDown={(e) => {
+                // Handle number keys 1-5 for direct rating selection
+                const num = parseInt(e.key);
+                if (num >= 1 && num <= 5) {
+                  e.preventDefault();
+                  setRating(num);
+                  return;
+                }
+                
+                // Handle arrow keys for navigation
+                if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+                  e.preventDefault();
+                  setRating((prev) => Math.min(5, (prev || 0) + 1));
+                } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  setRating((prev) => Math.max(1, (prev || 2) - 1));
+                }
+              }}
+            >
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   type="button"
-                  className="focus:outline-none transition-transform hover:scale-110"
+                  role="radio"
+                  aria-checked={star === rating}
+                  tabIndex={star === rating || (rating === 0 && star === 1) ? 0 : -1}
+                  className="p-1 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
                   onClick={() => setRating(star)}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
-                  aria-label={`Rate ${star} stars`}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setRating(star);
+                    }
+                  }}
+                  aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
                 >
                   <Star
                     className={`w-8 h-8 ${
