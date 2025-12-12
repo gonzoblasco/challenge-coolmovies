@@ -109,186 +109,197 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
 
   return (
     <Card className="bg-muted/50 border-border/50">
-      <CardHeader className="p-4 pb-2">
-        <div className="flex justify-between items-start gap-4">
-          {isEditing ? (
-            <div className="flex-1 space-y-2">
-              <Input
-                value={editForm.title}
-                onChange={(e) =>
-                  setEditForm((prev) => ({ ...prev, title: e.target.value }))
-                }
-                placeholder="Review Title"
-                className="font-semibold text-lg h-auto py-1 px-2"
-              />
-            </div>
-          ) : (
-            <h4 className="font-semibold text-lg flex-1">{review.title}</h4>
-          )}
+      {isEditing ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            saveEdit();
+          }}
+        >
+          <CardHeader className="p-4 pb-2">
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1 space-y-2">
+                <Input
+                  value={editForm.title}
+                  onChange={(e) =>
+                    setEditForm((prev) => ({ ...prev, title: e.target.value }))
+                  }
+                  placeholder="Review Title"
+                  className="font-semibold text-lg h-auto py-1 px-2"
+                />
+              </div>
 
-          <div className="flex items-center gap-4">
-            {isEditing ? (
-              <div 
-                className="flex items-center"
-                role="radiogroup"
-                aria-label="Rating"
-                onKeyDown={(e) => {
-                  // Handle number keys 1-5 for direct rating selection
-                  const num = parseInt(e.key);
-                  if (num >= 1 && num <= 5) {
-                    e.preventDefault();
-                    setEditForm((prev) => ({ ...prev, rating: num }));
-                    return;
-                  }
-                  
-                  // Handle arrow keys for navigation
-                  if (e.key === "ArrowRight" || e.key === "ArrowUp") {
-                    e.preventDefault();
-                    const newRating = Math.min(5, editForm.rating + 1);
-                    setEditForm((prev) => ({ ...prev, rating: newRating }));
-                  } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
-                    e.preventDefault();
-                    const newRating = Math.max(1, editForm.rating - 1);
-                    setEditForm((prev) => ({ ...prev, rating: newRating }));
-                  }
-                }}
-              >
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    role="radio"
-                    aria-checked={star === editForm.rating}
-                    tabIndex={star === editForm.rating ? 0 : -1}
-                    onClick={() =>
-                      setEditForm((prev) => ({ ...prev, rating: star }))
+              <div className="flex items-center gap-4">
+                <div
+                  className="flex items-center"
+                  role="radiogroup"
+                  aria-label="Rating"
+                  onKeyDown={(e) => {
+                    // Handle number keys 1-5 for direct rating selection
+                    const num = parseInt(e.key);
+                    if (num >= 1 && num <= 5) {
+                      e.preventDefault();
+                      setEditForm((prev) => ({ ...prev, rating: num }));
+                      return;
                     }
-                    onKeyDown={(e) => {
-                      // Select current star with Enter or Space
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setEditForm((prev) => ({ ...prev, rating: star }));
+
+                    // Handle arrow keys for navigation
+                    if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+                      e.preventDefault();
+                      const newRating = Math.min(5, editForm.rating + 1);
+                      setEditForm((prev) => ({ ...prev, rating: newRating }));
+                    } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+                      e.preventDefault();
+                      const newRating = Math.max(1, editForm.rating - 1);
+                      setEditForm((prev) => ({ ...prev, rating: newRating }));
+                    }
+                  }}
+                >
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      role="radio"
+                      aria-checked={star === editForm.rating}
+                      tabIndex={star === editForm.rating ? 0 : -1}
+                      onClick={() =>
+                        setEditForm((prev) => ({ ...prev, rating: star }))
                       }
-                    }}
-                    className="p-0.5 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded"
-                    aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-                  >
+                      onKeyDown={(e) => {
+                        // Select current star with Enter or Space
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setEditForm((prev) => ({ ...prev, rating: star }));
+                        }
+                      }}
+                      className="p-0.5 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded"
+                      aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
+                    >
+                      <Star
+                        className={`w-4 h-4 ${
+                          star <= editForm.rating
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-muted-foreground/30"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 pt-2">
+            <div className="space-y-4">
+              <Textarea
+                aria-label="Review body"
+                value={editForm.body}
+                onChange={(e) =>
+                  setEditForm((prev) => ({ ...prev, body: e.target.value }))
+                }
+                placeholder="Write your review here..."
+                className="min-h-[100px] text-sm"
+              />
+              <div className="flex justify-end gap-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  type="button"
+                  onClick={cancelEdit}
+                  className="h-8 w-8 p-0"
+                  aria-label="Cancel edit"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  type="submit"
+                  className="h-8 w-8 p-0"
+                  disabled={!editForm.title || !editForm.body || isUpdating}
+                  aria-label="Save review"
+                >
+                  {isUpdating ? (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Check className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </form>
+      ) : (
+        <>
+          <CardHeader className="p-4 pb-2">
+            <div className="flex justify-between items-start gap-4">
+              <h4 className="font-semibold text-lg flex-1">{review.title}</h4>
+
+              <div className="flex items-center gap-4">
+                <div className="flex items-center" role="img" aria-label={`${(review.rating || 0).toFixed(1)} out of 5 stars`}>
+                  {[1, 2, 3, 4, 5].map((star) => (
                     <Star
+                      key={star}
+                      aria-hidden="true"
                       className={`w-4 h-4 ${
-                        star <= editForm.rating
+                        star <= (review.rating || 0)
                           ? "text-yellow-400 fill-yellow-400"
                           : "text-muted-foreground/30"
                       }`}
                     />
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="flex items-center" role="img" aria-label={`${(review.rating || 0).toFixed(1)} out of 5 stars`}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    aria-hidden="true"
-                    className={`w-4 h-4 ${
-                      star <= (review.rating || 0)
-                        ? "text-yellow-400 fill-yellow-400"
-                        : "text-muted-foreground/30"
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
 
-            {isOwner && !isEditing && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-primary"
-                  onClick={startEdit}
-                  aria-label={`Edit review of ${review.title}`}
-                >
-                  <Pencil className="w-4 h-4" aria-hidden="true" />
-                </Button>
-                <AlertDialog
-                  open={showDeleteDialog}
-                  onOpenChange={setShowDeleteDialog}
-                >
-                  <AlertDialogTrigger asChild>
+                {isOwner && (
+                  <>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                      aria-label="Delete review"
+                      className="h-8 w-8 text-muted-foreground hover:text-primary"
+                      onClick={startEdit}
+                      aria-label={`Edit review of ${review.title}`}
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Pencil className="w-4 h-4" aria-hidden="true" />
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        {TEXT.DELETE_CONFIRMATION_TITLE}
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {TEXT.DELETE_REVIEW_CONFIRMATION_DESC}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{TEXT.CANCEL}</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDelete}
-                        disabled={isDeleting}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      >
-                        {isDeleting ? "Deleting..." : TEXT.DELETE}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 pt-2">
-        {isEditing ? (
-          <div className="space-y-4">
-            <Textarea
-              aria-label="Review body"
-              value={editForm.body}
-              onChange={(e) =>
-                setEditForm((prev) => ({ ...prev, body: e.target.value }))
-              }
-              placeholder="Write your review here..."
-              className="min-h-[100px] text-sm"
-            />
-            <div className="flex justify-end gap-2">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={cancelEdit}
-                className="h-8 w-8 p-0"
-                aria-label="Cancel edit"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-              <Button
-                size="sm"
-                onClick={saveEdit}
-                className="h-8 w-8 p-0"
-                disabled={!editForm.title || !editForm.body || isUpdating}
-                aria-label="Save review"
-              >
-                {isUpdating ? (
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Check className="w-4 h-4" />
+                    <AlertDialog
+                      open={showDeleteDialog}
+                      onOpenChange={setShowDeleteDialog}
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                          aria-label="Delete review"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            {TEXT.DELETE_CONFIRMATION_TITLE}
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {TEXT.DELETE_REVIEW_CONFIRMATION_DESC}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>{TEXT.CANCEL}</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            {isDeleting ? "Deleting..." : TEXT.DELETE}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
                 )}
-              </Button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <>
+          </CardHeader>
+          <CardContent className="p-4 pt-2">
             <p className="text-sm text-foreground/90 whitespace-pre-wrap">
               {review.body}
             </p>
@@ -333,9 +344,9 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
             {showComments && (
               <CommentList comments={comments} currentUser={currentUser} />
             )}
-          </>
-        )}
-      </CardContent>
+          </CardContent>
+        </>
+      )}
     </Card>
   );
 };
