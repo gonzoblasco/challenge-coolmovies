@@ -1,0 +1,294 @@
+yarn run v1.22.22
+$ jest
+FAIL src/features/reviews/components/MovieCard.test.tsx
+  ● MovieCard Component › dispatches openViewReviews when pressing Enter on the poster
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: ObjectContaining {"payload": "1", "type": StringContaining "openViewReviews"}
+
+    Number of calls: 0
+
+      121 |     fireEvent.keyDown(poster, { key: "Enter" });
+      122 |
+    > 123 |     expect(mockDispatch).toHaveBeenCalledWith(
+          |                          ^
+      124 |       expect.objectContaining({
+      125 |         type: expect.stringContaining("openViewReviews"),
+      126 |         payload: "1",
+
+      at Object.toHaveBeenCalledWith (src/features/reviews/components/MovieCard.test.tsx:123:26)
+
+  ● MovieCard Component › dispatches openViewReviews when pressing Space on the poster
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: ObjectContaining {"payload": "1", "type": StringContaining "openViewReviews"}
+
+    Number of calls: 0
+
+      139 |     fireEvent.keyDown(poster, { key: " " });
+      140 |
+    > 141 |     expect(mockDispatch).toHaveBeenCalledWith(
+          |                          ^
+      142 |       expect.objectContaining({
+      143 |         type: expect.stringContaining("openViewReviews"),
+      144 |         payload: "1",
+
+      at Object.toHaveBeenCalledWith (src/features/reviews/components/MovieCard.test.tsx:141:26)
+
+  ● MovieCard Component › poster has correct accessibility attributes
+
+    expect(element).toHaveAttribute("tabIndex", "0") // element.getAttribute("tabIndex") === "0"
+
+    Expected the element to have attribute:
+      tabIndex="0"
+    Received:
+      null
+
+      156 |     });
+      157 |
+    > 158 |     expect(poster).toHaveAttribute("tabIndex", "0");
+          |                    ^
+      159 |     expect(poster).toHaveAttribute("aria-label", "Read reviews for Test Movie");
+      160 |   });
+      161 | });
+
+      at Object.toHaveAttribute (src/features/reviews/components/MovieCard.test.tsx:158:20)
+
+PASS src/features/reviews/components/ReviewListDialog.test.tsx
+PASS src/features/reviews/components/ReviewCard.test.tsx
+  ● Console
+
+    console.error
+      Failed to delete review: TypeError: deleteReview(...).unwrap is not a function
+          at unwrap (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/src/features/reviews/components/ReviewCard.tsx:91:45)
+          at handleEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@radix-ui/primitive/src/primitive.tsx:17:5)
+          at processDispatchQueue (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:16122:17)
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:16725:9
+          at batchedUpdates$1 (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:3129:40)
+          at dispatchEventForPluginEventSystem (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:16281:7)
+          at dispatchEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:20353:11)
+          at dispatchDiscreteEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:20321:11)
+          at HTMLBodyElement.callTheUserObjectsOperation (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+          at innerInvokeEventListeners (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+          at invokeEventListeners (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+          at HTMLButtonElementImpl._dispatch (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+          at HTMLButtonElementImpl.dispatchEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+          at HTMLButtonElement.dispatchEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/dom/dist/events.js:19:20
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/pure.js:108:16
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at process.env.NODE_ENV.exports.act (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react/cjs/react.development.js:1081:22)
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.eventWrapper (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/pure.js:107:28)
+          at fireEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/dom/dist/events.js:12:35)
+          at fireEvent.<computed> [as click] (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/dom/dist/events.js:110:36)
+          at fireEvent.<computed> [as click] (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/fire-event.js:15:52)
+          at Object.click (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/src/features/reviews/components/ReviewCard.test.tsx:108:15)
+
+      93 |       toast.success("Review deleted successfully");
+      94 |     } catch (error) {
+    > 95 |       console.error("Failed to delete review:", error);
+         |               ^
+      96 |       toast.error("Failed to delete review");
+      97 |     }
+      98 |   };
+
+      at error (src/features/reviews/components/ReviewCard.tsx:95:15)
+      at handleEvent (node_modules/@radix-ui/primitive/src/primitive.tsx:17:5)
+      at processDispatchQueue (node_modules/react-dom/cjs/react-dom-client.development.js:16122:17)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16725:9
+      at batchedUpdates$1 (node_modules/react-dom/cjs/react-dom-client.development.js:3129:40)
+      at dispatchEventForPluginEventSystem (node_modules/react-dom/cjs/react-dom-client.development.js:16281:7)
+      at dispatchEvent (node_modules/react-dom/cjs/react-dom-client.development.js:20353:11)
+      at dispatchDiscreteEvent (node_modules/react-dom/cjs/react-dom-client.development.js:20321:11)
+      at HTMLBodyElement.callTheUserObjectsOperation (node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+      at innerInvokeEventListeners (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+      at invokeEventListeners (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+      at HTMLButtonElementImpl._dispatch (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+      at HTMLButtonElementImpl.dispatchEvent (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+      at HTMLButtonElement.dispatchEvent (node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+      at node_modules/@testing-library/dom/dist/events.js:19:20
+      at node_modules/@testing-library/react/dist/pure.js:108:16
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:1081:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.eventWrapper (node_modules/@testing-library/react/dist/pure.js:107:28)
+      at fireEvent (node_modules/@testing-library/dom/dist/events.js:12:35)
+      at fireEvent.<computed> [as click] (node_modules/@testing-library/dom/dist/events.js:110:36)
+      at fireEvent.<computed> [as click] (node_modules/@testing-library/react/dist/fire-event.js:15:52)
+      at Object.click (src/features/reviews/components/ReviewCard.test.tsx:108:15)
+
+PASS src/features/reviews/templates/Reviews.test.tsx
+PASS src/features/reviews/components/CommentList.test.tsx
+PASS src/features/reviews/integration/ReviewFlow.test.tsx
+  ● Console
+
+    console.error
+      Failed to create review TypeError: createReview(...).unwrap is not a function
+          at unwrap (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/src/features/reviews/components/CreateReviewDialog.tsx:80:10)
+          at processDispatchQueue (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:16122:17)
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:16725:9
+          at batchedUpdates$1 (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:3129:40)
+          at dispatchEventForPluginEventSystem (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:16281:7)
+          at dispatchEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:20353:11)
+          at dispatchDiscreteEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react-dom/cjs/react-dom-client.development.js:20321:11)
+          at HTMLBodyElement.callTheUserObjectsOperation (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+          at innerInvokeEventListeners (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+          at invokeEventListeners (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+          at HTMLButtonElementImpl._dispatch (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+          at HTMLButtonElementImpl.dispatchEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+          at HTMLButtonElement.dispatchEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/dom/dist/events.js:19:20
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/pure.js:108:16
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at process.env.NODE_ENV.exports.act (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/react/cjs/react.development.js:1081:22)
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.eventWrapper (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/pure.js:107:28)
+          at fireEvent (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/dom/dist/events.js:12:35)
+          at fireEvent.<computed> [as click] (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/dom/dist/events.js:110:36)
+          at fireEvent.<computed> [as click] (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/@testing-library/react/dist/fire-event.js:15:52)
+          at Object.click (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/src/features/reviews/integration/ReviewFlow.test.tsx:170:15)
+
+      85 |       toast.success("Review published successfully!");
+      86 |     } catch (error) {
+    > 87 |       console.error("Failed to create review", error);
+         |               ^
+      88 |       toast.error("Failed to publish review. Please try again.");
+      89 |     }
+      90 |   };
+
+      at error (src/features/reviews/components/CreateReviewDialog.tsx:87:15)
+      at processDispatchQueue (node_modules/react-dom/cjs/react-dom-client.development.js:16122:17)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16725:9
+      at batchedUpdates$1 (node_modules/react-dom/cjs/react-dom-client.development.js:3129:40)
+      at dispatchEventForPluginEventSystem (node_modules/react-dom/cjs/react-dom-client.development.js:16281:7)
+      at dispatchEvent (node_modules/react-dom/cjs/react-dom-client.development.js:20353:11)
+      at dispatchDiscreteEvent (node_modules/react-dom/cjs/react-dom-client.development.js:20321:11)
+      at HTMLBodyElement.callTheUserObjectsOperation (node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+      at innerInvokeEventListeners (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+      at invokeEventListeners (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+      at HTMLButtonElementImpl._dispatch (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+      at HTMLButtonElementImpl.dispatchEvent (node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+      at HTMLButtonElement.dispatchEvent (node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+      at node_modules/@testing-library/dom/dist/events.js:19:20
+      at node_modules/@testing-library/react/dist/pure.js:108:16
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:1081:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.eventWrapper (node_modules/@testing-library/react/dist/pure.js:107:28)
+      at fireEvent (node_modules/@testing-library/dom/dist/events.js:12:35)
+      at fireEvent.<computed> [as click] (node_modules/@testing-library/dom/dist/events.js:110:36)
+      at fireEvent.<computed> [as click] (node_modules/@testing-library/react/dist/fire-event.js:15:52)
+      at Object.click (src/features/reviews/integration/ReviewFlow.test.tsx:170:15)
+
+PASS src/features/reviews/components/CommentForm.test.tsx
+  ● Console
+
+    console.error
+      Failed to post comment: Error: Failed
+          at Object.<anonymous> (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/src/features/reviews/components/CommentForm.test.tsx:106:43)
+          at Promise.finally.completed (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at _runTest (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/Users/gonzoblasco/Proyectos/challenge-coolmovies/coolmovies-frontend/node_modules/jest-runner/build/index.js:343:7)
+
+      43 |       onSuccess();
+      44 |     } catch (error) {
+    > 45 |       console.error("Failed to post comment:", error);
+         |               ^
+      46 |       setError("Failed to post comment. Please try again.");
+      47 |     }
+      48 |   };
+
+      at error (src/features/reviews/components/CommentForm.tsx:45:15)
+
+PASS src/components/common/ErrorBoundary.test.tsx
+PASS src/hooks/useDebounce.test.ts
+PASS src/features/reviews/hooks/useReviewFilters.test.ts
+PASS src/features/reviews/state/slice.test.ts
+PASS src/features/reviews/utils/helpers.test.ts
+---------------------------------------------|---------|----------|---------|---------|-----------------------------------
+File                                         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                 
+---------------------------------------------|---------|----------|---------|---------|-----------------------------------
+All files                                    |   71.73 |    65.44 |   54.48 |   73.53 |                                   
+ src                                         |     100 |      100 |     100 |     100 |                                   
+  test-utils.tsx                             |     100 |      100 |     100 |     100 |                                   
+ src/app                                     |       0 |        0 |       0 |       0 |                                   
+  ClientExample.tsx                          |       0 |      100 |       0 |       0 | 3-6                               
+  Quote.tsx                                  |       0 |      100 |       0 |       0 | 3-13                              
+  error.tsx                                  |       0 |        0 |       0 |       0 | 3-28                              
+  global-error.tsx                           |       0 |        0 |       0 |       0 | 3-20                              
+  loading.tsx                                |       0 |      100 |       0 |       0 | 1-3                               
+  page.tsx                                   |       0 |      100 |       0 |       0 | 1-6                               
+  providers.tsx                              |       0 |        0 |       0 |       0 | 2-46                              
+ src/app/reviews                             |       0 |      100 |       0 |       0 |                                   
+  page.tsx                                   |       0 |      100 |       0 |       0 | 3-6                               
+ src/components/common                       |      75 |    57.14 |      50 |      80 |                                   
+  ErrorBoundary.tsx                          |   81.81 |    66.66 |      75 |   81.81 | 37,43                             
+  Loading.tsx                                |      60 |        0 |       0 |      75 | 13                                
+ src/components/ui                           |   86.66 |     87.5 |      80 |   87.71 |                                   
+  alert-dialog.tsx                           |    92.3 |      100 |     100 |    92.3 | 129-130                           
+  button.tsx                                 |     100 |    66.66 |     100 |     100 | 44                                
+  card.tsx                                   |   85.71 |      100 |     100 |     100 |                                   
+  dialog.tsx                                 |   83.33 |      100 |     100 |   83.33 | 111-114                           
+  input.tsx                                  |     100 |      100 |     100 |     100 |                                   
+  label.tsx                                  |     100 |      100 |     100 |     100 |                                   
+  select.tsx                                 |   79.16 |      100 |     100 |   79.16 | 149,153,155-157                   
+  skeleton.tsx                               |     100 |      100 |     100 |     100 |                                   
+  sonner.tsx                                 |       0 |      100 |       0 |       0 | 3-27                              
+  textarea.tsx                               |     100 |      100 |     100 |     100 |                                   
+ src/constants                               |     100 |      100 |     100 |     100 |                                   
+  text.ts                                    |     100 |      100 |     100 |     100 |                                   
+ src/features/example/components/FetchButton |       0 |      100 |       0 |       0 |                                   
+  FetchButton.tsx                            |       0 |      100 |       0 |       0 | 1-26                              
+ src/features/example/state                  |   45.83 |      100 |       0 |   52.38 |                                   
+  epics.ts                                   |   54.54 |      100 |       0 |   54.54 | 17-20,29-32                       
+  slice.ts                                   |   38.46 |      100 |       0 |      50 | 20-32                             
+ src/features/example/templates              |       0 |      100 |       0 |       0 |                                   
+  Example.tsx                                |       0 |      100 |       0 |       0 | 2-152                             
+ src/features/reviews/components             |   84.01 |    73.15 |   69.49 |   86.54 |                                   
+  CommentForm.tsx                            |    93.1 |       75 |     100 |     100 | 32-50,86                          
+  CommentList.tsx                            |      92 |    77.77 |     100 |     100 | 47,67,77,118                      
+  CreateReviewDialog.tsx                     |   84.21 |     82.6 |   71.42 |   86.27 | 63,67,83-85,125-126               
+  MovieCard.tsx                              |    93.1 |    66.66 |   85.71 |   92.85 | 83-84                             
+  ReviewCard.tsx                             |   78.57 |    76.19 |    64.7 |   78.84 | 67-68,84-85,92-93,127,255,279-282 
+  ReviewListDialog.tsx                       |      75 |    64.28 |   41.66 |   77.27 | 69-70,74-76,81,105-111,130-140    
+ src/features/reviews/hooks                  |   97.22 |    81.81 |     100 |   96.96 |                                   
+  useCreateReview.ts                         |     100 |      100 |     100 |     100 |                                   
+  useReviewFilters.ts                        |   96.42 |    81.81 |     100 |   96.29 | 49                                
+  useReviews.ts                              |     100 |      100 |     100 |     100 |                                   
+ src/features/reviews/state                  |   96.29 |      100 |     100 |     100 |                                   
+  slice.ts                                   |   96.29 |      100 |     100 |     100 |                                   
+ src/features/reviews/templates              |   81.25 |    61.11 |   55.55 |   85.71 |                                   
+  Reviews.tsx                                |   81.25 |    61.11 |   55.55 |   85.71 | 36-37,41-42                       
+ src/features/reviews/utils                  |     100 |      100 |     100 |     100 |                                   
+  helpers.ts                                 |     100 |      100 |     100 |     100 |                                   
+ src/hooks                                   |     100 |      100 |     100 |     100 |                                   
+  useDebounce.ts                             |     100 |      100 |     100 |     100 |                                   
+ src/lib                                     |   66.66 |        0 |     100 |   66.66 |                                   
+  observable-polyfill.ts                     |       0 |        0 |     100 |       0 | 6-7                               
+  utils.ts                                   |     100 |      100 |     100 |     100 |                                   
+ src/state                                   |   24.52 |        0 |    9.09 |   21.73 |                                   
+  api.ts                                     |       0 |        0 |       0 |       0 | 1-32                              
+  enhancedApi.ts                             |       0 |        0 |       0 |       0 | 1-39                              
+  store.ts                                   |    61.9 |        0 |   33.33 |   58.82 | 13-35                             
+---------------------------------------------|---------|----------|---------|---------|-----------------------------------
+
+Test Suites: 1 failed, 11 passed, 12 total
+Tests:       3 failed, 55 passed, 58 total
+Snapshots:   1 passed, 1 total
+Time:        2.884 s
+Ran all test suites.
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

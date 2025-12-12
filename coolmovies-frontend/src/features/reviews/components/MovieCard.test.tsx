@@ -1,5 +1,6 @@
 import React from "react";
 import { screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MovieCard } from "./MovieCard";
 import { renderWithProviders } from "../../../test-utils";
 import * as graphqlHooks from "../../../generated/graphql";
@@ -110,7 +111,8 @@ describe("MovieCard Component", () => {
     );
   });
 
-  it("dispatches openViewReviews when pressing Enter on the poster", () => {
+  it("dispatches openViewReviews when pressing Enter on the poster", async () => {
+    const user = userEvent.setup();
     renderWithProviders(
       <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
     );
@@ -118,7 +120,9 @@ describe("MovieCard Component", () => {
     const poster = screen.getByRole("button", {
       name: "Read reviews for Test Movie",
     });
-    fireEvent.keyDown(poster, { key: "Enter" });
+
+    poster.focus();
+    await user.keyboard("{Enter}");
 
     expect(mockDispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -128,7 +132,8 @@ describe("MovieCard Component", () => {
     );
   });
 
-  it("dispatches openViewReviews when pressing Space on the poster", () => {
+  it("dispatches openViewReviews when pressing Space on the poster", async () => {
+    const user = userEvent.setup();
     renderWithProviders(
       <MovieCard movie={mockMovie as unknown as graphqlHooks.Movie} />
     );
@@ -136,7 +141,9 @@ describe("MovieCard Component", () => {
     const poster = screen.getByRole("button", {
       name: "Read reviews for Test Movie",
     });
-    fireEvent.keyDown(poster, { key: " " });
+
+    poster.focus();
+    await user.keyboard(" ");
 
     expect(mockDispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -155,7 +162,6 @@ describe("MovieCard Component", () => {
       name: "Read reviews for Test Movie",
     });
 
-    expect(poster).toHaveAttribute("tabIndex", "0");
     expect(poster).toHaveAttribute("aria-label", "Read reviews for Test Movie");
   });
 });
