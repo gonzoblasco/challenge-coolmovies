@@ -3,7 +3,8 @@ import { render } from "@testing-library/react";
 import type { RenderOptions } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { MockedProvider, MockedResponse } from "@apollo/client/testing";
+import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
+import { MockLink, MockedResponse } from "@apollo/client/testing";
 import reviewsReducer from "./features/reviews/state/slice";
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
@@ -26,11 +27,14 @@ export function renderWithProviders(
   }: ExtendedRenderOptions = {}
 ) {
   function Wrapper({ children }: PropsWithChildren<{}>): React.JSX.Element {
+    const client = new ApolloClient({
+      cache: new InMemoryCache({}),
+      link: new MockLink(mocks),
+    });
+
     return (
       <Provider store={store}>
-        <MockedProvider mocks={mocks} addTypename={false}>
-          {children}
-        </MockedProvider>
+        <ApolloProvider client={client}>{children}</ApolloProvider>
       </Provider>
     );
   }
