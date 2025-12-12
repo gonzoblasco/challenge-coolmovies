@@ -24,17 +24,9 @@ jest.mock("../../../generated/graphql", () => ({
 
 jest.mock("../../../state/enhancedApi", () => ({
   enhancedApi: {
-    reducer: jest.fn(),
+    reducer: (state: any = {}) => state || {},
     reducerPath: "api",
-    middleware: jest.fn(),
-    endpoints: {
-      AllMovies: {},
-      MovieReviews: {},
-      CreateReview: {},
-      CreateComment: {},
-      DeleteComment: {},
-      DeleteReview: {},
-    },
+    middleware: () => (next: any) => (action: any) => next(action),
   },
 }));
 
@@ -68,6 +60,9 @@ const mockMovies = [
     userCreatorId: "user-creator-1",
     movieReviewsByMovieId: {
       nodes: [],
+      edges: [],
+      pageInfo: { hasNextPage: false, hasPreviousPage: false },
+      totalCount: 0,
     },
   },
 ];
@@ -96,6 +91,9 @@ describe("Review Flow Integration", () => {
           title: "Integration Test Movie",
           movieReviewsByMovieId: {
             nodes: [],
+            edges: [],
+            pageInfo: { hasNextPage: false, hasPreviousPage: false },
+            totalCount: 0,
           },
         },
       },

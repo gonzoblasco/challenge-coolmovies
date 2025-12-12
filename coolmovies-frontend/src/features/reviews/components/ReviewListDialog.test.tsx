@@ -29,9 +29,9 @@ jest.mock("../hooks/useReviews", () => ({
 
 jest.mock("../../../state/enhancedApi", () => ({
   enhancedApi: {
-    reducer: jest.fn(),
+    reducer: jest.fn(() => ({})),
     reducerPath: "api",
-    middleware: jest.fn(),
+    middleware: () => (next: any) => (action: any) => next(action),
   },
 }));
 
