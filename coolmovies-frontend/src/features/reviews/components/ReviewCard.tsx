@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Star, Pencil, Check, X, Trash2 } from "lucide-react";
+import { Star, Pencil, Check, X, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   useUpdateReviewMutation,
@@ -82,7 +82,12 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
       toast.success("Review updated successfully");
     } catch (error) {
       console.error("Failed to update review:", error);
-      toast.error("Failed to update review");
+      toast.error("Failed to update review", {
+        action: {
+          label: "Retry",
+          onClick: () => saveEdit(),
+        },
+      });
     }
   };
 
@@ -93,7 +98,12 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
       toast.success("Review deleted successfully");
     } catch (error) {
       console.error("Failed to delete review:", error);
-      toast.error("Failed to delete review");
+      toast.error("Failed to delete review", {
+        action: {
+          label: "Retry",
+          onClick: () => handleDelete(),
+        },
+      });
     }
   };
 

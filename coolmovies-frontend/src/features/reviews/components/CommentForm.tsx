@@ -8,6 +8,7 @@ import {
   NewCommentFragmentDoc,
 } from "../../../generated/graphql";
 import { Send } from "lucide-react";
+import { toast } from "sonner";
 
 interface CommentFormProps {
   reviewId: string;
@@ -27,8 +28,7 @@ export const CommentForm: FC<CommentFormProps> = ({
 
   const currentUser = userData?.currentUser;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitComment = async () => {
     if (!currentUser || !form.body.trim()) return;
     setError(null);
 
@@ -38,13 +38,24 @@ export const CommentForm: FC<CommentFormProps> = ({
         body: form.body,
         reviewId: reviewId,
         userId: currentUser.id,
-      }).unwrap(); // RTK Query returns a promise that resolves to { data }, unwrap throws if error
+      }).unwrap();
       setForm({ title: "", body: "" });
       onSuccess();
     } catch (error) {
       console.error("Failed to post comment:", error);
       setError("Failed to post comment. Please try again.");
+      toast.error("Failed to post comment", {
+        action: {
+          label: "Retry",
+          onClick: () => submitComment(),
+        },
+      });
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitComment();
   };
 
   if (userLoading) return null;

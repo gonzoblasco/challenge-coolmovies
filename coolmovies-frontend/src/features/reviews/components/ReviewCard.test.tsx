@@ -245,7 +245,8 @@ describe("ReviewCard Component", () => {
 
     await waitFor(() => {
       expect(require("sonner").toast.error).toHaveBeenCalledWith(
-        "Failed to update review"
+        "Failed to update review",
+        expect.objectContaining({ action: expect.any(Object) })
       );
     });
   });
@@ -268,7 +269,8 @@ describe("ReviewCard Component", () => {
 
     await waitFor(() => {
       expect(require("sonner").toast.error).toHaveBeenCalledWith(
-        "Failed to delete review"
+        "Failed to delete review",
+        expect.objectContaining({ action: expect.any(Object) })
       );
     });
   });
