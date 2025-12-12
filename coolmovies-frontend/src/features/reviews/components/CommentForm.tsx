@@ -10,6 +10,7 @@ import {
 import { Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { extractErrorMessage } from "@/utils/errorHandling";
+import { commentSchema } from "@/lib/validation";
 
 interface CommentFormProps {
   reviewId: string;
@@ -30,7 +31,14 @@ export const CommentForm: FC<CommentFormProps> = ({
   const currentUser = userData?.currentUser;
 
   const submitComment = async () => {
-    if (!currentUser || !form.body.trim()) return;
+    if (!currentUser) return;
+    
+    const validation = commentSchema.safeParse(form);
+    if (!validation.success) {
+        setError(validation.error.issues[0].message);
+        return;
+    }
+    
     setError(null);
 
     try {

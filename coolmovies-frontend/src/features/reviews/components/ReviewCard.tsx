@@ -17,6 +17,8 @@ import {
 import { Star, Pencil, Check, X, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { extractErrorMessage } from "@/utils/errorHandling";
+import { sanitizeHtml } from "@/lib/sanitize";
+import { useThrottle } from "@/hooks/useThrottle";
 import {
   useUpdateReviewMutation,
   useDeleteReviewMutation,
@@ -94,7 +96,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = useThrottle(async () => {
     if (isDeleteProcessing) return;
     setIsDeleteProcessing(true);
     try {
@@ -113,7 +115,7 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
     } finally {
       setIsDeleteProcessing(false);
     }
-  };
+  }, 1000);
 
   return (
     <Card className="bg-muted/50 border-border/50">
@@ -318,9 +320,10 @@ export const ReviewCard: FC<ReviewCardProps> = ({ review, currentUser }) => {
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-2">
-            <p className="text-sm text-foreground/90 whitespace-pre-wrap">
-              {review.body}
-            </p>
+            <p 
+              className="text-sm text-foreground/90 whitespace-pre-wrap"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(review.body) }}
+            />
             <div className="mt-4 flex justify-between items-center">
               <div className="flex gap-2">
                 <Button
