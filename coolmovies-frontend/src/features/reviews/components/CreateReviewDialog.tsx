@@ -25,6 +25,7 @@ import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { errorService } from "@/services/errorService";
 import { reviewSchema } from "@/lib/validation";
+import { debounce } from "@/utils/debounce";
 
 export const CreateReviewDialog: FC = () => {
   const router = useRouter();
@@ -57,6 +58,33 @@ export const CreateReviewDialog: FC = () => {
   const [rating, setRating] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateField = React.useCallback(
+    (field: string, values: { title: string; body: string; rating: number }) => {
+      const result = reviewSchema.safeParse(values);
+      if (!result.success) {
+        const fieldError = result.error.errors.find(
+          (err) => err.path[0] === field
+        );
+        setErrors((prev) => ({
+          ...prev,
+          [field]: fieldError ? fieldError.message : "",
+        }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[field];
+          return newErrors;
+        });
+      }
+    },
+    []
+  );
+
+  const debouncedValidate = React.useMemo(
+    () => debounce(validateField, 500),
+    [validateField]
+  );
 
   useEffect(() => {
     if (isWriteReviewOpen) {
@@ -144,7 +172,11 @@ export const CreateReviewDialog: FC = () => {
             <Input
               id="title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setTitle(val);
+                debouncedValidate("title", { title: val, body, rating });
+              }}
               placeholder="Great Movie!"
               autoFocus
               className={errors.title ? "border-red-500" : ""}
@@ -187,7 +219,10 @@ export const CreateReviewDialog: FC = () => {
                   aria-checked={star === rating}
                   tabIndex={star === rating || (rating === 0 && star === 1) ? 0 : -1}
                   className="p-1 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-                  onClick={() => setRating(star)}
+                  onClick={() => {
+                    setRating(star);
+                    debouncedValidate("rating", { title, body, rating: star });
+                  }}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
                   onKeyDown={(e) => {
@@ -221,7 +256,11 @@ export const CreateReviewDialog: FC = () => {
             <Textarea
               id="review"
               value={body}
-              onChange={(e) => setBody(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setBody(val);
+                debouncedValidate("body", { title, body: val, rating });
+              }}
               placeholder="Tell us what you thought..."
               rows={4}
               className={errors.body ? "border-red-500" : ""}
