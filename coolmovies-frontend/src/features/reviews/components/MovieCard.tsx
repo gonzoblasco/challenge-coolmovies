@@ -82,7 +82,7 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
           />
           <button
             onClick={handleViewReviews}
-            className="absolute inset-0 w-full h-full focus:outline-none focus:ring-2 focus:ring-primary z-10"
+            className="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary z-10"
             aria-label={`Read reviews for ${movie.title}`}
           >
             <span className="sr-only">Read reviews for {movie.title}</span>
