@@ -23,21 +23,7 @@ jest.mock("../../../generated/graphql", () => ({
   },
 }));
 
-jest.mock("../../../state/enhancedApi", () => ({
-  enhancedApi: {
-    reducer: (state: any = {}) => state || {},
-    reducerPath: "api",
-    middleware: () => (next: any) => (action: any) => next(action),
-    endpoints: {
-      AllMovies: {},
-      MovieReviews: {},
-      CreateReview: {},
-      CreateComment: {},
-      DeleteComment: {},
-      DeleteReview: {},
-    },
-  },
-}));
+
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(() => ({
