@@ -5,7 +5,7 @@ import { ApolloProvider, useApolloClient } from "@apollo/client";
 import { Providers } from "../app/providers";
 import { createStore } from "./store";
 import { enhancedApi } from "./enhancedApi";
-import { api } from "./api";
+import { api, client } from "./api";
 import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 
 // Mock the environment variable to ensure consistent testing
