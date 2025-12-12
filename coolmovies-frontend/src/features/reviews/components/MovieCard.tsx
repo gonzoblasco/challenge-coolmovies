@@ -34,9 +34,8 @@ export const MovieCard: FC<MovieCardProps> = ({ movie }) => {
         reviewCount
       : 0;
 
-  const year = movie.releaseDate
-    ? new Date(movie.releaseDate).getFullYear()
-    : "N/A";
+  const date = movie.releaseDate ? new Date(movie.releaseDate) : undefined;
+  const year = date && !isNaN(date.getTime()) ? date.getFullYear() : "N/A";
   // ... (keeping other handlers the same, skipping to return for replace)
 
   const handleViewReviews = () => {
