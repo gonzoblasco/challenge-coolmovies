@@ -28,8 +28,7 @@ export const CommentForm: FC<CommentFormProps> = ({
 
   const currentUser = userData?.currentUser;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitComment = async () => {
     if (!currentUser || !form.body.trim()) return;
     setError(null);
 
@@ -39,7 +38,7 @@ export const CommentForm: FC<CommentFormProps> = ({
         body: form.body,
         reviewId: reviewId,
         userId: currentUser.id,
-      }).unwrap(); // RTK Query returns a promise that resolves to { data }, unwrap throws if error
+      }).unwrap();
       setForm({ title: "", body: "" });
       onSuccess();
     } catch (error) {
@@ -48,10 +47,15 @@ export const CommentForm: FC<CommentFormProps> = ({
       toast.error("Failed to post comment", {
         action: {
           label: "Retry",
-          onClick: () => handleSubmit(e),
+          onClick: () => submitComment(),
         },
       });
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitComment();
   };
 
   if (userLoading) return null;
