@@ -275,6 +275,54 @@ describe("ReviewCard Component", () => {
     });
   });
 
+  it("handles RTK Query error object during update", async () => {
+    const updateReviewMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockRejectedValue({ data: { message: "Detailed Update Error" } }),
+    });
+    (graphqlHooks.useUpdateReviewMutation as jest.Mock).mockReturnValue([
+      updateReviewMock,
+      { isLoading: false },
+    ]);
+
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={mockUser} />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Edit review/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Save review" }));
+
+    await waitFor(() => {
+      expect(require("sonner").toast.error).toHaveBeenCalledWith(
+        "Failed to update review: Detailed Update Error",
+        expect.objectContaining({ action: expect.any(Object) })
+      );
+    });
+  });
+
+  it("handles RTK Query error object during delete", async () => {
+    const deleteReviewMock = jest.fn().mockReturnValue({
+      unwrap: jest.fn().mockRejectedValue({ data: { message: "Detailed Delete Error" } }),
+    });
+    (graphqlHooks.useDeleteReviewMutation as jest.Mock).mockReturnValue([
+      deleteReviewMock,
+      { isLoading: false },
+    ]);
+
+    renderWithProviders(
+      <ReviewCard review={mockReview} currentUser={mockUser} />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete review" }));
+    fireEvent.click(screen.getByRole("button", { name: TEXT.DELETE }));
+
+    await waitFor(() => {
+      expect(require("sonner").toast.error).toHaveBeenCalledWith(
+        "Failed to delete review: Detailed Delete Error",
+        expect.objectContaining({ action: expect.any(Object) })
+      );
+    });
+  });
+
   it("updates rating in edit mode", async () => {
     const updateReviewMock = jest.fn().mockReturnValue({
       unwrap: jest.fn().mockResolvedValue({}),
