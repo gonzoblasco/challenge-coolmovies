@@ -100,8 +100,9 @@ describe("Reviews Component", () => {
       isLoading: false,
     });
     (graphqlHooks.useAllMoviesQuery as jest.Mock).mockReturnValue({
-      data: { allMovies: { nodes: mockMovies } },
+      data: { allMovies: { nodes: mockMovies, totalCount: 1 } },
       isLoading: false,
+      isFetching: false,
     });
     (graphqlHooks.useAllUsersQuery as jest.Mock).mockReturnValue({
       data: { allUsers: { nodes: [] } },
@@ -215,4 +216,33 @@ describe("Reviews Component", () => {
     const { container } = renderWithProviders(<Reviews />);
     expect(container.firstChild).toMatchSnapshot();
   });
+
+  it("handles error state when movies fail to load", async () => {
+    (graphqlHooks.useAllMoviesQuery as jest.Mock).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error("Network Error"),
+    });
+
+    renderWithProviders(<Reviews />);
+
+    expect(
+      screen.getByText("We could not load the movies. Please try reloading the page.")
+    ).toBeInTheDocument();
+  });
+
+  it("handles empty state (no movies found)", async () => {
+    (graphqlHooks.useAllMoviesQuery as jest.Mock).mockReturnValue({
+      data: { allMovies: { nodes: [], totalCount: 0 } },
+      isLoading: false,
+    });
+
+    renderWithProviders(<Reviews />);
+
+    expect(screen.queryByText("Cool Movie")).not.toBeInTheDocument();
+    // Verify no pagination controls when no movies
+    expect(screen.queryByRole("button", { name: "Previous page" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Next page" })).not.toBeInTheDocument();
+  });
+
 });

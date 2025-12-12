@@ -189,6 +189,66 @@ exports[`Reviews Component matches snapshot 1`] = `
         </div>
       </div>
     </div>
+    <div
+      aria-hidden="true"
+      class="mt-12 flex items-center justify-center gap-4"
+      data-aria-hidden="true"
+    >
+      <button
+        aria-label="Previous page"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10"
+        disabled=""
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-left h-4 w-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m15 18-6-6 6-6"
+          />
+        </svg>
+      </button>
+      <span
+        class="text-sm font-medium"
+      >
+        Page 
+        1
+         of 
+        1
+      </span>
+      <button
+        aria-label="Next page"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10"
+        disabled=""
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-right h-4 w-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9 18 6-6-6-6"
+          />
+        </svg>
+      </button>
+    </div>
   </div>
 </div>
 `;

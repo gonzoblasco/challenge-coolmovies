@@ -306,4 +306,21 @@ describe("ReviewListDialog Component", () => {
     expect(await screen.findByText("No reviews match your filters.")).toBeInTheDocument();
     expect(screen.getByText("Clear filters and view all")).toBeInTheDocument();
   });
+
+  it("handles network error gracefully", async () => {
+    (useReviews as jest.Mock).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new Error("Network failure"),
+    });
+
+    renderComponent();
+
+    // Dialog should still render but show error state
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    // The component should handle error gracefully - check for any error indication
+    // or at minimum not crash
+    expect(screen.queryByText("Great Movie")).not.toBeInTheDocument();
+  });
 });
